@@ -1,0 +1,51 @@
+﻿.quote-card {
+    border-radius: 6px;
+    background: #FFF;
+    box-shadow: 0 3px 0 0 #E6E6E6;
+    border: 1px solid #e6e9eb;
+    overflow: hidden;
+}
+
+    /*.quote-card:hover {
+        border-color: #cbd5e1;*/ /* slightly darker border */
+    /*box-shadow: 0 4px 24px 0 rgba(42, 43, 45, 0.09);
+    }*/
+
+    .quote-card .quote-header {
+        background-color: rgb(248 250 252 / 1);
+        padding: 10px 16px;
+        border-bottom: 1px solid #e6e9eb;
+    }
+
+        .quote-card .quote-header .header-text {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--tw-primary);
+            line-height: normal;
+        }
+
+    .quote-card .totalamount .header-text {
+        font-size: 12px;
+        text-transform: uppercase;
+        font-weight: 400;
+        /* padding-bottom: 4px; */
+        line-height: 20px;
+    }
+
+    .quote-card .totalamount .amount-text {
+        font-size: 22px;
+        font-weight: 700;
+        color: #0d121b;
+    }
+
+        .quote-card .totalamount .amount-text > span {
+            font-size: 18px;
+            font-weight: 600;
+            color: #838383;
+        }
+
+    .quote-card .quote-footer {
+        background-color: rgb(248 250 252 / 0.5);
+        padding: 10px 20px;
+        border-top: 1px solid #f1f5f9;
+    }

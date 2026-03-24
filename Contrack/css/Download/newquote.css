@@ -1,0 +1,366 @@
+﻿* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+@page {
+    margin: 2cm 1.5cm 2.5cm 1.5cm;
+}
+
+body {
+    font-family: 'Inter', Arial, sans-serif;
+    background-color: #ffffff;
+    color: #334155;
+    font-size: 14px;
+    line-height: 1.5;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+}
+
+.invoice-container {
+    max-width: 1000px;
+    margin: 0 auto;
+    background: white;
+}
+
+.header {
+    padding: 1rem;
+    padding-bottom: 0;
+    margin-bottom: 1rem;
+}
+
+.header-inner {
+    padding: 1rem;
+    border-radius: 8px;
+    border: 2px solid #DDE5E5;
+}
+
+.header-right {
+    text-align: right;
+}
+
+    .header-right h2 {
+        font-size: 1.75rem;
+        font-weight: 700;
+        margin-bottom: 0.25rem;
+        color: #071437;
+    }
+
+    .header-right p {
+        font-size: 0.875rem;
+        color: #78829D;
+        margin: 0;
+    }
+
+.info-row {
+    display: flex;
+    margin: 0 1rem 1rem 1rem; 
+    page-break-inside: avoid;
+}
+
+    .info-row .info-card {
+        flex: 1; 
+        margin: 0; 
+    }
+
+        .info-row .info-card + .info-card {
+            margin-left: 1rem;
+        }
+
+
+.info-card {
+    margin: 0 1rem 1rem 1rem;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    overflow: hidden;
+    page-break-inside: avoid;
+}
+
+.card-header {
+    padding: 0.75rem 1rem;
+}
+
+.blue-header {
+    background-color: #f8fafc !important;
+    color: #1B84FF !important;
+    font-size: 14px;
+    min-height: 40px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.card-header h3 {
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.card-content {
+    padding: 1rem;
+}
+
+    .card-content p {
+        font-size: 0.875rem;
+        margin-bottom: 0.25rem;
+        color: #1e2b3b;
+    }
+
+.company-name {
+    font-weight: 600;
+    color: #1e293b !important;
+}
+
+.details-grid-table {
+    width: 100%;
+    table-layout: fixed;
+}
+
+.details-grid-cell {
+    width: 33.33%;
+    vertical-align: top;
+    padding: 0 1rem 0 0;
+}
+
+    .details-grid-cell:last-child {
+        padding-right: 0;
+    }
+
+.label {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #6e7581 !important;
+    margin-bottom: 0.25rem;
+    display: block;
+}
+
+.value {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #1f2937;
+    word-wrap: break-word;
+    display: block;
+}
+
+.line-items-card {
+    margin: 0 1rem 1rem 1rem;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.items-table {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+}
+
+    .items-table thead {
+        display: table-header-group;
+    }
+
+
+    .items-table th {
+        background-color: #f8fafc !important;
+        color: #1B84FF !important;
+        padding: 0.75rem 1rem;
+        font-size: 14px;
+        font-weight: 500;
+        text-align: left;
+        border-bottom: 1px solid #e5e7eb !important;
+        border-right: 1px solid #e5e7eb !important;
+    }
+
+
+        .items-table th:last-child {
+            border-right: none !important;
+        }
+
+    .items-table tr {
+        page-break-inside: avoid;
+    }
+
+    .items-table td {
+        padding: 0.75rem 1rem;
+        font-size: 0.875rem;
+        border-bottom: 1px solid #e5e7eb !important;
+        border-right: 1px solid #e5e7eb !important;
+        vertical-align: top;
+        color: #4B5675;
+    }
+
+        .items-table td:last-child {
+            border-right: none !important;
+        }
+
+    .items-table tbody tr:last-child td {
+        border-bottom: none !important;
+    }
+
+.col-item {
+    width: 55%;
+    text-align: left;
+}
+
+.col-qty {
+    width: 10%;
+    text-align: center !important;
+}
+
+.col-price {
+    width: 17.5%;
+    text-align: right !important;
+}
+
+.col-subtotal {
+    width: 17.5%;
+    text-align: right !important;
+}
+
+.item-name {
+    font-size: 12px;
+    font-weight: 400;
+    color: #4B5675;
+    margin-bottom: 0;
+    line-height: 1.4;
+}
+
+.item-meta {
+    font-size: 11px;
+    color: #4b5563;
+    padding-top: 2px;
+}
+
+    .item-meta span {
+        padding-left: 4px;
+    }
+
+.qty-val {
+    display: block;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #1f2937;
+}
+
+.qty-uom {
+    display: block;
+    font-size: 0.75rem;
+    color: #374151;
+    font-weight: 400;
+}
+
+.price-val {
+    font-weight: 500;
+    color: #374151;
+    white-space: nowrap;
+    display: block;
+}
+
+.total-summary-wrapper {
+    margin: 1rem 1rem 0 1rem;
+    overflow: hidden;
+    page-break-inside: avoid;
+}
+
+.total-summary-table {
+    width: 320px;
+    float: right;
+    border-collapse: collapse;
+}
+
+.final-total td {
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+    border-top: 1px solid #b5b5b5;
+    border-bottom: 1px solid #b5b5b5;
+    font-size: 1.125rem;
+}
+
+.final-label {
+    text-align: left;
+    color: #1B84FF;
+    font-weight: 700;
+}
+
+.final-value {
+    text-align: right;
+    color: #1B84FF;
+    font-weight: 700;
+}
+
+.clear-float {
+    clear: both;
+}
+
+.page-break-spacer {
+    page-break-before: always;
+    clear: both;
+}
+
+.termsbox {
+    clear: both;
+    background-color: #f8fafc;
+    padding: 1.5rem;
+    margin: 1rem;
+    border-radius: 8px;
+    border: 1px solid #e5e7eb;
+    page-break-inside: avoid;
+}
+
+    .termsbox h3 {
+        color: #1B84FF;
+        font-size: 16px;
+        padding-bottom: 10px;
+        font-weight: 600;
+    }
+
+    .termsbox p {
+        font-size: 12px;
+        line-height: 1.4;
+        margin: 0 0 4px 0;
+    }
+
+        .termsbox p strong,
+        .termsbox p b {
+            font-weight: 600;
+            color: #1e293b;
+        }
+
+    .termsbox ul, .termsbox ol {
+        padding-left: 20px;
+        margin: 5px 0;
+        font-size: 12px;
+        line-height: 1.4;
+    }
+
+    .termsbox li {
+        margin-bottom: 4px;
+    }
+
+.footer {
+    position: fixed;
+    bottom: -2cm;
+    left: 0px;
+    right: 0px;
+    height: 30px;
+    text-align: center;
+    font-size: 12px;
+    color: #78829D;
+}
+
+    .footer .page-number::after {
+        content: "Page " counter(page) " of " counter(pages);
+    }
+.final-value .currency-code {
+    color: #6B7280; 
+    font-weight: 500;
+    margin-right: 0.3rem; 
+}
+
+.final-value .currency-amount {
+    color: #111827; 
+    font-weight: 700; 
+}
+
+
+/*for po*/

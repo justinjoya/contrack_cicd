@@ -1,0 +1,27 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Contrack
+{
+    public interface IPricingRepository
+    {
+        Result SaveHeader(PricingHeaderDTO header);
+        Result CloneHeader(PricingHeaderDTO header);
+        Result SaveCurrency(PricingCurrencyDTO currency);
+        Result CloneCurrency(PricingCurrencyDTO currency);
+        Result SaveDetail(PricingDetailDTO detail);
+        Result SaveCustomer(PricingCustomerDTO customer);
+        Result DeleteCustomer(PricingCustomerDTO customer);
+        PricingHeaderDTO GetHeader(string pricinguuid);
+        PricingCurrencyDTO GetPricing(string currencyuuid);
+<<<<<<< .mine
+        //List<PricingCustomerDTO> GetCustomerList(string pricingid);
+||||||| .r893
+=======
+        List<PricingHeaderDTO> GetPricingList(PricingListFilter filter);
+>>>>>>> .r905
+    }
+}

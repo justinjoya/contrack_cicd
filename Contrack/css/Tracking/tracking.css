@@ -1,0 +1,485 @@
+
+
+.container {
+    max-width: 1240px;
+    width: 100%;
+    margin: 0 auto;
+    display: flex;
+    align-items: flex-start;
+    gap: 32px;
+    padding: 20px 0;
+}
+
+.card {
+    border-radius: 8px;
+    border: 1px solid #E5E5E5;
+    background: #FFFFFF;
+    box-shadow: 0 4px 54px 0 rgba(42, 43, 45, 0.08);
+}
+
+    .card.lCard {
+        padding: 24px;
+        display: flex;
+        flex-direction: column;
+        gap: 25px;
+        flex: 1;
+    }
+
+        .card.lCard .card-header {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            border-bottom: 0;
+            padding: 0;
+        }
+
+            .card.lCard .card-header .card-icon {
+                height: 48px;
+                width: 48px;
+                background-color: #232323;
+                padding: 13px 10px;
+                border-radius: 50%;
+            }
+
+            .card.lCard .card-header .card-title h2 {
+                color: #241D1A;
+                font-size: 18px;
+                font-weight: 700;
+                line-height: 18px;
+                margin: 0 0 12px;
+            }
+
+            .card.lCard .card-header .card-title p {
+                color: #7F7C75;
+                font-size: 14px;
+                font-weight: 400;
+                line-height: 12px;
+                margin: 0;
+            }
+
+            .card.lCard .card-header .right-wrapper {
+                margin-left: auto;
+                display: flex;
+                align-items: flex-end;
+                gap: 16px;
+            }
+
+            .card.lCard .card-header .time-wrapper {
+                color: #232323;
+                text-align: right;
+                display: flex;
+                flex-direction: column;
+                gap: 8px;
+            }
+
+                .card.lCard .card-header .time-wrapper h5 {
+                    font-size: 14px;
+                    font-weight: 400;
+                    margin: 0;
+                    line-height: 12px;
+                }
+
+                .card.lCard .card-header .time-wrapper .status-wrapper {
+                    display: flex;
+                    gap: 16px;
+                    align-items: center;
+                }
+
+                    .card.lCard .card-header .time-wrapper .status-wrapper .status {
+                        border-radius: 35px;
+                        background: #FFFFFF;
+                        padding: 8px 12px;
+                        text-align: center;
+                        gap: 10px;
+                        font-size: 14px;
+                        font-weight: 400;
+                        line-height: 12px;
+                    }
+
+                        .card.lCard .card-header .time-wrapper .status-wrapper .status.delay {
+                            background: #FBF7E8;
+                            color: #B49602;
+                        }
+
+                    .card.lCard .card-header .time-wrapper .status-wrapper p {
+                        font-size: 14px;
+                        font-weight: 600;
+                        line-height: 16px;
+                        margin: 0;
+                    }
+
+        .card.lCard .inner-wrapper {
+            border-radius: 8px;
+            background: #F7F7F7;
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            overflow-y: auto;
+        }
+
+            .card.lCard .inner-wrapper .timeline-wrapper {
+                position: relative;
+                margin-left: 55px;
+            }
+
+                .card.lCard .inner-wrapper .timeline-wrapper:first-child::after {
+                    position: absolute;
+                    content: url("/assets/images/gps-icon.svg");
+                    left: -55px;
+                    top: 0;
+                    width: 34px;
+                    height: 34px;
+                    border-radius: 50%;
+                    background-color: #3157FF;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    line-height: 85%;
+                    overflow: hidden;
+                }
+
+                .card.lCard .inner-wrapper .timeline-wrapper:first-child .card-content:after {
+                    height: calc(100% + 14px);
+                    top: 26px;
+                }
+
+                .card.lCard .inner-wrapper .timeline-wrapper:has(+ .timeline-wrapper.active) .dot::after {
+                    height: calc(100% + 6px);
+                }
+
+                .card.lCard .inner-wrapper .timeline-wrapper.active::after {
+                    position: absolute;
+                    content: "";
+                    height: 100%;
+                    width: 34px;
+                    border-radius: 40px;
+                    border: 1px solid #E3E3E3;
+                    background: #3157FF;
+                    left: -55px;
+                    top: 0;
+                }
+
+                .card.lCard .inner-wrapper .timeline-wrapper.active .dot::before {
+                    background-color: #FFFFFF;
+                    z-index: 1;
+                }
+
+                .card.lCard .inner-wrapper .timeline-wrapper.active .card-content:after {
+                    background-color: #FFFFFF;
+                    z-index: 1;
+                    height: calc(100% - 4px);
+                    opacity: 0.3;
+                }
+
+                .card.lCard .inner-wrapper .timeline-wrapper.active .card-content:last-child:after {
+                    display: none;
+                }
+
+                .card.lCard .inner-wrapper .timeline-wrapper.upcoming .dot::before {
+                    background-color: rgba(49, 87, 255, 0.44);
+                }
+
+                .card.lCard .inner-wrapper .timeline-wrapper.upcoming .dot::after {
+                    content: "";
+                    position: absolute;
+                    left: -55.5px;
+                    top: 10px;
+                    width: 5px;
+                    height: calc(100% + 36px);
+                    background: radial-gradient(circle, rgba(49, 87, 255, 0.14) 50%, transparent 51%) repeat-y;
+                    background-size: 5px 7.5px;
+                    background-position: center top;
+                    border-radius: 0;
+                }
+
+                .card.lCard .inner-wrapper .timeline-wrapper:nth-last-child(2) .dot::after {
+                    height: calc(100% + 20px);
+                }
+
+                .card.lCard .inner-wrapper .timeline-wrapper:last-child .dot:before {
+                    position: absolute;
+                    content: url("/assets/images/location-tick.svg");
+                    left: -70px;
+                    top: -8px;
+                    width: 34px;
+                    height: 34px;
+                    border-radius: 50%;
+                    background-color: #D0D6F1;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    line-height: 85%;
+                    overflow: hidden;
+                }
+
+                .card.lCard .inner-wrapper .timeline-wrapper:last-child .dot::after {
+                    display: none;
+                }
+
+            .card.lCard .inner-wrapper .dot {
+                position: relative;
+            }
+
+                .card.lCard .inner-wrapper .dot::before {
+                    position: absolute;
+                    content: "";
+                    height: 8px;
+                    width: 8px;
+                    background-color: #3157FF;
+                    border-radius: 50%;
+                    left: -57px;
+                }
+
+                .card.lCard .inner-wrapper .dot::after {
+                    position: absolute;
+                    content: "";
+                    height: calc(100% + 24px);
+                    width: 1.5px;
+                    border-radius: 10px;
+                    background-color: #3157FF;
+                    left: -54px;
+                    top: 16px;
+                }
+
+            .card.lCard .inner-wrapper .inner-card {
+                display: flex;
+                flex-direction: column;
+                border-radius: 8px;
+                border: 1.5px solid #F3F3F3;
+                background: #FFF;
+                padding: 16px;
+                gap: 20px;
+            }
+
+                .card.lCard .inner-wrapper .inner-card .card-content {
+                    display: flex;
+                    align-items: flex-start;
+                    gap: 16px;
+                }
+
+                    .card.lCard .inner-wrapper .inner-card .card-content .inner-icon {
+                        width: 20px;
+                        height: 20px;
+                    }
+
+                    .card.lCard .inner-wrapper .inner-card .card-content .inner-title {
+                        flex: 1;
+                    }
+
+                        .card.lCard .inner-wrapper .inner-card .card-content .inner-title h3 {
+                            color: #232323;
+                            font-size: 16px;
+                            font-weight: 600;
+                            line-height: 16px;
+                            margin: 0 0 8px;
+                        }
+
+                            .card.lCard .inner-wrapper .inner-card .card-content .inner-title h3 span {
+                                display: inline-flex;
+                                padding: 3px 4px;
+                                border-radius: 4px;
+                                background: #0AA782;
+                                margin-left: 8px;
+                                color: #FFF;
+                                font-size: 12px;
+                                font-weight: 700;
+                                line-height: 12px;
+                            }
+
+                        .card.lCard .inner-wrapper .inner-card .card-content .inner-title p {
+                            color: #656565;
+                            font-size: 14px;
+                            font-weight: 400;
+                            line-height: 14px;
+                            margin: 0;
+                        }
+
+                    .card.lCard .inner-wrapper .inner-card .card-content .location-container {
+                        display: flex;
+                        gap: 8px;
+                    }
+
+                        .card.lCard .inner-wrapper .inner-card .card-content .location-container .location-wrapper {
+                            display: flex;
+                            flex-direction: column;
+                            gap: 8px;
+                            text-align: right;
+                        }
+
+                            .card.lCard .inner-wrapper .inner-card .card-content .location-container .location-wrapper h5 {
+                                color: #232323;
+                                font-size: 14px;
+                                font-weight: 500;
+                                line-height: 16px;
+                                margin: 0;
+                            }
+
+                            .card.lCard .inner-wrapper .inner-card .card-content .location-container .location-wrapper p {
+                                color: #959595;
+                                font-size: 12px;
+                                font-weight: 500;
+                                line-height: 16px;
+                                margin: 0;
+                            }
+
+                .card.lCard .inner-wrapper .inner-card.upcoming {
+                    border-radius: 8px;
+                    border: 1.5px dashed #E4E4E4;
+                }
+
+                    .card.lCard .inner-wrapper .inner-card.upcoming .card-content .inner-title h3, .card.lCard .inner-wrapper .inner-card.upcoming .card-content .inner-title p {
+                        color: #959595;
+                    }
+
+                        .card.lCard .inner-wrapper .inner-card.upcoming .card-content .inner-title h3 span, .card.lCard .inner-wrapper .inner-card.upcoming .card-content .inner-title p span {
+                            background: #A5B5FF;
+                        }
+
+                    .card.lCard .inner-wrapper .inner-card.upcoming .card-content .location-container .location-wrapper h5 {
+                        color: #959595;
+                    }
+
+            .card.lCard .inner-wrapper .status-wrapper {
+                padding: 16px;
+                border-radius: 8px;
+                background: #E5EEEC;
+                color: #0AA782;
+                font-size: 14px;
+                font-style: italic;
+                font-weight: 500;
+                line-height: 16px;
+                border: 1.5px solid #E5EEEC;
+            }
+
+            .card.lCard .inner-wrapper .status-container {
+                border: 1.5px solid transparent;
+            }
+
+                .card.lCard .inner-wrapper .status-container .current-status {
+                    display: inline-flex;
+                    padding: 10px 16px;
+                    align-items: center;
+                    gap: 10px;
+                    border-radius: 35px;
+                    background: #0AA782;
+                    color: #FFFFFF;
+                    font-size: 14px;
+                    font-weight: 600;
+                    line-height: 12px;
+                }
+
+                .card.lCard .inner-wrapper .status-container .dot::before {
+                    display: none;
+                }
+
+                .card.lCard .inner-wrapper .status-container .dot::after {
+                    left: -39.5px;
+                    top: -2px;
+                    width: 5px;
+                    height: calc(100% + 30px);
+                    background: radial-gradient(circle, rgba(49, 87, 255, 0.14) 50%, transparent 51%) repeat-y;
+                    background-size: 5px 7.5px;
+                    background-position: center top;
+                    border-radius: 0;
+                }
+
+    .card.rCard {
+        padding: 16px;
+        width: 100%;
+        max-width: 436px;
+        display: flex;
+        flex-direction: column;
+        gap: 24px;
+        position: sticky;
+        top: 80px;
+    }
+
+        .card.rCard .confirm-wrapper {
+            border-radius: 6px;
+            background: rgba(49, 87, 255, 0.1);
+            padding: 20px;
+            display: flex;
+            align-items: flex-start;
+            gap: 20px;
+        }
+
+            .card.rCard .confirm-wrapper .icon {
+                width: 44px;
+                display: flex;
+            }
+
+            .card.rCard .confirm-wrapper .confirm-details h6 {
+                color: #3157FF;
+                font-size: 16px;
+                font-weight: 500;
+                line-height: 20px;
+                margin: 0 0 10px;
+            }
+
+            .card.rCard .confirm-wrapper .confirm-details h4 {
+                color: #172C87;
+                font-size: 20px;
+                font-weight: 700;
+                line-height: 20px;
+                margin: 0 0 8px;
+            }
+
+            .card.rCard .confirm-wrapper .confirm-details p {
+                color: #172C87;
+                font-size: 16px;
+                font-weight: 400;
+                line-height: 16px;
+                margin: 0;
+            }
+
+        .card.rCard .details-wrapper {
+            padding: 24px 0;
+            border-bottom: 1px solid #E5E5E5;
+        }
+
+            .card.rCard .details-wrapper:first-child {
+                padding-top: 0;
+            }
+
+            .card.rCard .details-wrapper:last-child {
+                border-bottom: 0;
+                padding-bottom: 0;
+            }
+
+            .card.rCard .details-wrapper h3 {
+                color: #232323;
+                font-size: 16px;
+                font-weight: 700;
+                line-height: 16px;
+                margin: 0 0 20px;
+            }
+
+            .card.rCard .details-wrapper .detail-container {
+                display: flex;
+                align-items: flex-start;
+                justify-content: space-between;
+                gap: 16px;
+                margin-bottom: 16px;
+            }
+
+                .card.rCard .details-wrapper .detail-container:last-child {
+                    margin-bottom: 0;
+                }
+
+                .card.rCard .details-wrapper .detail-container label {
+                    color: #656565;
+                    font-size: 14px;
+                    font-weight: 500;
+                    line-height: 14px;
+                }
+
+                .card.rCard .details-wrapper .detail-container p {
+                    color: #232323;
+                    text-align: right;
+                    font-size: 16px;
+                    font-weight: 500;
+                    line-height: 16px;
+                    margin: 0;
+                }
+/*# sourceMappingURL=tracking.css.map */

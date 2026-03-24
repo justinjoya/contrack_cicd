@@ -1,0 +1,1359 @@
+﻿
+
+.voyage-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 0fr));
+    gap: 20px;
+}
+
+.voyage-card {
+    padding: 20px;
+    border: 1px solid #e6e8eb;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    width: 350px;
+    /* height: 130px; */
+    border-radius: 6px;
+    background: #FFF;
+    box-shadow: 0 3px 0 0 #E6E6E6;
+}
+
+.voyage-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.voyage-code {
+    color: #232323;
+    font-family: Inter;
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: 14px; /* 87.5% */
+}
+
+.voyage-stops {
+    font-size: 13px;
+    font-weight: 600;
+    color: #1fb676;
+}
+
+.voyage-title {
+    color: #7F7C75;
+    font-family: Inter;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 14px; /* 100% */
+}
+
+.ld-polpod-box {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.ld-loc-col {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.ld-flag {
+    width: 24px;
+    height: 24px;
+    aspect-ratio: 1/1;
+}
+
+.ld-loc-details .ld-label {
+    font-size: 13px;
+    color: #848484;
+    margin-bottom: 2px;
+}
+
+.ld-city {
+    color: #232323;
+    font-family: Inter;
+    font-size: 12px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 12px;
+}
+
+.border-line {
+    border-bottom: 1px solid #F0F0F0;
+    margin-top: 10px;
+}
+
+
+.ld-arrow {
+    font-size: 26px;
+    color: #888;
+}
+
+.route-arrow {
+    width: 22px;
+    height: 22px;
+    background: url('/assets/img/Vector 183.png') center center no-repeat;
+    flex-shrink: 0;
+    margin: 0 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+
+.intermediate-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 18px;
+}
+
+.title-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.route-icon {
+    width: 20px;
+}
+
+.intermediate-header h2 {
+    font-size: 20px;
+    margin: 0;
+    font-weight: 600;
+    color: #222;
+}
+
+.add-new {
+    font-size: 15px;
+    color: #2A63F5;
+    font-weight: 500;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.port-card {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    padding: 18px;
+    border-radius: 12px;
+    gap: 18px;
+    margin-bottom: 14px;
+    width: 100%;
+    border-radius: 8px;
+    border: 2px solid #E5E5E5;
+    background: #FFF;
+    box-shadow: 0 4px 24px 0 rgba(42, 43, 45, 0.09);
+}
+
+.port-left {
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+    min-width: 300px;
+}
+
+.flag {
+    width: 44px;
+    height: 44px;
+}
+
+.port-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.port-name {
+    color: #232323;
+    font-family: Inter;
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 600;
+    line-height: 20px; /* 125% */
+}
+
+.terminal {
+    color: #959595;
+    font-family: Inter;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 14px; /* 100% */
+}
+
+.team {
+    margin-top: 13px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #656565;
+    font-family: Inter;
+    font-size: 12px;
+    font-style: normal;
+    font-weight: 600;
+    line-height: 12px;
+}
+
+.user-icon {
+    width: 16px;
+    height: 16px;
+    object-fit: cover;
+}
+
+.team .dots {
+    color: #9aa1a7;
+    margin: 0 4px;
+    font-size: 12px;
+}
+
+.port-right {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    flex: 1;
+    min-width: 360px;
+}
+
+.dates-and-edit {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    width: 100%;
+    justify-content: flex-end;
+}
+
+
+.dates {
+    display: flex;
+    align-items: center;
+    gap: 11.5px;
+}
+
+.date-col {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    text-align: left;
+    min-width: 150px;
+}
+
+.date-main {
+    font-size: 14px;
+    font-weight: 700;
+    color: #2f3438;
+}
+
+.date-sub {
+    color: #656565;
+    font-family: Inter;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 14px;
+}
+
+.date-label {
+    color: #232323;
+    font-family: Inter;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 14px;
+}
+
+.vertical-divider {
+    width: 1px;
+    height: 38px;
+    background: #D5B40F;
+    border-radius: 2px;
+}
+
+.edit-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-left: 12px;
+    color: #333;
+    text-decoration: none;
+    font-size: 14px;
+}
+
+.edit-icon {
+    width: 20px;
+    height: 20px;
+    padding-left: 8px;
+}
+
+.cutoff-row {
+    width: 100%;
+    display: flex;
+    margin-top: 10px;
+}
+
+.cutoff-pill {
+    color: #6f7377;
+    border-radius: 2px;
+    background: #F3F3F3;
+    font-size: 13px;
+    text-align: center;
+    box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.01);
+    display: flex;
+    width: 306px;
+    padding: 1px 12px;
+    justify-content: center;
+    align-items: center;
+    gap: 24px;
+}
+
+@media (max-width: 1024px) {
+    .port-left {
+        min-width: 220px;
+    }
+
+    .port-right {
+        min-width: 260px;
+    }
+
+    .date-col {
+        min-width: 120px;
+    }
+}
+
+@media (max-width: 720px) {
+    .port-card {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 12px;
+    }
+
+    .port-right {
+        align-items: stretch;
+    }
+
+    .dates-and-edit {
+        justify-content: space-between;
+    }
+
+    .cutoff-row {
+        justify-content: flex-start;
+    }
+}
+
+.details-section {
+    width: 380px;
+    font-family: Inter, sans-serif;
+    padding: 8px 0;
+}
+
+.details-row {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin: 12px 0px 12px 0px;
+}
+
+.details-col {
+    display: flex;
+    flex-direction: column;
+}
+
+.details-label {
+    margin-bottom: 8px;
+    color: #999EA8;
+    font-family: Inter;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 12px;
+}
+
+.details-title {
+    color: #232323;
+    font-family: Inter;
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: 15px; /* 83.333% */
+}
+
+.pol-line {
+    position: relative;
+    padding-left: 10px;
+}
+
+    .pol-line::before {
+        content: "";
+        position: absolute;
+        left: 0;
+        top: 0px;
+        width: 2px;
+        background-color: #2AB18F;
+        border-radius: 2px;
+        height: 36px;
+    }
+
+
+.arrow {
+    font-size: 15px;
+    color: #9B9B9B;
+    margin-top: 12px;
+}
+
+.voyage-box {
+    font-size: 14px;
+    margin-bottom: 20px;
+    display: flex;
+    width: 381px;
+    padding: 16px 24px;
+    justify-content: space-between;
+    align-items: flex-start;
+    border-radius: 8px;
+    background: #EFF6F4;
+}
+
+.voyage-left {
+    color: #0B6048;
+    font-family: Inter;
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 16px;
+}
+
+
+.divider-line {
+    border-top: 1px solid #E5E5E5;
+    margin: 18px 0;
+}
+
+.intermediate-title {
+    font-size: 16px;
+    margin-bottom: 14px;
+    color: #333;
+}
+
+.port-item {
+    display: flex;
+    gap: 12px;
+}
+
+.timeline-col {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.circle {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    border: 2px solid #E5E5E5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.sailed {
+    background: #00A77E;
+    border-color: #00A77E;
+}
+
+.sailed-check {
+    background: #00A77E;
+    border-color: #00A77E;
+}
+
+.arrived {
+    border-color: #FFCC00;
+    position: relative;
+}
+
+.yellow-dot {
+    width: 10px;
+    height: 10px;
+    background: #FFCC00;
+    border-radius: 50%;
+}
+
+.empty {
+    background: #F7F7F7;
+}
+
+.expected {
+    border-color: #999;
+}
+
+.line {
+    width: 2px;
+    height: 32px;
+    background: #D8D8D8;
+    margin-top: 4px;
+}
+
+
+.port-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.port-name {
+    color: #232323;
+    font-family: Inter;
+    font-size: 15px;
+    font-style: normal;
+    font-weight: 600;
+    line-height: 15px; /* 100% */
+}
+
+.terminals {
+    color: #656565;
+    font-family: Inter;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 12px; /* 85.714% */
+    margin-top: 6px;
+}
+
+.status {
+    font-family: Inter;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 12px;
+    margin-left: 4px;
+}
+
+.sailed-status {
+    color: #0AA782;
+}
+
+.arrived-status {
+    color: #B49602;
+}
+
+.expected-status {
+    color: #7931FF;
+}
+
+.right-booking-summary {
+    width: 424px;
+    border-left: 1px solid #DFDFDF;
+    background: #FFF;
+    position: fixed;
+    right: 0;
+    top: 25px;
+    /*    height: 100vh;*/
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.white-bg {
+    color: white;
+}
+
+.intermediate-title {
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: 24px;
+}
+
+.timeline-item {
+    position: relative;
+    padding-left: 63px;
+    margin-bottom: 18px;
+}
+
+.timeline-line {
+    position: absolute;
+    top: 40px;
+    left: 34px;
+    width: 2px;
+    height: 100%;
+    background: #00C16A;
+}
+
+.timeline-icon .icon-circle {
+    width: 40px;
+    height: 40px;
+    padding: 6px;
+    background: white;
+    border-radius: 50%;
+    border: 2px solid #00C16A;
+    position: absolute;
+    top: 0;
+    left: 15px;
+}
+
+.timeline-content {
+    /*    margin-left: 15px;*/
+    width: 100%;
+}
+
+.port-header {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    margin-bottom: 6px;
+}
+
+.port-name {
+    color: #232323;
+    font-family: Inter;
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: 14px; /* 87.5% */
+}
+
+.port-terminal {
+    color: #232323;
+    font-family: Inter;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 12px; /* 85.714% */
+}
+
+.port-sub-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 8px;
+}
+
+.port-sub {
+    color: #656565;
+    font-family: Inter;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 12px; /* 85.714% */
+}
+
+.status-row {
+    display: flex;
+    align-items: center;
+    font-size: 15px;
+    font-weight: 600;
+    gap: 6px;
+}
+
+.status-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+}
+
+.arrived .status-dot {
+    background: #0AA782;
+}
+
+.arrived {
+    color: #0AA782;
+    font-family: Inter;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 12px; /* 85.714% */
+}
+
+
+.cancelled .status-dot {
+    background: #D80027;
+}
+
+.cancelled {
+    color: #D80027;
+    font-family: Inter;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 12px; /* 85.714% */
+}
+
+.sailed .status-dot {
+    background: #8A2FF9;
+}
+
+.sailed {
+    color: #8A2FF9;
+    font-family: Inter;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 12px; /* 85.714% */
+}
+
+.expected .status-dot {
+    background: #CD9D00;
+}
+
+.expected {
+    color: #CD9D00;
+    font-family: Inter;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 12px; /* 85.714% */
+}
+
+.date-box-container {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.date-box {
+    width: 364px;
+    height: 32px;
+    display: inline-flex;
+    padding: 4px 12px;
+    justify-content: center;
+    align-items: center;
+    /*    gap: 24px;*/
+    border-radius: 8px;
+    background: #F0F0F0;
+    font-size: 15px;
+    color: #555;
+    font-weight: 500;
+}
+
+.date-label {
+    color: #656565;
+    font-family: Inter;
+    font-size: 15px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 16px; /* 106.667% */
+}
+
+.separator {
+    font-weight: 600;
+}
+
+
+.date-row:last-child {
+    margin-bottom: 0;
+}
+
+
+
+.voyage-details-container {
+    border-bottom: 1px solid #e5e7eb;
+    border-radius: 0 0 8px 8px;
+    /* padding-bottom: 3px;*/
+}
+
+.voyage-details-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+    .voyage-details-table thead th {
+        background: #fafafa !important;
+        border-bottom: 1px solid #ececec;
+        font-size: 13px;
+        font-weight: 600;
+        color: #5d5d5d;
+        padding: 12px;
+    }
+
+    .voyage-details-table td {
+        padding: 12px 14px;
+        border-top: 1px solid #f0f0f0;
+    }
+
+.voyage-dt .expand-row > td {
+    padding: 0 !important;
+    /*padding-bottom: 12px !important;*/
+}
+
+    /*.voyage-dt .expand-row:last-of-type > td {
+    padding-bottom: 0px !important;
+}*/
+
+    .voyage-dt .expand-row > td .voyage-details-container {
+        background: #fff;
+        border-radius: 8px;
+        border: 1px solid #E8ECEF;
+        background: #F9FAFB;
+        /*overflow: hidden;*/
+    }
+
+.voyage-dt .expand-row {
+    /* background: #f5f5f5;*/
+}
+
+
+.vdetail th {
+    background: #f9fafb !important;
+    border-radius: 0 !important;
+    /*  border-top: 1px solid #e5e7eb;*/
+    border-bottom: 1px solid #E5E8EC !important;
+    padding-top: 13px !important;
+    padding-bottom: 13px !important;
+}
+
+.vdetail td {
+    background: #f9fafb !important;
+    padding-top: 13px !important;
+    padding-bottom: 13px !important;
+    border-bottom: 1px solid #E5E8EC !important;
+}
+/*.expand-row > td {
+    border-top: 0 !important;
+}
+*/
+.main-row td {
+    /* background: #fcfcfd;*/
+}
+
+
+.arrive .badgespan {
+    /* background-color: #28a745;
+    color: #fff;
+    border-color: #28a745;*/
+    line-height: normal;
+    border-radius: 50%;
+    padding: 2px 5px;
+    border: 1px solid;
+    font-weight: 600;
+    font-size: 13px;
+    width: 24px;
+    height: 24px;
+    text-align: center;
+    background-color: #FFF;
+    color: #0AA782;
+    border-color: #28a745;
+}
+
+.arrive .datespan {
+    /*color: #1e7e34;*/
+}
+
+.expect .badgespan {
+    /*background-color: #1976d2;
+    color: #fff;
+    border-color: #1976d2;*/
+    line-height: normal;
+    border-radius: 50%;
+    padding: 2px 5px;
+    border: 1px solid;
+    font-weight: 600;
+    font-size: 13px;
+    width: 22px;
+    height: 22px;
+    text-align: center;
+    background-color: #f1f7ff;
+    color: #1565c0;
+    border-color: #1976d2;
+}
+
+.expect .datespan {
+    /*color: #1976d2;*/
+}
+
+.voyageno-link {
+    color: #232323;
+    font-size: 16px;
+    font-weight: 700;
+    line-height: 16px; /* 100% */
+    display: flex;
+    gap: 16px;
+    align-items: center;
+}
+
+
+.voyage-dt .main-row {
+    position: relative;
+}
+
+    .voyage-dt .main-row td {
+        padding: 15px 20px;
+    }
+
+.voyageno-vessel {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    /*    color: #7F7C75;
+*/
+    font-size: 14px;
+    font-weight: 500;
+    line-height: normal; /* 100% */
+}
+
+    .voyageno-vessel i {
+        font-size: 16px;
+    }
+
+.voyage-past {
+    display: flex;
+    padding: 6px 12px;
+    justify-content: center;
+    align-items: center;
+    gap: 6px;
+    border-radius: 30px;
+    background: #232323 !important;
+    color: #fff !important;
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 12px; /* 100% */
+}
+
+    .voyage-past::before {
+        content: '';
+        content: '';
+        width: 6px;
+        height: 6px;
+        background: #fff;
+        border-radius: 50%;
+    }
+
+.voyage-ongoing {
+    display: flex;
+    padding: 6px 12px;
+    justify-content: center;
+    align-items: center;
+    gap: 6px;
+    border-radius: 30px;
+    background: #445DCE !important;
+    color: #fff !important;
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 12px; /* 100% */
+}
+
+    .voyage-ongoing::before {
+        content: '';
+        content: '';
+        width: 6px;
+        height: 6px;
+        background: #fff;
+        border-radius: 50%;
+    }
+
+.voyage-upcoming {
+    display: flex;
+    padding: 6px 12px;
+    justify-content: center;
+    align-items: center;
+    gap: 6px;
+    border-radius: 30px;
+    background: #0AA782 !important;
+    color: #fff !important;
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 12px; /* 100% */
+}
+
+    .voyage-upcoming::before {
+        content: '';
+        content: '';
+        width: 6px;
+        height: 6px;
+        background: #fff;
+        border-radius: 50%;
+    }
+
+.voyage-ports {
+    border-radius: 8px;
+    border: 1px solid #E8ECEF;
+    background: #F9FAFB;
+    padding: 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 500px;
+    gap: 15px;
+}
+
+    .voyage-ports .vport {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        width: 50%;
+    }
+
+        .voyage-ports .vport.right {
+            justify-content: end;
+        }
+
+        .voyage-ports .vport img {
+            width: 30px;
+            height: 30px;
+        }
+
+        .voyage-ports .vport .textnames {
+            gap: 6px;
+        }
+
+            .voyage-ports .vport .textnames .textport {
+                color: #232323;
+                font-size: 14px;
+                font-weight: 600;
+                line-height: normal; /* 100% */
+            }
+
+            .voyage-ports .vport .textnames .textcountry {
+                color: #959595;
+                font-size: 14px;
+                font-weight: 500;
+                line-height: 12px; /* 100% */
+            }
+
+        .voyage-ports .vport.right .textnames .textport, .voyage-ports .vport.right .textnames .textcountry {
+            text-align: right;
+        }
+
+.voyage-dt td, .voyage-dt th {
+    border-inline-end: transparent !important;
+}
+
+
+.horizontalline {
+    position: absolute;
+    height: 2px;
+    background: #DEE2E8;
+    left: -58px;
+    width: 58px;
+    top: 50%;
+}
+
+    .horizontalline::after {
+        content: '';
+        width: 8px;
+        height: 8px;
+        background: #DEE2E8;
+        border-radius: 50%;
+        position: absolute;
+        right: -3px;
+        top: -3px;
+    }
+
+.verticleline {
+}
+
+    .verticleline::before {
+        content: '';
+        position: absolute;
+        width: 1.5px;
+        background: #DEE2E8;
+        top: 0;
+        bottom: 0;
+        left: 35px;
+    }
+
+.voyage-details-container tr:last-of-type > td:first-of-type::before {
+    content: '';
+    position: absolute;
+    width: 3px;
+    background: #ffffff;
+    top: 50%;
+    left: -59px;
+    height: calc(50% + 20px);
+}
+
+
+
+.voyage-dt .main-row:has(+ .expand-row) .horizontallinetop {
+    position: absolute;
+    width: 2px;
+    background: #DEE2E8;
+    top: calc(50% + 16px);
+    bottom: 0;
+    left: 35.5px;
+}
+
+.horizontallinetop {
+    width: 0;
+}
+
+.voyage-dt .toggle-row {
+    border-radius: 50%;
+    border: 2px solid #D1D8E6;
+}
+    /*.voyage-dt .main-row:has(+ .expand-row) .toggle-row {
+    border: 2px solid #D1D8E6;
+}*/
+    .voyage-dt .toggle-row i {
+        color: #232323;
+    }
+/*.voyage-dt .main-row td {
+    border-bottom: 0 !important;
+}
+*/
+.voyage-dt .main-row:has(+ .expand-row) td {
+    border-bottom: 0;
+}
+
+
+.expand-row-spacer td {
+    background: #f5f5f5;
+    padding: 5px !important;
+}
+
+.voyage-dt .main-row {
+    background: #FFF;
+    border-bottom: 0;
+}
+
+
+.voyage-dt .expand-row {
+    border: 1px solid #BCC4D2;
+    background: #FFF;
+    border-top: 0;
+    box-shadow: 0 2px 5px 0 rgba(188, 196, 210, 0.55);
+    overflow: hidden;
+    border-radius: 10px;
+}
+
+.voyage-dt .main-row td {
+    border-top: 1px solid #BCC4D2;
+    border-bottom: 2px solid #BCC4D2;
+}
+
+    .voyage-dt .main-row td:first-child {
+        border-top-left-radius: 10px;
+        border-bottom-left-radius: 10px;
+        border-left: 1px solid #BCC4D2;
+    }
+
+    .voyage-dt .main-row td:last-child {
+        border-top-right-radius: 8px;
+        border-bottom-right-radius: 10px;
+        border-right: 1px solid #BCC4D2 !important;
+    }
+
+.voyage-dt .main-row:has(+ .expand-row) td:first-child {
+    border-bottom-left-radius: 0;
+}
+
+.voyage-dt .main-row:has(+ .expand-row) td:last-child {
+    border-bottom-right-radius: 0;
+}
+
+.voyage-dt table:not(.vdetail) {
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+.voyage-dt .expand-row > td {
+    border-bottom: 1px solid #BCC4D2;
+}
+
+    .voyage-dt .expand-row > td:first-child {
+        border-bottom-left-radius: 10px;
+        border-left: 1px solid #BCC4D2;
+    }
+
+    .voyage-dt .expand-row > td:last-child {
+        border-bottom-right-radius: 8px;
+        border-right: 1px solid #BCC4D2 !important;
+    }
+
+.vdt-port-group {
+    gap: 12px;
+}
+
+    .vdt-port-group img {
+        width: 35px;
+        height: 35px;
+    }
+
+    .vdt-port-group .vdt-port {
+        gap: 8px;
+    }
+
+        .vdt-port-group .vdt-port .vdt-port-name {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+            .vdt-port-group .vdt-port .vdt-port-name .vdt-port-name-text {
+                color: #232323;
+                font-size: 14px;
+                font-weight: 600;
+                line-height: 16px; /* 100% */
+            }
+
+            .vdt-port-group .vdt-port .vdt-port-name .dot {
+                width: 6px;
+                height: 6px;
+                border-radius: 50%;
+                background: #232323;
+            }
+
+        .vdt-port-group .vdt-port .vdt-port-country {
+            color: #959595;
+            font-size: 14px;
+            font-weight: 500;
+            line-height: 12px; /* 100% */
+        }
+
+
+.vdt-date-group {
+    gap: 12px;
+    align-items: center;
+}
+
+
+    .vdt-date-group .vdt-date {
+        gap: 8px;
+    }
+
+        .vdt-date-group .vdt-date .vdt-date-text {
+            color: #232323;
+            font-size: 14px;
+            font-weight: 600;
+            line-height: 14px; /* 100% */
+        }
+
+
+
+    .vdt-date-group .vdt-date-subtext {
+        color: #656565;
+        font-size: 14px;
+        font-weight: 400;
+        line-height: 14px; /* 100% */
+    }
+
+        .vdt-date-group .vdt-date-subtext.red {
+            color: #D80027;
+        }
+
+.voyagewidth {
+    max-width: 45%;
+    width: 400px;
+}
+
+.portwidth {
+    max-width: 45%;
+}
+
+.voyagemain > thead {
+    visibility: collapse;
+}
+
+
+.voyage-depart {
+    /* display: flex;*/
+    padding: 6px 12px;
+    gap: 6px;
+    border-radius: 36px;
+    border: 1px solid #0D866A !important;
+    background: #FFF !important;
+    color: #0D866A !important;
+    font-size: 13px;
+    font-weight: 700;
+    line-height: 12px; /* 100% */
+    position: relative;
+    padding-left: 24px;
+}
+
+    .voyage-depart::before {
+        position: absolute;
+        content: '';
+        content: '';
+        width: 6px;
+        height: 6px;
+        background: #0D866A;
+        border-radius: 50%;
+        top: 12px;
+        left: 12px;
+    }
+
+.voyage-scheduled {
+    /* display: flex;*/
+    padding: 6px 12px;
+    gap: 6px;
+    border-radius: 36px;
+    border: 1px solid #445DCE !important;
+    background: #FFF !important;
+    color: #445DCE !important;
+    font-size: 13px;
+    font-weight: 700;
+    line-height: 12px; /* 100% */
+    position: relative;
+    padding-left: 24px;
+}
+
+    .voyage-scheduled::before {
+        position: absolute;
+        content: '';
+        content: '';
+        width: 6px;
+        height: 6px;
+        background: #445DCE;
+        border-radius: 50%;
+        top: 12px;
+        left: 12px;
+    }
+
+.voyage-arrived {
+    /* display: flex;*/
+    padding: 6px 12px;
+    gap: 6px;
+    border-radius: 36px;
+    border: 1px solid #232323 !important;
+    background: #FFF !important;
+    color: #232323 !important;
+    font-size: 13px;
+    font-weight: 700;
+    line-height: 12px; /* 100% */
+    position: relative;
+    padding-left: 24px;
+}
+
+    .voyage-arrived::before {
+        position: absolute;
+        content: '';
+        content: '';
+        width: 6px;
+        height: 6px;
+        background: #232323;
+        border-radius: 50%;
+        top: 12px;
+        left: 12px;
+    }
+
+.vdetail tbody tr.status-scheduled > td {
+    /*background-color: rgba(59, 130, 246, 0.08) !important;*/
+}
+
+.vdetail tbody tr.status-arrived > td {
+   /* background-color: rgba(107, 114, 128, 0.08) !important;*/
+}
+
+.vdetail tbody tr.status-departed > td {
+    /*background-color: rgba(16, 185, 129, 0.08) !important;*/
+    /*opacity: 0.7;*/
+}
+
+.vdetail tbody tr > td {
+    transition: background-color 0.2s ease;
+}
+.voyage-date-ports {
+    border-radius: 8px;
+    border: 1px solid #E8ECEF;
+    background: #F9FAFB;
+    padding: 10px;
+    align-items: center;
+    width: 275px;
+    gap: 31px;
+}
+.voyage-days {
+    font-size: 16px;
+    font-weight: 600;
+    color: #232323;
+}

@@ -1,0 +1,764 @@
+﻿using Newtonsoft.Json;
+using Npgsql;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Linq;
+using System.Text.Json;
+using System.Web.Helpers;
+
+
+namespace Contrack
+{
+    public class VoyageRepository : CustomException, IVoyageRepository
+    {
+        public Result SaveVoyage(VoyageExtendedDTO voyage)
+        {
+            Result result = new Result();
+            try
+            {
+                using (SqlDB Db = new SqlDB(DatabaseCollection.Contrack))
+                {
+                    var header = new
+                    {
+                        voyageid = Common.Decrypt(voyage.VoyageId.EncryptedValue),
+                        voyagenumber = voyage.VoyageNumber,
+                        vesseldetailid = Common.Decrypt(voyage.VesseDetailId.EncryptedValue),
+                        description = voyage.Description,
+                        voyageuuid = voyage.VoyageUuid,
+                    };
+                    string headerJson = System.Text.Json.JsonSerializer.Serialize(header);
+                    var d = voyage.VoyageDetails;
+                    var detail = new
+                    {
+                        voyagedetailid = Common.Decrypt(d.VoyageDetailId.EncryptedValue),
+                        portid = Common.Decrypt(d.PortId.EncryptedValue),
+                        terminal = d.Terminal,
+                        eta = d.ETA.DBFormattedText,
+                        etd = d.ETD.DBFormattedText,
+                        cutoffdeadline = d.CutoffDeadline.DBFormattedText,
+                        arrivalcaptain = d.ArrivalCaptain,
+                        departurecaptain = d.DepartureCaptain,
+                        isdeleted = false
+                    };
+                    string detailsJson = System.Text.Json.JsonSerializer.Serialize(new[] { detail });
+                    string query = @"SELECT * FROM masters.voyage_save(
+                    p_header_json  := '" + Common.Escape(headerJson) + @"',
+                    p_details_json := '" + Common.Escape(detailsJson) + @"',
+                    p_hub_id       := '" + Common.HubID + @"',
+                    p_user_id      := '" + Common.LoginID + @"');";
+
+                    DataTable tbl = Db.GetDataTable(query);
+                    if (tbl.Rows.Count > 0)
+                    {
+                        if (tbl.Rows[0]["resultid"].ToString() == "1")
+                        {
+                            result = Common.SuccessMessage(
+                                tbl.Rows[0]["resultmessage"].ToString()
+                            );
+                            result.TargetUUID = tbl.Rows[0]["voyage_uuid"]?.ToString();
+                        }
+                        else
+                        {
+                            result = Common.ErrorMessage(
+                                tbl.Rows[0]["resultmessage"].ToString()
+                            );
+                        }
+                    }
+                    else
+                    {
+                        result = Common.ErrorMessage("Cannot save voyage");
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                RecordException(ex);
+                result = Common.ErrorMessage(ex.Message);
+            }
+
+            return result;
+        }
+        public Result AddIntermediatePortToVoyage(VoyageExtendedDTO voyage)
+        {
+            Result result = new Result();
+            try
+            {
+
+                var d = voyage.VoyageDetails;
+
+                using (SqlDB Db = new SqlDB(DatabaseCollection.Contrack))
+                {
+                    var detail = new
+                    {
+                        voyagedetailid = Common.Decrypt(d.VoyageDetailId.EncryptedValue),
+                        portid = Common.Decrypt(d.PortId.EncryptedValue),
+                        terminal = d.Terminal,
+                        eta = d.ETA.DBFormattedText,
+                        etd = d.ETD.DBFormattedText,
+                        cutoffdeadline = d.CutoffDeadline.DBFormattedText,
+                        arrivalcaptain = d.ArrivalCaptain,
+                        departurecaptain = d.DepartureCaptain,
+                        sortorder = d.SortOrder
+                    };
+                    string detailsJson = System.Text.Json.JsonSerializer.Serialize(detail);
+                    string query = $@" SELECT * FROM masters.voyage_add_intermediate_port(
+                            p_hubid       := '{Common.HubID}',
+                            p_voyageid    := '{Common.Decrypt(voyage.VoyageId.EncryptedValue)}',
+                            p_detail_json := '{Common.Escape(detailsJson)}',
+                            p_userid      := '{Common.LoginID}');";
+
+                    DataTable tbl = Db.GetDataTable(query);
+                    if (tbl.Rows.Count > 0)
+                    {
+                        if (tbl.Rows[0]["resultid"].ToString() == "1")
+                        {
+                            result = Common.SuccessMessage(tbl.Rows[0]["resultmessage"].ToString());
+                            result.TargetUUID = tbl.Rows[0]["new_voyagedetailid"]?.ToString();
+                        }
+                        else
+                        {
+                            result = Common.ErrorMessage(tbl.Rows[0]["resultmessage"].ToString());
+                        }
+                    }
+                    else
+                    {
+                        result = Common.ErrorMessage("Cannot Mark As Arrived");
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                RecordException(ex);
+                result = Common.ErrorMessage(ex.Message);
+            }
+
+            return result;
+        }
+        public Result MarkAsArrived(VoyageExtendedDTO voyage)
+        {
+            Result result = new Result();
+            try
+            {
+                var d = voyage.VoyageDetails;
+                using (SqlDB Db = new SqlDB(DatabaseCollection.Contrack))
+                {
+                    var detail = new
+                    {
+                        voyagedetailid = Common.Decrypt(d.VoyageDetailId.EncryptedValue),
+                        ata = d.ATA.Text,
+                        arrivalcaptain = d.ArrivalCaptain,
+                    };
+                    string detailsJson = System.Text.Json.JsonSerializer.Serialize(detail);
+                    string query = $@"SELECT * FROM masters.voyage_save_markarrived(
+                    p_hubid       := '{Common.HubID}',
+                    p_voyageid    := '{Common.Decrypt(voyage.VoyageId.EncryptedValue)}',
+                    p_detail_json := '{Common.Escape(detailsJson)}',
+                    p_userid      := '{Common.LoginID}');";
+
+                    DataTable tbl = Db.GetDataTable(query);
+                    if (tbl.Rows.Count > 0)
+                    {
+                        if (tbl.Rows[0]["resultid"].ToString() == "1")
+                        {
+                            result = Common.SuccessMessage(tbl.Rows[0]["resultmessage"].ToString());
+                            result.TargetUUID = tbl.Rows[0]["voyagedetailid"]?.ToString();
+                        }
+                        else
+                        {
+                            result = Common.ErrorMessage(tbl.Rows[0]["resultmessage"].ToString());
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                RecordException(ex);
+                result = Common.ErrorMessage(ex.Message);
+            }
+
+            return result;
+        }
+        public Result MarkAsDepartured(VoyageExtendedDTO voyage)
+        {
+            Result result = new Result();
+            try
+            {
+                var d = voyage.VoyageDetails;
+                using (SqlDB Db = new SqlDB(DatabaseCollection.Contrack))
+                {
+                    var detail = new
+                    {
+                        voyagedetailid = Common.Decrypt(d.VoyageDetailId.EncryptedValue),
+                        atd = d.ATD.Text,
+                        departurecaptain = d.DepartureCaptain,
+                    };
+                    string detailsJson = System.Text.Json.JsonSerializer.Serialize(detail);
+                    string query = $@" SELECT * FROM masters.voyage_save_markdeparted(
+                    p_hubid       := '{Common.HubID}',
+                    p_voyageid    := '{Common.Decrypt(voyage.VoyageId.EncryptedValue)}',
+                    p_detail_json := '{Common.Escape(detailsJson)}',
+                    p_userid      := '{Common.LoginID}');";
+                    DataTable tbl = Db.GetDataTable(query);
+                    if (tbl.Rows.Count > 0)
+                    {
+                        if (tbl.Rows[0]["resultid"].ToString() == "1")
+                        {
+                            result = Common.SuccessMessage(tbl.Rows[0]["resultmessage"].ToString());
+                            result.TargetUUID = tbl.Rows[0]["voyagedetailid"]?.ToString();
+                        }
+                        else
+                        {
+                            result = Common.ErrorMessage(tbl.Rows[0]["resultmessage"].ToString());
+                        }
+                    }
+                    else
+                    {
+                        result = Common.ErrorMessage("Cannot save voyage");
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                RecordException(ex);
+                result = Common.ErrorMessage(ex.Message);
+            }
+
+            return result;
+        }
+        public Result DeleteVoyageDetail(int voyageDetailId, int voyageId)
+        {
+            var result = new Result();
+            try
+            {
+                using (SqlDB Db = new SqlDB(DatabaseCollection.Contrack))
+                {
+                    string query = $@" SELECT * FROM masters.voyage_detail_delete(
+                    p_voyageid := {voyageId},
+                    p_voyagedetailid := {voyageDetailId},
+                    p_hubid := {Common.HubID});";
+                    var tbl = Db.GetDataTable(query);
+                    if (tbl.Rows.Count > 0)
+                    {
+                        var resultId = tbl.Rows[0]["resultid"].ToString();
+                        var message = tbl.Rows[0]["resultmessage"].ToString();
+                        result = resultId == "1" ? Common.SuccessMessage(message) : Common.ErrorMessage(message);
+                    }
+                    else
+                    {
+                        result = Common.ErrorMessage("Cannot Delete Voyage");
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                result = Common.ErrorMessage(ex.Message);
+            }
+
+            return result;
+        }
+
+        public VoyageExtendedDTO GetVoyageByDetailID(int voyagedetailId)
+        {
+            try
+            {
+                using (SqlDB Db = new SqlDB(DatabaseCollection.Contrack))
+                {
+                    string query = $@" SELECT * FROM masters.voyage_detail_byid(
+                    p_hubid := '{Common.HubID}',
+                    p_voyagedetailid := '{voyagedetailId}',
+                    p_userid := '{Common.LoginID}');";
+                    DataTable tbl = Db.GetDataTable(query);
+                    if (tbl.Rows.Count == 0) return null;
+
+                    DataRow row = tbl.Rows[0];
+
+                    var voyage = new VoyageExtendedDTO
+                    {
+                        VoyageId = new EncryptedData
+                        {
+                            NumericValue = Common.ToInt(row["voyageid"]),
+                            EncryptedValue = Common.Encrypt(Common.ToInt(row["voyageid"]))
+                        },
+                        VoyageUuid = Common.ToString(row["voyageuuid"]),
+                        VoyageNumber = Common.ToString(row["voyagenumber"]),
+                        Description = Common.ToString(row["description"]),
+                        VesseDetailId = new EncryptedData
+                        {
+                            NumericValue = Common.ToInt(row["vesseldetailid"]),
+                            EncryptedValue = Common.Encrypt(Common.ToInt(row["vesseldetailid"]))
+                        },
+                        Vesselname = Common.ToString(row["vesselname"]),
+                        VoyageDetails = new VoyageDetailDTO()
+                    };
+                    if (tbl.Columns.Contains("voyagedetailid"))
+                    {
+                        voyage.VoyageDetails = new VoyageDetailDTO
+                        {
+                            VoyageDetailId = new EncryptedData
+                            {
+                                NumericValue = Common.ToInt(row["voyagedetailid"]),
+                                EncryptedValue = Common.Encrypt(Common.ToInt(row["voyagedetailid"]))
+                            },
+                            VoyageId = voyage.VoyageId,
+                            PortId = new EncryptedData
+                            {
+                                NumericValue = Common.ToInt(row["portid"]),
+                                EncryptedValue = Common.Encrypt(Common.ToInt(row["portid"]))
+                            },
+                            portname = Common.ToString(row["portname"]),
+                            portcode = Common.ToString(row["portcode"]),
+                            CountryId = Common.ToInt(row["countryid"]),
+                            CountryName = Common.ToString(row["countryname"]),
+                            CountryFlag = Common.ToString(row["flag"]),
+                            Terminal = row["terminal"].ToString(),
+                            ETA = FormatConvertor.ToDateTimeFormat(Common.ToDateTime(row["eta"])),
+                            ETD = FormatConvertor.ToDateTimeFormat(Common.ToDateTime(row["etd"])),
+                            ATA = FormatConvertor.ToDateTimeFormat(Common.ToDateTime(row["ata"])),
+                            ATD = FormatConvertor.ToDateTimeFormat(Common.ToDateTime(row["atd"])),
+                            CutoffDeadline = FormatConvertor.ToDateTimeFormat(Common.ToDateTime(row["cutoffdeadline"])),
+                            ArrivalCaptain = row["arrivalcaptain"].ToString(),
+                            DepartureCaptain = row["departurecaptain"].ToString(),
+                            SortOrder = Common.ToInt(row["sortorder"]),
+                            CreatedAt = Common.ToDateTime(row["createdat"])
+                        };
+                    }
+
+                    return voyage;
+                }
+            }
+            catch (Exception ex)
+            {
+                RecordException(ex);
+                throw;
+            }
+        }
+        public VoyageExtendedDTO GetVoyageById(int voyageId)
+        {
+            try
+            {
+                using (SqlDB Db = new SqlDB(DatabaseCollection.Contrack))
+                {
+                    string query = $@"SELECT * FROM masters.voyage_get_by_id(
+                    p_hubid    := {Common.HubID},
+                    p_voyageid := {voyageId},
+                    p_userid   := {Common.LoginID});";
+                    DataTable tbl = Db.GetDataTable(query);
+                    if (tbl.Rows.Count == 0) return null;
+                    DataRow row = tbl.Rows[0];
+                    var voyage = new VoyageExtendedDTO
+                    {
+                        VoyageId = new EncryptedData
+                        {
+                            NumericValue = Common.ToInt(row["h_voyageid"]),
+                            EncryptedValue = Common.Encrypt(Common.ToInt(row["h_voyageid"]))
+                        },
+                        VoyageUuid = row["h_voyageuuid"].ToString(),
+                        VoyageNumber = row["h_voyagenumber"].ToString(),
+                        Description = row["h_description"].ToString(),
+                        VesseDetailId = new EncryptedData
+                        {
+                            NumericValue = Common.ToInt(row["h_vesseldetailid"]),
+                            EncryptedValue = Common.Encrypt(Common.ToInt(row["h_vesseldetailid"]))
+                        },
+                        Vesselname = Common.ToString(row["h_vesselname"])
+                    };
+                    return voyage;
+                }
+            }
+            catch (Exception ex)
+            {
+                RecordException(ex);
+                throw;
+            }
+        }      
+        public List<VoyageDTO> GetVoyageList(VoyageFilter filter)
+        {
+            List<VoyageDTO> list = new List<VoyageDTO>();
+            try
+            {
+                using (SqlDB db = new SqlDB(DatabaseCollection.Contrack))
+                {
+                    string filterJson = JsonConvert.SerializeObject(filter);
+                    string query = $@"SELECT * FROM masters.voyage_list_full(
+                    p_hubid   := {Common.HubID},
+                    p_filters := '{filterJson}'::jsonb,
+                    p_userid  := {Common.LoginID});";
+                    DataTable tbl = db.GetDataTable(query);
+                    list = tbl.AsEnumerable()
+                        .Select(r =>
+                        {
+                            return new VoyageDTO
+                            {
+                                VoyageId = new EncryptedData
+                                {
+                                    NumericValue = Common.ToInt(r["voyageid"]),
+                                    EncryptedValue = Common.Encrypt(Common.ToInt(r["voyageid"]))
+                                },
+                                VoyageUuid = Common.ToString(r["voyageuuid"]),
+                                VoyageNumber = Common.ToString(r["voyagenumber"]),
+                                Vesselname = Common.ToString(r["vesselname"]),
+                                IsLive = Common.ToBool(r["islive"]),
+                                CreatedAt = Common.ToDateTime(r["createdat"]),
+                                totalnoofrows = Common.ToInt(r["total_count"]),
+                                VoyageDetails = r["detailjson"] == DBNull.Value
+                                    ? new List<VoyageDetailDTO>()
+                                    : JsonConvert.DeserializeObject<List<dynamic>>(r["detailjson"].ToString())
+                                        .Select(d =>
+                                        {
+                                            var port = d.port;
+                                            var country = d.country;
+
+                                            return new VoyageDetailDTO
+                                            {
+                                                VoyageDetailId = new EncryptedData
+                                                {
+                                                    NumericValue = Common.ToInt(d.voyagedetailid),
+                                                    EncryptedValue = Common.Encrypt(Common.ToInt(d.voyagedetailid))
+                                                },
+
+                                                VoyageId = new EncryptedData
+                                                {
+                                                    NumericValue = Common.ToInt(d.voyageid),
+                                                    EncryptedValue = Common.Encrypt(Common.ToInt(d.voyageid))
+                                                },
+                                                PortId = new EncryptedData
+                                                {
+                                                    NumericValue = Common.ToInt(d.portid),
+                                                    EncryptedValue = Common.Encrypt(Common.ToInt(d.portid))
+                                                },
+                                                portname = Common.ToString(port.portname),
+                                                portcode = Common.ToString(port.portcode),
+                                                PortCountryId = Common.ToInt(port.countryid),
+                                                CountryId = Common.ToInt(country.countryid),
+                                                CountryName = Common.ToString(country.countryname),
+                                                CountryFlag = Common.ToString(country.flag),
+                                                Terminal = Common.ToString(d.terminal),
+                                                ETA = FormatConvertor.ToDateTimeFormat(Common.ToDateTime(d.eta)),
+                                                ETD = FormatConvertor.ToDateTimeFormat(Common.ToDateTime(d.etd)),
+                                                ATA = FormatConvertor.ToDateTimeFormat(Common.ToDateTime(d.ata)),
+                                                ATD = FormatConvertor.ToDateTimeFormat(Common.ToDateTime(d.atd)),
+                                                CutoffDeadline = FormatConvertor.ToDateTimeFormat(Common.ToDateTime(d.cutoffdeadline)),
+                                                ArrivalCaptain = Common.ToString(d.arrivalcaptain),
+                                                DepartureCaptain = Common.ToString(d.departurecaptain),
+                                                SortOrder = Common.ToInt(d.sortorder)
+                                            };
+                                        }).ToList()
+                            };
+<<<<<<< .mine
+                        })
+                        .ToList();
+
+||||||| .r957
+                        })
+                        .OrderByDescending(x => x.CreatedAt)
+                        .ToList();
+
+=======
+                        }).OrderByDescending(x => x.CreatedAt).ToList();
+>>>>>>> .r987
+                    list.ForEach(x =>
+                    {
+                        x.Status = GetStatus(x.VoyageDetails);
+                        x.VoyageDetails.ForEach(dtl =>
+                        {
+                            dtl.PortStatus = GetPortStatus(dtl);
+                        });
+                    });
+                }
+            }
+            catch (Exception ex)
+            {
+                RecordException(ex);
+            }
+            return list;
+        }
+        public List<voyageStatusCountDTO> GetVoyageStatusCount(VoyageFilter filter)
+        {
+            List<voyageStatusCountDTO> list = new List<voyageStatusCountDTO>();
+            try
+            {
+                using (SqlDB Db = new SqlDB(DatabaseCollection.Contrack))
+                {
+                    string jsonFilters = JsonConvert.SerializeObject(filter);
+
+                    string query = "SELECT * FROM masters.voyage_status_count(" +
+                                   "p_hubid := " + Common.HubID + "," +
+                                   "p_filters := '" + Common.Escape(jsonFilters) + "'::jsonb," +
+                                   "p_userid := " + Common.LoginID + "" +
+                                   ");";
+
+                    DataTable tbl = Db.GetDataTable(query);
+                    if (tbl != null)
+                    {
+                        foreach (DataRow dr in tbl.Rows)
+                        {
+                            list.Add(new voyageStatusCountDTO
+                            {
+                                status_code = Common.ToInt(dr["status_code"]),
+                                status_name = Common.ToString(dr["status_name"]),
+                                status_count = Common.ToLong(dr["status_count"])
+                            });
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                RecordException(ex);
+            }
+            return list;
+        }
+        private string GetStatus(List<VoyageDetailDTO> list)
+        {
+            if (list.Count > 0)
+            {
+                DateTime mindate = list.Min(y => y.ATA.Value == DateTime.MinValue ? y.ETA.Value : y.ATA.Value);
+                DateTime maxdate = list.Max(y => y.ATA.Value == DateTime.MinValue ? y.ETA.Value : y.ATA.Value);
+                if (maxdate.Date < DateTime.Now.Date)
+                {
+                    return "<span class=\"badge-styling gray voyage-past\">Past</span>";// Past
+                }
+                else if (mindate.Date > DateTime.Now.Date)
+                {
+                    return "<span class=\"badge-styling green voyage-upcoming\">Upcoming</span>"; // Future
+                }
+                else
+                {
+                    return "<span class=\"badge-styling blue voyage-ongoing\">Ongoing</span>"; ;// Current
+                }
+            }
+            else
+                return "";
+        }
+        private string GetPortStatus(VoyageDetailDTO detail)
+        {
+            if (detail.ATD.Value > DateTime.MinValue)
+            {
+                return "<span><span class=\"badge-styling gray voyage-depart\">Departed</span></span>";
+            }
+            else if (detail.ATA.Value > DateTime.MinValue)
+            {
+                return "<span><span class=\"badge-styling green voyage-arrived\">Arrived</span></span>";
+            }
+            else
+            {
+                return "<span><span class=\"badge-styling blue voyage-scheduled\">Scheduled</span></span>";
+            }
+        }
+        public VoyageDTO GetVoyageByUUID(string uuid)
+        {
+            VoyageDTO voyage = new VoyageDTO();
+            try
+            {
+                using (SqlDB Db = new SqlDB(DatabaseCollection.Contrack))
+                {
+                    string query = "SELECT * FROM masters.voyage_get_by_uuid(" +"p_hubid := '" + Common.HubID + "', " +"p_voyageuuid := '" + Common.Escape(uuid) + "'::uuid" +"p_userid := '" + Common.LoginID + "', " +");";
+                    DataTable dt = Db.GetDataTable(query);
+                    if (dt == null || dt.Rows.Count == 0)
+                        return null;
+                    var rows = dt.AsEnumerable();
+                    var first = rows.First();
+                    voyage = new VoyageDTO
+                    {
+                        VoyageId = new EncryptedData
+                        {
+                            NumericValue = Common.ToInt(first["h_voyageid"]),
+                            EncryptedValue = Common.Encrypt(Common.ToInt(first["h_voyageid"]))
+                        },
+                        VoyageUuid = Common.ToString(first["h_voyageuuid"]),
+                        VoyageNumber = Common.ToString(first["h_voyagenumber"]),
+                        VesseDetailId = new EncryptedData
+                        {
+                            NumericValue = Common.ToInt(first["h_vesseldetailid"]),
+                            EncryptedValue = Common.Encrypt(Common.ToInt(first["h_vesseldetailid"]))
+                        },
+                        Vesselname = Common.ToString(first["h_vesselname"]),
+                        vesselassignmentid = new EncryptedData
+                        {
+                            NumericValue = Common.ToInt(first["h_vesselassignmentid"]),
+                            EncryptedValue = Common.Encrypt(Common.ToInt(first["h_vesselassignmentid"]))
+                        },
+                        IsLive = Common.ToBool(first["h_islive"]),
+                        Description = Common.ToString(first["h_description"]),
+                        CreatedAt = Common.ToDateTime(first["h_createdat"]),
+                        VoyageDetails = new List<VoyageDetailDTO>()
+                    };
+                    voyage.VoyageDetails = rows
+                        .Where(r => Common.ToInt(r["d_voyagedetailid"]) > 0)
+                        .GroupBy(r => Common.ToInt(r["d_voyagedetailid"]))
+                        .Select(g =>
+                        {
+                            var d = g.First();
+                            return new VoyageDetailDTO
+                            {
+                                VoyageDetailId = new EncryptedData
+                                {
+                                    NumericValue = Common.ToInt(d["d_voyagedetailid"]),
+                                    EncryptedValue = Common.Encrypt(Common.ToInt(d["d_voyagedetailid"]))
+                                },
+                                VoyageId = new EncryptedData
+                                {
+                                    NumericValue = Common.ToInt(d["d_voyageid"]),
+                                    EncryptedValue = Common.Encrypt(Common.ToInt(d["d_voyageid"]))
+                                },
+                                PortId = new EncryptedData
+                                {
+                                    NumericValue = Common.ToInt(d["d_portid"]),
+                                    EncryptedValue = Common.Encrypt(Common.ToInt(d["d_portid"]))
+                                },
+                                Terminal = Common.ToString(d["d_terminal"]),
+                                ETA = FormatConvertor.ToDateTimeFormat(Common.ToDateTime(d["d_eta"])),
+                                ETD = FormatConvertor.ToDateTimeFormat(Common.ToDateTime(d["d_etd"])),
+                                CutoffDeadline = FormatConvertor.ToDateTimeFormat(Common.ToDateTime(d["d_cutoffdeadline"])),
+                                ATA = FormatConvertor.ToDateTimeFormat(Common.ToDateTime(d["d_ata"])),
+                                ATD = FormatConvertor.ToDateTimeFormat(Common.ToDateTime(d["d_atd"])),
+                                ArrivalCaptain = Common.ToString(d["d_arrivalcaptain"]),
+                                DepartureCaptain = Common.ToString(d["d_departurecaptain"]),
+                                SortOrder = Common.ToInt(d["d_sortorder"]),
+                                CreatedAt = Common.ToDateTime(d["d_createdat"])
+                            };
+                        }).ToList();
+                }
+            }
+            catch (Exception ex)
+            {
+                RecordException(ex);
+            }
+            return voyage;
+        }
+        public List<VoyageDTO> SearchVoyage(string search, bool createnew)
+        {
+            var list = new List<VoyageDTO>();
+
+            using (SqlDB db = new SqlDB(DatabaseCollection.Contrack))
+            {
+                string safeSearch = Common.Escape(search ?? "");
+
+                string query = @" SELECT * FROM masters.voyage_search(
+                p_hubid := " + Common.HubID + @",
+                p_allow_create := " + (createnew ? "true" : "false") + @",
+                p_search_text := '" + safeSearch + @"'
+            );";
+
+                DataTable tbl = db.GetDataTable(query);
+
+                foreach (DataRow dr in tbl.Rows)
+                {
+                    long voyageId = Common.ToInt(dr["voyageid"]);
+
+                    list.Add(new VoyageDTO
+                    {
+                        VoyageId = new EncryptedData
+                        {
+                            NumericValue = Common.ToInt(dr["voyageid"]),
+                            EncryptedValue = Common.Encrypt(Common.ToInt(dr["voyageid"]))
+                        },
+                        VoyageNumber = Common.ToString(dr["voyagenumber"]),
+                        Vesselname = Common.ToString(dr["vesselname"]),
+                        Description = Common.ToString(dr["description"]),
+                        VesseDetailId = new EncryptedData
+                        {
+                            NumericValue = Common.ToInt(dr["vesseldetailid"]),
+                            EncryptedValue = Common.Encrypt(Common.ToInt(dr["vesseldetailid"]))
+                        },
+                        IsNew = Common.ToBool(dr["isnew"])
+                    });
+                }
+            }
+
+            return list;
+        }
+        public List<VoyageDTO> GetDirectVoyageSearch(string originPortId, string destinationPortId)
+        {
+            List<VoyageDTO> list = new List<VoyageDTO>();
+            try
+            {
+                using (SqlDB db = new SqlDB(DatabaseCollection.Contrack))
+                {
+                    string query = $@"SELECT * FROM masters.voyage_search_direct(
+                                          p_hubid := {Common.HubID},
+                                          p_originportid := {Common.Decrypt(originPortId)},
+                                          p_destinationportid := {Common.Decrypt(destinationPortId)}
+                                      );";
+
+                    DataTable tbl = db.GetDataTable(query);
+                    list = tbl.AsEnumerable()
+                        .Select(r =>
+                        {
+                            return new VoyageDTO
+                            {
+                                VoyageId = new EncryptedData
+                                {
+                                    NumericValue = Common.ToInt(r["voyageid"]),
+                                    EncryptedValue = Common.Encrypt(Common.ToInt(r["voyageid"]))
+                                },
+
+                                VoyageUuid = Common.ToString(r["voyageuuid"]),
+                                VoyageNumber = Common.ToString(r["voyagenumber"]),
+
+                                OriginPort = new EncryptedData
+                                {
+                                    NumericValue = Common.ToInt(r["originportid"]),
+                                    EncryptedValue = Common.Encrypt(Common.ToInt(r["originportid"]))
+                                },
+                                DestinationPort = new EncryptedData
+                                {
+                                    NumericValue = Common.ToInt(r["destinationportid"]),
+                                    EncryptedValue = Common.Encrypt(Common.ToInt(r["destinationportid"]))
+                                },
+                                VesseDetailId = new EncryptedData
+                                {
+                                    NumericValue = Common.ToInt(r["vesseldetailid"]),
+                                    EncryptedValue = Common.Encrypt(Common.ToInt(r["vesseldetailid"]))
+                                },
+                                Vesselname = Common.ToString(r["vesselname"]),
+                                VoyageDetails = r["segmentjson"] == DBNull.Value ? new List<VoyageDetailDTO>() : JsonConvert.DeserializeObject<List<dynamic>>(r["segmentjson"].ToString())
+                                        .Select((d, index) => new VoyageDetailDTO
+                                        {
+                                            VoyageDetailId = new EncryptedData
+                                            {
+                                                NumericValue = Common.ToInt(d.voyagedetailid),
+                                                EncryptedValue = Common.Encrypt(Common.ToInt(d.voyagedetailid))
+                                            },
+                                            VoyageId = new EncryptedData
+                                            {
+                                                NumericValue = Common.ToInt(r["voyageid"]),
+                                                EncryptedValue = Common.Encrypt(Common.ToInt(r["voyageid"]))
+                                            },
+                                            PortId = new EncryptedData
+                                            {
+                                                NumericValue = Common.ToInt(d.portid),
+                                                EncryptedValue = Common.Encrypt(Common.ToInt(d.portid))
+                                            },
+                                            portname = Common.ToString(d.portname),
+                                            portcode = Common.ToString(d.portcode),
+                                            CountryId = Common.ToInt(d.countryid),
+                                            CountryName = Common.ToString(d.countryname),
+                                            CountryFlag = Common.ToString(d.flag),
+                                            ETA = FormatConvertor.ToDateTimeFormat(Common.ToDateTime(d.eta)),
+                                            ETD = FormatConvertor.ToDateTimeFormat(Common.ToDateTime(d.etd)),
+                                            ATA = FormatConvertor.ToDateTimeFormat(Common.ToDateTime(d.ata)),
+                                            ATD = FormatConvertor.ToDateTimeFormat(Common.ToDateTime(d.atd)),
+                                            CutoffDeadline = FormatConvertor.ToDateTimeFormat(Common.ToDateTime(d.cutoffdeadline)),
+                                            Terminal = Common.ToString(d.terminal),
+                                            ArrivalCaptain = Common.ToString(d.arrivalcaptain),
+                                            DepartureCaptain = Common.ToString(d.departurecaptain),
+                                            SortOrder = index + 1,
+                                            CreatedAt = Common.ToDateTime(d.time)
+                                        }).ToList()
+                            };
+                        }).OrderBy(x => x.CreatedAt).ToList();
+                }
+            }
+            catch (Exception ex)
+            {
+                RecordException(ex);
+            }
+
+            return list;
+        }
+    }
+
+}

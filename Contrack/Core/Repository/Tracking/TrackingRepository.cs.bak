@@ -1,0 +1,202 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Linq;
+using System.Web;
+
+namespace Contrack
+{
+    public class TrackinRepository : CustomException, ITrackingRepository
+    {
+        public Result SaveTracking(TrackingDTO tracking)
+        {
+            Result result = new Result();
+            try
+            {
+                using (SqlDB Db = new SqlDB(DatabaseCollection.Contrack))
+                {
+                    DataTable tbl = Db.GetDataTable("SELECT * FROM tracking.container_movement_tracking_save(" +
+                         "p_trackingid := " + Common.Decrypt(tracking.TrackingId.EncryptedValue) + "," +
+                         "p_containerid := " + Common.Decrypt(tracking.Container.containerid.EncryptedValue) + "," +
+                         "p_bookingid := " + Common.Decrypt(tracking.ContainerBooking.bookingid.EncryptedValue) + "," +
+                         "p_hubid := '" + Common.HubID + "'," +
+                         "p_movetype := " + Common.Decrypt(tracking.Moves.MovesId.EncryptedValue) + "," +
+                         "p_locationdetailid := " + Common.ToInt(tracking.LocationDetailId) + "," +
+                         "p_recorddatetime := '" + Common.ToDateTime(tracking.RecordDateTime) + "'," +
+                         "p_nextmove := " + Common.Decrypt(tracking.NextMoves.MovesId.EncryptedValue) + "," +
+                         "p_nextlocationdetailid := " + Common.ToInt(tracking.NextLocationDetailId) + "," +                  
+                         "p_nextdatetime := '" + Common.ToDateTime(tracking.NextDateTime) + "'," +
+                         "p_isdamaged := " + Common.ToBool(tracking.IsDamaged) + "," +
+                         "p_noofdamages := " + Common.ToInt(tracking.NoOfDamages) + "," +
+                         "p_createdby := " + Common.LoginID + "" +                      
+                     ");");
+
+                    if (tbl.Rows.Count > 0)
+                    {
+                        if (tbl.Rows[0][0].ToString() == "1")
+                            result = Common.SuccessMessage(tbl.Rows[0][1].ToString());
+                        else
+                            result = Common.ErrorMessage(tbl.Rows[0][1].ToString());
+                    }
+                    else
+                    {
+                        result = Common.ErrorMessage("Cannot Save Tracking.");
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                result = Common.ErrorMessage(ex.Message);
+                RecordException(ex);
+            }
+            return result;
+        }
+
+        public TrackingDTO GetTrackingByUUID(string trackingUuid)
+        {
+            TrackingDTO tracking = new TrackingDTO();
+            try
+            {
+                if (trackingUuid != "")
+                {
+                    tracking = ParseTracking("SELECT * FROM tracking.container_movement_tracking_get_by_trackinguuid('" + trackingUuid + "', '" + Common.HubID + "', '"+ Common.LoginID +"');");
+                }
+            }
+            catch (Exception ex)
+            {
+                RecordException(ex);
+            }
+            return tracking;
+        }
+
+        private TrackingDTO ParseTracking(string qry)
+        {
+            TrackingDTO tracking = new TrackingDTO();
+            try
+            {
+                using (SqlDB Db = new SqlDB(DatabaseCollection.Contrack))
+                {
+                    DataTable tbl = Db.GetDataTable(qry);
+                    if (tbl.Rows.Count != 0)
+                    {
+                        tracking.TrackingId = new EncryptedData()
+                        {
+                            NumericValue = Common.ToInt(tbl.Rows[0]["trackingid"]),
+                            EncryptedValue = Common.Encrypt(Common.ToInt(tbl.Rows[0]["trackingid"]))
+                        };
+                        tracking.TrackingUuid = Common.ToString(tbl.Rows[0]["trackinguuid"]);
+                        tracking.Container.containerid = new EncryptedData()
+                        {
+                            NumericValue = Common.ToInt(tbl.Rows[0]["containerid"]),
+                            EncryptedValue = Common.Encrypt(Common.ToInt(tbl.Rows[0]["containerid"]))
+                        };
+                        tracking.Container.containeruuid = Common.ToString(tbl.Rows[0]["containeruuid"]);
+                        tracking.ContainerBooking.bookingid = new EncryptedData()
+                        {
+                            NumericValue = Common.ToInt(tbl.Rows[0]["bookingid"]),
+                            EncryptedValue = Common.Encrypt(Common.ToInt(tbl.Rows[0]["bookingid"]))
+                        };
+                        tracking.ContainerBooking.bookinguuid = Common.ToString(tbl.Rows[0]["bookinguuid"]);
+                        tracking.Moves.MovesId = new EncryptedData()
+                        { 
+                            NumericValue = Common.ToInt(tbl.Rows[0]["movetype"]),
+                            EncryptedValue = Common.Encrypt(Common.ToInt(tbl.Rows[0]["movetype"]))
+                        };
+                        tracking.LocationDetailId = Common.ToInt(tbl.Rows[0]["locationdetailid"]);
+                        tracking.RecordDateTime = Common.ToDateTime(tbl.Rows[0]["recorddatetime"]);
+                        tracking.NextMoves.MovesId = new EncryptedData()
+                        {
+                            NumericValue = Common.ToInt(tbl.Rows[0]["nextmove"]),
+                            EncryptedValue = Common.Encrypt(Common.ToInt(tbl.Rows[0]["nextmove"]))
+                        };
+                        tracking.NextLocationDetailId = Common.ToInt(tbl.Rows[0]["nextlocationdetailid"]);                   
+                        tracking.NextDateTime = Common.ToDateTime(tbl.Rows[0]["nextdatetime"]);
+                        tracking.IsDamaged = Common.ToBool(tbl.Rows[0]["isdamaged"]);
+                        tracking.NoOfDamages = Common.ToInt(tbl.Rows[0]["noofdamages"]);
+                        tracking.CreatedAt = Common.ToDateTime(tbl.Rows[0]["createdat"]);
+                        tracking.CreatedBy = Common.ToInt(tbl.Rows[0]["createdby"]);                       
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                RecordException(ex);
+            }
+
+            return tracking;
+        }
+
+        public Result SaveTrackingDamage(TrackingDamageDTO trackingDamage, string trackingIdEncrypt)
+        {
+            Result result = new Result();
+            try
+            {
+                using (SqlDB Db = new SqlDB(DatabaseCollection.Contrack))
+                {
+                    DataTable tbl = Db.GetDataTable("SELECT * FROM tracking.container_movement_tracking_damage_save(" +
+                        "p_trackingdamageid := " + Common.Decrypt(trackingDamage.TrackingdDamageId.EncryptedValue) + "," +
+                        "p_trackingid := " + Common.Decrypt(trackingIdEncrypt) + "," +
+                        "p_damageside := " + Common.ToInt(trackingDamage.DamageSide) + "," +
+                        "p_damagetype := " + Common.ToInt(trackingDamage.DamageType) + "," +
+                        "p_positionx := " + Common.ToInt(trackingDamage.PositionX) + "," +
+                        "p_positiony := " + Common.ToInt(trackingDamage.PositionY) + "," +
+                        "p_comments := '" + Common.ToString(trackingDamage.Comments) + "'," +
+                        "p_createdby := " + Common.LoginID + "" +
+                    ");");
+
+                    if (tbl.Rows.Count > 0)
+                    {
+                        if (tbl.Rows[0][0].ToString() == "1")
+                            result = Common.SuccessMessage(tbl.Rows[0][1].ToString());
+                        else
+                            result = Common.ErrorMessage(tbl.Rows[0][1].ToString());
+                    }
+                    else
+                    {
+                        result = Common.ErrorMessage("Cannot Save Tracking Damage.");
+                    }
+                }
+            }
+            catch(Exception ex)
+            {
+                RecordException(ex);
+            }
+            return result;
+        }
+
+        public List<MovesDTO> GetMovesList()
+        {
+            List<MovesDTO> list = new List<MovesDTO>();
+            try
+            {
+                using (SqlDB Db = new SqlDB(DatabaseCollection.Contrack))
+                {
+                    DataTable tbl = Db.GetDataTable("SELECT * FROM masters.moves_list(" + Common.HubID + ", " + Common.LoginID + ");");
+
+                    list = (from DataRow dr in tbl.Rows
+                            select new MovesDTO
+                            {
+                                MovesId = new EncryptedData()
+                                {
+                                    EncryptedValue = Common.Encrypt(Common.ToInt(dr["movesid"])),
+                                    NumericValue = Common.ToInt(dr["movesid"]),
+                                },
+                                MovesUuid = Common.ToString(dr["movesuuid"]),
+                                MovesName = Common.ToString(dr["movesname"]),
+                                IconId = Common.ToInt(dr["iconid"]),
+                                InOut = Common.ToString(dr["in_out"]),
+                                FullEmptyNone = Common.ToString(dr["full_empty_none"]),
+                                DontShowPublic = Common.ToBool(dr["dontshowpublic"]),                             
+                                CreatedBy = Common.ToInt(dr["createdby"]),
+                                CreatedAt = Common.ToDateTime(dr["createdat"])
+                            }).ToList();                
+                }
+            }
+            catch (Exception ex)
+            {
+                RecordException(ex);
+            }
+            return list;
+        }
+    }
+}

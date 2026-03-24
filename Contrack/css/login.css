@@ -1,0 +1,64 @@
+﻿.loginbox {
+    width: 370px;
+}
+
+.loginbanner {
+    padding: 30px;
+    height: 100vh;
+    position: relative;
+}
+
+    .loginbanner .bg {
+        background-image: url(/assets/img/containerbg.png);
+        background-size: cover;
+        height: 100%;
+        width: 100%;
+        background-position: center;
+        border-radius: 20px;
+    }
+
+    .loginbanner .bottomtext {
+        position: absolute;
+        bottom: 30px;
+        left: 30px;
+        background: linear-gradient(180deg, rgba(0, 0, 0, 0.00) 0%, rgba(0, 0, 0, 0.73) 63.28%, #000 100%);
+        right: 30px;
+        border-radius: 0px 0px 30px 30px;
+        height: 600px;
+        padding: 0 30px 30px;
+    }
+
+        .loginbanner .bottomtext .quote {
+            color: #FFDA44;
+            font-family: "Inclusive Sans";
+            font-size: 142px;
+            font-style: normal;
+            font-weight: 400;
+         
+        }
+
+        .loginbanner .bottomtext .text {
+            color: #FFF;
+            font-family: Inter;
+            font-size: 32px;
+            font-style: normal;
+            font-weight: 400;
+            width: 80%;
+            line-height: 47px;
+        }
+
+.textlogin {
+    color: #232323;
+    font-size: 28px;
+    font-weight: 500;
+    line-height: 34px;
+}
+
+.loginsubtext {
+    color: #959595;
+    font-family: Inter;
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 16px; /* 100% */
+    padding-bottom: 16px;
+}
