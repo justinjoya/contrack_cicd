@@ -1,0 +1,271 @@
+﻿@using Contrack;
+@{
+    ViewBag.Title = "Container Allocation";
+    ViewBag.MainManu = "Container";
+    ViewBag.SubManu = "";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<link href="~/css/Booking/booking.css?v=1.0.2" rel="stylesheet" />
+@*<link href="~/css/Container/containerBooking.css?v=2.0.1" rel="stylesheet" />*@
+<link href="~/css/Container/tracking.css?v=1.0.0" rel="stylesheet" />
+
+<div class="container-fluid1 nobottom">
+    <div class="booking-section  flex flex-col">
+        <div class="booking-info-recordmove">
+            <div class="container-fluid booking-max-width">
+                <div class="booking-content-recordmove">
+                    <div class="page-header-holder">
+                        <span class="head">Record Move</span>
+                        <span class="subhead">Follow the steps below to complete your booking.</span>
+                    </div>
+                    <div class="left-section">
+                        <div class="tracking-container">
+                            <div class="tracking-move">
+                                @Html.Partial("~/Views/Shared/Tracking/_RecordMoveSection.cshtml")
+                                <div class="box bg-grid">
+                                    <div class="damage-box-header">
+                                        <div class="damage-box-header-info">
+                                            <span class="header-text">Damage Assessment:</span>
+                                            <div class="steps">
+                                                <div class="step-line">
+                                                    <div class="stepbg"></div>
+                                                    <div class="actual" style="width:50%;"></div>
+                                                </div>
+                                                <span class="text">3/5</span>
+                                            </div>
+                                        </div>
+                                        <button type="button" class="btn btn-xs btn-sm btn-outline btn-primary">
+                                            <i class="ki-filled ki-plus"></i>
+                                            Add Damage
+                                        </button>
+                                    </div>
+
+                                    <div class="square-radios">
+                                        <div class="checkbox-item">
+                                            <input type="radio" id="Side1" name="Side" value="1" checked>
+                                            <label for="Side1">
+                                                <img class="default" src="~/assets/dbicons/front.svg" />
+                                                <img class="selected" src="~/assets/dbicons/front-s.svg" />
+                                                <span>Front (DS)</span>
+                                            </label>
+                                            <div class="damage-count">3</div>
+                                        </div>
+                                        <div class="checkbox-item">
+                                            <input type="radio" id="Side2" name="Side" value="2">
+                                            <label for="Side2">
+                                                <img class="default" src="~/assets/dbicons/back.svg" />
+                                                <img class="selected" src="~/assets/dbicons/back-s.svg" />
+                                                <span>Rear (OS)</span>
+                                            </label>
+                                        </div>
+                                        <div class="checkbox-item">
+                                            <input type="radio" id="Side3" name="Side" value="3">
+                                            <label for="Side3">
+                                                <img class="default" src="~/assets/dbicons/side-left.svg" />
+                                                <img class="selected" src="~/assets/dbicons/side-left-s.svg" />
+                                                <span>Left (LS)</span>
+                                            </label>
+                                        </div>
+                                        <div class="checkbox-item">
+                                            <input type="radio" id="Side4" name="Side" value="4">
+                                            <label for="Side4">
+                                                <img class="default" src="~/assets/dbicons/side-right.svg" />
+                                                <img class="selected" src="~/assets/dbicons/side-right-s.svg" />
+                                                <span>Right (RS)</span>
+                                            </label>
+                                        </div>
+                                        <div class="checkbox-item">
+                                            <input type="radio" id="Side5" name="Side" value="5">
+                                            <label for="Side5">
+                                                <img class="default" src="~/assets/dbicons/side-up.svg" />
+                                                <img class="selected" src="~/assets/dbicons/side-up-s.svg" />
+                                                <span>Top (Roof)</span>
+                                            </label>
+                                        </div>
+                                        <div class="checkbox-item">
+                                            <input type="radio" id="Side6" name="Side" value="6">
+                                            <label for="Side6">
+                                                <img class="default" src="~/assets/dbicons/side-down.svg" />
+                                                <img class="selected" src="~/assets/dbicons/side-down-s.svg" />
+                                                <span>Bottom (Floor)</span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="container-alert-info damage-badge">
+                                        <i class="ki-filled ki-information-1"></i>
+                                        <div class="text">You can click any area in the container image to add damages.</div>
+                                    </div>
+                                    <div class="damage_side_container" id="damage_side_container_1" style="display:inline-block;">
+                                        @Html.Partial("_FrontRear", new TrackingDamage() { Side = new ContainerSide() { SideNo = 1, SideName = "Front Side" } })
+                                    </div>
+                                    <div class="damage_side_container" id="damage_side_container_2">
+                                        @Html.Partial("_FrontRear", new TrackingDamage() { Side = new ContainerSide() { SideNo = 1, SideName = "Rear Side" } })
+                                    </div>
+                                    <div class="damage_side_container" id="damage_side_container_3">
+                                        @Html.Partial("_Side", new TrackingDamage() { Side = new ContainerSide() { SideNo = 1, SideName = "Left Side" } })
+                                    </div>
+                                    <div class="damage_side_container" id="damage_side_container_4">
+                                        @Html.Partial("_Side", new TrackingDamage() { Side = new ContainerSide() { SideNo = 1, SideName = "Right Side" } })
+                                    </div>
+                                    <div class="damage_side_container" id="damage_side_container_5">
+                                        @Html.Partial("_Side", new TrackingDamage() { Side = new ContainerSide() { SideNo = 1, SideName = "Top Side" } })
+                                    </div>
+                                    <div class="damage_side_container" id="damage_side_container_6">
+                                        @Html.Partial("_Side", new TrackingDamage() { Side = new ContainerSide() { SideNo = 1, SideName = "Bottom Side" } })
+                                    </div>
+
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Persistent Booking Summary on the side -->
+        <div class="booking-summary">
+            <div class="summary-content">
+                <div class="damage-summary-container">
+                    <h2>Damage Summary</h2>
+                    <div class="damage-side">
+                        <h4>1. Right (RS)</h4>
+                        <div class="damage-item">
+                            <div class="damage-item-info">
+                                <div class="icon-c">
+                                    <img src="~/assets/img/damage-paint.svg">
+                                </div>
+                                <div class="content">
+                                    <span class="damage-name">
+                                        Paint Damage <span class="damage-item-position">
+                                            X:12 , Y:4
+                                        </span>
+                                    </span>
+                                    <span class="damage-desc">
+                                        Lower Left corner, approximately 20cm wide, paint stripped.
+                                    </span>
+                                    <div class="images">
+                                        <a href="javascript:void(0);" class="photo">
+                                            <img src="~/assets/img/damage1.png">
+                                            <button type="button"><img src="~/assets/img/close-circle.svg"></button>
+                                        </a>
+                                        <a href="javascript:void(0);">
+                                            <img src="~/assets/img/damage2.png">
+                                            <button type="button"><img src="~/assets/img/close-circle.svg"></button>
+
+                                        </a>
+                                    </div>
+
+                                </div>
+                            </div>
+                            @*<div class="damage-item-position">
+                                    X:12 , Y:4
+                                </div>*@
+                            <div>
+                                <a class="btn btn-sm btn-icon btn-clear btn-light" href="javascript:void(0);">
+                                    <img src="~/assets/img/edit.svg" />
+                                </a>
+                                <a class="btn btn-sm btn-icon btn-clear btn-light" href="javascript:void(0);"><img src="~/assets/img/trash.svg" /></a>
+                            </div>
+                        </div>
+                        <img class="seperator" src="~/assets/img/seperator2.svg" />
+                        <div class="damage-item">
+                            <div class="damage-item-info">
+                                <div class="icon-c">
+                                    <img src="~/assets/img/damage-scratch.svg">
+                                </div>
+                                <div class="content">
+                                    <span class="damage-name">
+                                        Surface scratch
+                                        <span class="damage-item-position">
+                                            X:12 , Y:4
+                                        </span>
+                                    </span>
+                                    <span class="damage-desc">
+                                        Near the lock mechanism
+                                    </span>
+                                    <div class="actions">
+
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div>
+                                <a class="btn btn-sm btn-icon btn-clear btn-light" href="javascript:void(0);">
+                                    <img src="~/assets/img/edit.svg" />
+                                </a>
+                                <a class="btn btn-sm btn-icon btn-clear btn-light" href="javascript:void(0);"><img src="~/assets/img/trash.svg" /></a>
+                            </div>
+                        </div>
+                        <img class="seperator" src="~/assets/img/seperator2.svg" />
+                    </div>
+                    <div class="damage-side">
+                        <h4>2. Left (LS)</h4>
+                        <div class="damage-item">
+                            <div class="damage-item-info">
+                                <div class="icon-c">
+                                    <img src="~/assets/img/damage-paint.svg">
+                                </div>
+                                <div class="content">
+                                    <span class="damage-name">
+                                        Paint Damage
+                                        <span class="damage-item-position">
+                                            X:12 , Y:4
+                                        </span>
+                                    </span>
+                                    <span class="damage-desc">
+                                        Lower Left corner, approximately 20cm wide, paint stripped.
+                                    </span>
+                                    <div class="actions">
+
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div>
+                                <a class="btn btn-sm btn-icon btn-clear btn-light" href="javascript:void(0);">
+                                    <img src="~/assets/img/edit.svg" />
+                                </a>
+                                <a class="btn btn-sm btn-icon btn-clear btn-light" href="javascript:void(0);"><img src="~/assets/img/trash.svg" /></a>
+                            </div>
+                        </div>
+                        <img class="seperator" src="~/assets/img/seperator2.svg" />
+                        <div class="damage-item">
+                            <div class="damage-item-info">
+                                <div class="icon-c">
+                                    <img src="~/assets/img/damage-scratch.svg">
+                                </div>
+                                <div class="content">
+                                    <span class="damage-name">
+                                        Surface scratch
+                                        <span class="damage-item-position">
+                                            X:12 , Y:4
+                                        </span>
+                                    </span>
+                                    <span class="damage-desc">
+                                        Near the lock mechanism
+                                    </span>
+                                    <div class="actions">
+
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div>
+                                <a class="btn btn-sm btn-icon btn-clear btn-light" href="javascript:void(0);">
+                                    <img src="~/assets/img/edit.svg" />
+                                </a>
+                                <a class="btn btn-sm btn-icon btn-clear btn-light" href="javascript:void(0);"><img src="~/assets/img/trash.svg" /></a>
+                            </div>
+                        </div>
+                        <img class="seperator" src="~/assets/img/seperator2.svg" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="modalsection"></div>
+@section PageScripts {
+    <script src="~/js/Tracking/tracking.js"></script>
+    <script src="~/js/voyageselect2.js"></script>
+}

@@ -1,0 +1,93 @@
+﻿@using Contrack;
+@model SendApproval
+<div class="modal hidden" data-modal="true" data-modal-backdrop-static="true" data-modal-autofocus="true" id="ModalQuotationApprovaReject">
+    <div class="modal-content modal-center max-w-[600px]">
+        <div class="modal-header">
+            <h3 class="modal-title flex gap-2 items-center">
+                @if (Model.ApproveStatus == 1)
+                {
+                    <i class="ki-filled text-lg ki-check-circle text-primary"></i>
+                    <span>Approve Quotation</span>
+                }
+                else
+                {
+                    <i class="ki-filled ki-cross-square text-lg text-danger"></i>
+                    <span>
+                        Reject Quotation
+                    </span>
+                }
+            </h3>
+            <button class="btn btn-xs btn-icon btn-light" data-modal-dismiss="true">
+                <i class="ki-outline ki-cross">
+                </i>
+            </button>
+        </div>
+        <div class="modal-body">
+            <form id="formQuoteApprovalAction">
+                @Html.HiddenFor(x => x.ID.EncryptedValue)
+                @Html.HiddenFor(x => x.UUID)
+                @Html.HiddenFor(x => x.ApproveStatus)
+                @Html.HiddenFor(x => x.ApproveOrder)
+                @Html.HiddenFor(x => x.ApprovalType)
+                @if (Model.ApproveStatus == 1)
+                {
+                    <div class="flex text-md text-primary font-normal grow rounded-md border border-dashed gap-4 p-4 mb-4 border-primary bg-primary-light">
+                        Are you sure you want to approve this quotation? This action will authorize the quotation.
+                    </div>
+                }
+                else
+                {
+                    <div class="flex grow text-danger font-normal rounded-md border border-dashed gap-4 p-4 mb-3 border-danger bg-danger-light">
+                        Are you sure you want to reject this quotation? This will decline the quotation.
+                    </div>
+                }
+                <div class="flex flex-col items-baseline flex-wrap lg:flex-nowrap gap-1.5">
+                    @if (Model.ApproveStatus == 1)
+                    {
+                        <label class="form-label max-w-[170px]">
+                            Comments <span class="text-danger ps-2">*</span>
+                        </label>
+                        <div class="flex flex-col w-full ">
+                            <div class="flex flex-col">
+                                @Html.TextAreaFor(m => m.Comments, new { @class = "textarea", @rows = 4, @placeholder = "Enter Comments", @datarequired = "yes", @datarequired_message = "Please enter Comments", @id = "txt_Comments" })
+                            </div>
+                        </div>
+                    }
+                    else
+                    {
+                        <label class="form-label max-w-[170px]">
+                            Comments <span class="text-danger ps-2">*</span>
+                        </label>
+                        <div class="flex flex-col w-full ">
+                            <div class="flex flex-col">
+                                @Html.TextAreaFor(m => m.Comments, new { @class = "textarea", @rows = 4, @placeholder = "Enter Comments", @datarequired = "yes", @datarequired_message = "Please enter Comments", @id = "txt_Comments" })
+                            </div>
+                        </div>
+                    }
+                </div>
+
+            </form>
+        </div>
+        <div class="modal-footer justify-end">
+            <div class="flex gap-4">
+                <button class="btn btn-light" data-modal-dismiss="true">
+                    Close
+                </button>
+                @if (Model.ApproveStatus == 1)
+                {
+                    <button class="btn btn-primary" type="button" onclick="SaveApprovalAction();">
+                        <i class="ki-filled ki-check-circle"></i>
+                        Approve
+                    </button>
+                }
+                else
+                {
+                    <button class="btn btn-danger" type="button" onclick="SaveApprovalAction();">
+                        <i class="ki-filled ki-cross-square"></i>
+                        Reject
+                    </button>
+                }
+            </div>
+        </div>
+    </div>
+</div>

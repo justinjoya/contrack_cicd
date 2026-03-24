@@ -1,0 +1,153 @@
+﻿@using Contrack;
+@model List<Contrack.ContainerTypeDTO>
+@{
+    ViewBag.Title = "Container Models";
+    ViewBag.MainManu = "Container";
+    ViewBag.SubManu = "";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    var filter = SessionManager.ContainerModelFilter ?? new ContainerModelFilter();
+    var selectedTypes = (filter.containertypeid ?? "").Split(',').Where(x => x != "").ToList();
+    var selectedSizes = (filter.sizeid ?? "").Split(',').Where(x => x != "").ToList();
+
+    var typeGroups = Model
+    .GroupBy(x => new { x.containertypeid.EncryptedValue, x.typename })
+    .Select(g => new
+    {
+        TypeId = g.Key.EncryptedValue,
+        TypeName = g.Key.typename,
+        Count = g.Sum(v => v.sizes.Sum(s => s.models.Count))
+    })
+    .OrderBy(x => x.TypeName)
+    .ToList();
+
+    var sizeGroups = Model
+        .SelectMany(t => t.sizes)
+        .GroupBy(s => new { s.sizeid.EncryptedValue, s.sizename })
+        .Select(g => new
+        {
+            SizeId = g.Key.EncryptedValue,
+            SizeName = g.Key.sizename,
+            Count = g.Sum(x => x.models.Count)
+        })
+        .OrderBy(x => x.SizeName)
+        .ToList();
+
+    var isFilterActive =
+    selectedTypes.Count > 0 ||
+    selectedSizes.Count > 0 ||
+    !string.IsNullOrWhiteSpace(filter.search);
+}
+
+<link href="~/css/Container/containermodel.css?v=1.0.2" rel="stylesheet" />
+
+<div class="breadscrumb-holder">
+    <div class="container-fluid flex items-center justify-between flex-wrap gap-5">
+        <div class="flex flex-col justify-center items-start flex-wrap gap-1.5">
+            <div class="flex items-center gap-1 text-sm font-normal">
+                <span class="text-gray-700">Home</span>
+                <span class="text-gray-400 text-sm">/</span>
+                <span class="text-gray-700">Container</span>
+                <span class="text-gray-400 text-sm">/</span>
+                <span class="text-gray-900">Container models</span>
+            </div>
+            <h1 class="page-header">Container models</h1>
+        </div>
+
+        <div class="flex items-center flex-wrap gap-1.5 lg:gap-3.5">
+            <label class="input input-sm w-[200px] relative">
+                <i class="ki-filled ki-magnifier"></i>
+
+                <input placeholder="Search"
+                       type="text"
+                       id="txtSearch"
+                       autocomplete="off"
+                       value="@filter.search" />
+
+                <span class="clear-search"
+                      onclick="ClearSearch()"
+                      style="position:absolute; right:8px; cursor:pointer; display:@(string.IsNullOrEmpty(filter.search) ? "none" : "block")">
+                    ✕
+                </span>
+            </label>
+
+
+            <button class="btn btn-sm @(isFilterActive ? "btn-dark" : "btn-outline btn-dark") dropdown-toggle"
+                    data-drawer-toggle="#drawer_4">
+                <i class="ki-filled ki-setting-4"></i>
+                Filters
+            </button>
+
+            <button class="btn btn-sm btn-primary" onclick="OpenContainerTypeModal('')">
+                <i class="ki-filled ki-plus"></i> Add Container Type
+            </button>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid cont-main-wrapper">
+    <div id="ContainerModelBody">
+        @Html.Partial("_ContainerModel", Model)
+    </div>
+</div>
+
+<div id="modalsection"></div>
+<div class="cont-right-body" id="ModelOutput"></div>
+
+<div class="drawer drawer-end flex flex-col gap-4 filter-width" data-drawer="true" id="drawer_4">
+    <div class="flex items-center justify-between p-5 border-b">
+        <h3 class="text-base font-semibold text-gray-900">Filters</h3>
+
+        <button class="btn btn-xs btn-icon btn-light" type="button" data-drawer-dismiss="true">
+            <i class="ki-outline ki-cross"></i>
+        </button>
+    </div>
+
+    <div class="scrollable-y py-0 px-5">
+        <div class="filter-sections flex flex-col">
+            <div class="filter-section">
+                <div class="filter-label">Container Type</div>
+                <div class="controls">
+                    @foreach (var t in typeGroups)
+                    {
+                        <label class="form-label flex items-center text-nowrap">
+                            <input type="checkbox" name="ctype" class="checkbox checkbox-sm"
+                                   value="@t.TypeId"
+                                   @(selectedTypes.Contains(t.TypeId) ? "checked" : "") />
+                            @t.TypeName <span class="stat">(@t.Count)</span>
+                        </label>
+                    }
+                </div>
+            </div>
+
+            <div class="filter-section">
+                <div class="filter-label">Container Size</div>
+                <div class="controls">
+                    @foreach (var s in sizeGroups)
+                    {
+                        <label class="form-label flex items-center text-nowrap">
+                            <input type="checkbox" name="csize" class="checkbox checkbox-sm"
+                                   value="@s.SizeId"
+                                   @(selectedSizes.Contains(s.SizeId) ? "checked" : "") />
+                            @s.SizeName <span class="stat">(@s.Count)</span>
+                        </label>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="flex justify-between">
+        <div class="flex justify-end gap-4 border-t p-5">
+            <button class="btn btn-light" type="button" data-drawer-dismiss="true">Close</button>
+        </div>
+        <div class="flex justify-end gap-4 border-t p-5">
+            <button class="btn btn-light" type="button" onclick="ResetFilters()">Reset Filter</button>
+            <button class="btn btn-dark" type="button" onclick="ApplyFilters()">Apply Filter</button>
+        </div>
+    </div>
+</div>
+
+@section PageScripts {
+    <script src="~/js/Masters/ContainerModel.js?v=2.0"></script>
+}

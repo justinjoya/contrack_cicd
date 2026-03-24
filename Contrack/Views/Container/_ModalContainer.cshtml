@@ -1,0 +1,140 @@
+﻿@model Contrack.ContainerModal
+
+<div class="modal" data-modal="true" data-modal-backdrop-static="true" data-modal-autofocus="true" id="ModalAddContainer">
+    <div class="modal-content modal-center-y max-w-[600px] max-h-[95%]">
+        <div class="modal-header">
+            <h3 class="modal-title">
+                @(Model.container.containerid != null && Model.container.containerid.NumericValue > 0 ? "Edit Container" : "Add Container")
+            </h3>
+            <button class="btn btn-xs btn-icon btn-light" data-modal-dismiss="true">
+                <i class="ki-outline ki-cross"></i>
+            </button>
+        </div>
+
+        <div class="modal-body scrollable-y h-[300px] max-h-[95%]">
+            <div class="model-req flex items-center grow rounded-xl border border-dashed gap-4 p-2 mb-5 border-primary bg-primary-light">
+                <i class="ki-outline ki-information-1 text-3xl text-primary"></i>
+                <div class="flex flex-col gap-0.5">
+                    <p class="text">Fields marked with <span class="text-danger ps-2"> * </span> are mandatory.</p>
+                </div>
+            </div>
+
+            <form id="formContainer">
+                @Html.HiddenFor(m => m.container.containerid.EncryptedValue)
+                @Html.HiddenFor(m => m.container.containeruuid)
+                @Html.Hidden("container.islive", "true")
+
+                <div class="grid lg:grid-cols-1 items-stretch gap-5">
+
+                    <div class="flex flex-col1 items-baseline flex-wrap lg:flex-nowrap gap-1.5">
+                        <label class="form-label max-w-32 text-right">Equipment No <span class="text-danger ps-2">*</span></label>
+                        <div class="flex flex-col w-full">
+                            @Html.TextBoxFor(m => m.container.equipmentno, new
+                            {
+                                @class = "input",
+                                @placeholder = "Enter ISO Equipment No",
+                                @autocomplete = "off",
+                                datarequired = "yes",
+                                datarequired_message = "Please enter Equipment No"
+                            })
+                        </div>
+                    </div>
+
+                    <div class="flex flex-col1 items-baseline flex-wrap lg:flex-nowrap gap-1.5">
+                        <label class="form-label max-w-32 text-right">Make <span class="text-danger ps-2">*</span></label>
+                        <div class="flex gap-3 w-full">
+                            <div class="flex-1">
+                                @Html.DropDownListFor(m => m.MakeMonth, new SelectList(ViewBag.Months, "Value", "Text", Model.MakeMonth), new
+                                {
+                                    @class = "form-control select2",
+                                    @style = "width: 100%;",
+                                    datarequired = "yes",
+                                    datarequired_message = "Select Month",
+                                    data_append_parent = "yes"
+                                })
+                            </div>
+
+                            <div class="flex-1">
+                                @Html.DropDownListFor(m => m.MakeYear, new SelectList(ViewBag.Years, "Value", "Text", Model.MakeYear), new
+                                {
+                                    @class = "form-control select2",
+                                    @style = "width: 100%;",
+                                    datarequired = "yes",
+                                    datarequired_message = "Select Year",
+                                    data_append_parent = "yes"
+                                })
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flex flex-col1 items-baseline flex-wrap lg:flex-nowrap gap-1.5">
+                        <label class="form-label max-w-32 text-right">Model <span class="text-danger ps-2">*</span></label>
+                        <div class="flex flex-col w-full">
+                            @Html.DropDownListFor(m => m.container.containermodeluuid, new SelectList(ViewBag.ContainerModels, "Value", "Text", Model.container.containermodeluuid), new
+                            {
+                                @class = "form-control select2",
+                                @placeholder = "Select Model",
+                                @style = "width:100%;",
+                                datarequired = "yes",
+                                datarequired_message = "Please select a Model",
+                                data_append_parent = "yes"
+                            })
+                        </div>
+                    </div>
+
+                    <div class="flex flex-col1 items-baseline flex-wrap lg:flex-nowrap gap-1.5">
+                        <label class="form-label max-w-32 text-right">Operator <span class="text-danger ps-2">*</span></label>
+                        <div class="flex flex-col w-full">
+                            @Html.DropDownListFor(m => m.container.operatorid.EncryptedValue, new SelectList(ViewBag.Operators, "Value", "Text", Model.container.operatorid.EncryptedValue), new
+                            {
+                                @class = "form-control select2",
+                                @placeholder = "Select Operator",
+                                @style = "width:100%;",
+                                datarequired = "yes",
+                                datarequired_message = "Please select an Operator",
+                                data_append_parent = "yes"
+                            })
+                        </div>
+                    </div>
+                    <div class="flex flex-col1 items-baseline flex-wrap lg:flex-nowrap gap-1.5">
+                        <label class="form-label max-w-32 text-right">Location <span class="text-danger ps-2">*</span></label>
+                        <div class="flex flex-col w-full">
+                            @Html.DropDownListFor(m => m.container.currentlocationid.EncryptedValue, new SelectList(ViewBag.Locations, "Value", "Text", Model.container.currentlocationid.EncryptedValue), new
+                            {
+                                @class = "form-control select2",
+                                @placeholder = "Select Location",
+                                @style = "width:100%;",
+                                datarequired = "yes",
+                                datarequired_message = "Please select a Location",
+                                data_append_parent = "yes"
+                            })
+                        </div>
+                    </div>
+                    <div class="flex flex-col1 items-baseline flex-wrap lg:flex-nowrap gap-1.5">
+                        <label class="form-label max-w-32 text-right">Full/Empty <span class="text-danger ps-2">*</span></label>
+                        <div class="flex flex-col w-full">
+                            @Html.DropDownListFor(m => m.container.is_empty, new SelectList(ViewBag.EmptyFullStatus, "Value", "Text", Model.container.is_empty), new
+                            {
+                                @class = "form-control select2",
+                                @placeholder = "Select Status",
+                                @style = "width:100%;",
+                                datarequired = "yes",
+                                datarequired_message = "Please select Status",
+                                data_append_parent = "yes"
+                            })
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <div class="modal-footer justify-end">
+            <div class="flex gap-4">
+                <button class="btn btn-light" data-modal-dismiss="true">Close</button>
+                <button type="button" class="btn btn-primary" onclick="SaveContainer();">
+                    @(Model.container.containerid != null && Model.container.containerid.NumericValue > 0 ? "Update Container" : "Save Container")
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

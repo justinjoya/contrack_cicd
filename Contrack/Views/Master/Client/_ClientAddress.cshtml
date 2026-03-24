@@ -1,0 +1,101 @@
+﻿@model Contrack.ClientDTO
+@using Contrack;
+<div class="card h-full">
+    <div class="card-header p-3 flex items-between">
+        <h3 class="card-title">
+            Addresses (@Model.Addresses.Count)
+        </h3>
+        @if (Model.Contacts.Count < 10@*&& PagePermission.GetPermissions().Client.edit*@)
+{
+<button type="button" onclick="OpenClientAddressModal('','@Common.Encrypt(Model.clientid.NumericValue)');" class=" btn btn-xs btn-sm btn-outline btn-light">
+    <i class="ki-filled ki-plus">
+    </i>
+    Add Address
+</button>}
+    </div>
+    <div class="card-body flex flex-col gap-5">
+        @if (Model.Addresses.Count > 0)
+        {
+            {
+                for (int i = 0; i < Model.Addresses.Count; i++)
+                {
+                    <div class="flex items-center gap-2">
+                        <div class="flex items-center grow gap-2.5">
+                            <div class="flex flex-col">
+                                <a class="text-sm font-medium text-gray-900 hover:text-primary-active mb-px" href="#">
+                                    @(string.IsNullOrEmpty(Model.Addresses[i].addressname) ? "[No Name]" : Model.Addresses[i].addressname)
+                                    <span class="mx-2 py-1 badge badge-outline badge-secondary">
+                                        @Model.Addresses[i].typevalue
+                                    </span>
+                                    @if (Model.Addresses[i].isdefault)
+                                    {
+                                        <span class="py-1 badge badge-outline badge-primary badge-sm ">
+                                            Primary
+                                        </span>}
+                                </a>
+                                <span class="text-2sm text-gray-700">
+                                    @Html.Raw(Model.Addresses[i].address.Replace("\n", "<br/>"))
+                                </span>
+                            </div>
+                        </div>
+                        @*@if (PagePermission.GetPermissions().Client.edit)
+                            {*@
+                        <div class="flex items-center gap-1.5">
+                            @*@if (Model.Addresses[i].isdefault)
+                                    {
+                                <span class="badge badge-outline badge-primary badge-sm ">
+                                    Primary
+                                </span>}*@
+                            <div class="menu" data-menu="true">
+                                <div class="menu-item menu-item-dropdown" data-menu-item-offset="0, 10px" data-menu-item-placement="bottom-end" data-menu-item-placement-rtl="bottom-start" data-menu-item-toggle="dropdown" data-menu-item-trigger="click|lg:click">
+                                    <button class="menu-toggle btn btn-sm btn-icon btn-light btn-clear">
+                                        <i class="ki-filled ki-dots-vertical">
+                                        </i>
+                                    </button>
+                                    <div class="menu-dropdown menu-default w-full max-w-[175px]" data-menu-dismiss="true">
+                                        <div class="menu-item">
+                                            <a class="menu-link" href="javascript:void(0);" onclick="OpenClientAddressModal('@Model.Addresses[i].addressid.EncryptedValue','@Common.Encrypt(Model.clientid.NumericValue)');">
+                                                <span class="menu-icon">
+                                                    <i class="ki-filled ki-notepad-edit">
+                                                    </i>
+                                                </span>
+                                                <span class="menu-title">
+                                                    Edit
+                                                </span>
+                                            </a>
+                                        </div>
+                                        <div class="menu-item">
+                                            <a class="menu-link" href="javascript:void(0);" onclick="MakeAddressPrimary('@Model.Addresses[i].addressid.EncryptedValue','@Common.Encrypt(Model.clientid.NumericValue)');">
+                                                <span class="menu-icon">
+                                                    <i class="ki-filled ki-toggle-on-circle">
+                                                    </i>
+                                                </span>
+                                                <span class="menu-title">
+                                                    Make Primary
+                                                </span>
+                                            </a>
+                                        </div>
+                                        <div class="menu-item">
+                                            <a class="menu-link" href="javascript:void(0);" onclick="DeleteAddress('@Model.Addresses[i].addressid.EncryptedValue','@Common.Encrypt(Model.clientid.NumericValue)');">
+                                                <span class="menu-icon">
+                                                    <i class="ki-filled ki-trash">
+                                                    </i>
+                                                </span>
+                                                <span class="menu-title">
+                                                    Delete
+                                                </span>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        @*}*@
+                    </div> }
+            }
+        }
+        else
+        {
+            <span class="text-sm text-gray-500">   No addresses added</span>}
+    </div>
+</div>

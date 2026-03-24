@@ -1,0 +1,2 @@
+﻿@model Contrack.DropdownModal
+@Html.ListBox(Model.Name, new SelectList(@ViewBag.SupplierDropdown, "Value", "Text", "") { }, new { @id = "ddlVendor", @placeholder = "Select Vendor", @class = "form-control select2", @datarequired = "no", @datarequired_message = "Please select Vendor", @data_append_parent = "yes", @style = "width:100%;", @multiple = true })

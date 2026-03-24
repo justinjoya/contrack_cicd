@@ -1,0 +1,165 @@
+﻿@model Contrack.PricingListFilter
+@using Contrack
+@{
+    ViewBag.Title = "Pricing Templates";
+    ViewBag.MainManu = "Booking";
+    ViewBag.SubManu = "Pricing List";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="breadscrumb-holder">
+    <div class="container-fluid flex items-center justify-between flex-wrap gap-5">
+        <div class="flex flex-col justify-center items-start flex-wrap gap-1 lg:gap-2">
+            <h1 class="page-header">Pricing List</h1>
+            <div class="flex items-center gap-1 text-sm font-normal">
+                <span class="text-gray-700">Manage all Quotation  with customer and quotation schedule details.</span>
+            </div>
+        </div>
+
+        <div class="flex items-center flex-wrap gap-1.5 lg:gap-2">
+            <div class="">
+                <label class="input input-md">
+                    <i class="ki-filled ki-magnifier"></i>
+                    <input data-datatable-search="#TablePricing" placeholder="Search Template..." type="text" id="txtSearchDisplay" />
+                </label>
+            </div>
+
+            <button class="btn btn-md text-md btn-outline original btn-light dropdown-toggle" data-drawer-toggle="#drawer_filter">
+                <i class="ki-filled ki-setting-4"></i>
+                Filters
+                @{
+                    int count = Model.GetFilterCount();
+                    if (count > 0)
+                    {
+                        <span class="badge text-2xs badge-xs batch-new badge-primary">@count</span>
+                    }
+                }
+            </button>
+            <button class="btn btn-md text-md btn-primary" onclick="OpenPricingTemplate('');">
+                <i class="ki-filled ki-plus"></i>
+                Create Template
+            </button>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid">
+    <div class="grid">
+        <div class="card card-grid min-w-full">
+            <div class="card-body carddatatable">
+                <div id="TablePricing" class="custom-dt">
+                    <div class="scrollable-x-auto">
+                        <table class="table table-auto table-border align-middle text-gray-700 font-medium text-sm" data-datatable-table="true">
+                            <thead>
+                                <tr>
+                                    <th class="min-w-[200px]" data-datatable-column="description">
+                                        <span class="sort"><span class="sort-label">Template Name</span><span class="sort-icon"></span></span>
+                                    </th>
+                                    <th class="min-w-[120px]" data-datatable-column="pol">
+                                        <span class="sort"><span class="sort-label">POL</span><span class="sort-icon"></span></span>
+                                    </th>
+                                    <th class="min-w-[120px]" data-datatable-column="pod">
+                                        <span class="sort"><span class="sort-label">POD</span><span class="sort-icon"></span></span>
+                                    </th>
+                                    <th class="min-w-[120px] text-center" data-datatable-column="currency">
+                                        <span class="sort"><span class="sort-label">Currency</span><span class="sort-icon"></span></span>
+                                    </th>
+                                    <th class="min-w-[100px] text-center" data-datatable-column="clients">
+                                        <span class="sort"><span class="sort-label">No of Clients</span><span class="sort-icon"></span></span>
+                                    </th>
+                                    <th class="min-w-[150px]" data-datatable-column="createdby">
+                                        <span class="sort"><span class="sort-label">Created By</span><span class="sort-icon"></span></span>
+                                    </th>
+                                    <th class="min-w-[150px]" data-datatable-column="created">
+                                        <span class="sort"><span class="sort-label">Created Date</span><span class="sort-icon"></span></span>
+                                    </th>
+                                    <th class="w-[100px] text-center" data-datatable-column="action">Action</th>
+                                </tr>
+                            </thead>
+                        </table>
+                    </div>
+                    <div class="card-footer justify-center md:justify-between flex-col md:flex-row gap-3 text-gray-600 text-2sm font-medium">
+                        <div class="flex items-center gap-2">Show <select class="select select-sm w-16" data-datatable-size="true" name="perpage"></select> per page</div>
+                        <div class="flex items-center gap-4"><span data-datatable-info="true"></span><div class="pagination" data-datatable-pagination="true"></div></div>
+                    </div>
+                </div>
+            </div>
+            <div class="emptydatatable hidden">
+                @Html.Partial("_EmptyTable", new EmptyTable()
+               {
+                   Heading = "No Templates found",
+                   SubHead = "Try adjusting your search or add a new pricing template",
+                   Icon = "<i class=\"ki-filled ki-briefcase text-5xl text-gray-400\"></i>",
+               })
+            </div>
+        </div>
+    </div>
+</div>
+
+@using (Html.BeginForm("List", "Pricing", FormMethod.Post, new { @id = "frmPricingList" }))
+{
+    <div class="drawer drawer-end flex flex-col h-full filter-width" data-drawer="true" id="drawer_filter">
+        <div class="flex items-center justify-between p-5 border-b">
+            <h3 class="text-base font-semibold text-gray-900">Filters</h3>
+            <button type="button" class="btn btn-xs btn-icon btn-light" data-drawer-dismiss="true"><i class="ki-outline ki-cross"></i></button>
+        </div>
+
+        <div class="scrollable-y flex-grow py-5 px-5">
+            <div class="grid lg:grid-cols-2 gap-5">
+
+                <div class="w-full lg:col-span-2">
+                    <div class="flex flex-col items-baseline flex-wrap lg:flex-nowrap gap-2.5">
+                        <label class="form-label flex items-center gap-1 max-w-56">POL (Port of Loading)</label>
+                        <div class="input-group w-full">
+                            @Html.DropDownListFor(m => m.filters.pol_encry, new SelectList(ViewBag.POLDropdown, "Value", "Text"), "-Select-", new { @class = "form-control select2", @style = "width:100%;" })
+                        </div>
+                    </div>
+                </div>
+
+                <div class="w-full lg:col-span-2">
+                    <div class="flex flex-col items-baseline flex-wrap lg:flex-nowrap gap-2.5">
+                        <label class="form-label flex items-center gap-1 max-w-56">POD (Port of Discharge)</label>
+                        <div class="input-group w-full">
+                            @Html.DropDownListFor(m => m.filters.pod_encry, new SelectList(ViewBag.PODDropdown, "Value", "Text"), "-Select-", new { @class = "form-control select2", @style = "width:100%;" })
+                        </div>
+                    </div>
+                </div>
+
+                <div class="w-full lg:col-span-2">
+                    <div class="flex flex-col items-baseline flex-wrap lg:flex-nowrap gap-2.5">
+                        <label class="form-label flex items-center gap-1 max-w-56">Transfer Type</label>
+                        <div class="input-group w-full">
+                            @Html.DropDownListFor(m => m.filters.transfertype_encry, new SelectList(ViewBag.TransferTypeDropdown, "Value", "Text"), "-Select-", new { @class = "form-control select2", @style = "width:100%;" })
+                        </div>
+                    </div>
+                </div>
+                <div class="w-full lg:col-span-2">
+                    <div class="flex flex-col items-baseline flex-wrap lg:flex-nowrap gap-2.5">
+                        <label class="form-label flex items-center gap-1 max-w-56">Client</label>
+                        <div class="input-group w-full">
+                            @Html.DropDownListFor(m => m.filters.client_encry,
+                                new SelectList(ViewBag.ClientDropdown, "Value", "Text"),
+                                "-Select Client-",
+                                new { @class = "form-control select2", @style = "width:100%;" })
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="flex justify-between items-center p-5 border-t mt-auto">
+            <button type="button" class="btn btn-light" data-drawer-dismiss="true">Close</button>
+            <div class="flex gap-2">
+                <button type="submit" name="action" value="Reset" class="btn btn-light">Reset Filter</button>
+                <button type="submit" name="action" value="filter" class="btn btn-dark">Apply Filter</button>
+            </div>
+        </div>
+    </div>
+}
+
+<div id="modalsection"></div>
+
+@section PageScripts {
+    <script src="~/js/port.js"></script>
+    <script src="~/js/pricing/pricing.js?v=1.0.0"></script>
+}

@@ -1,0 +1,288 @@
+﻿<div style="height:100%;" class="bg-[--tw-navbar-bg] dark:bg-[--tw-navbar-bg-dark] hidden lg:flex lg:items-stretch" data-drawer="true" data-drawer-class="drawer drawer-start fixed z-10 top-0 bottom-0 w-full mr-5 max-w-[250px] p-5 lg:p-0 overflow-auto" data-drawer-enable="true|lg:false" id="navbar">
+    <!-- Container -->
+    <div class="container-fluid flex flex-wrap justify-between items-center gap-2 px-0">
+        <!-- Mega Menu -->
+        <div class="menu items-stretch flex-col lg:flex-row grow lg:grow-0" data-menu="true" id="mega_menu">
+
+            <div class="menu-item @(ViewBag.MainManu=="Purchase"?"active":"")" data-menu-item-offset="0,0|lg:-20px, 0" data-menu-item-offset-rtl="0,0|lg:20px, 0" data-menu-item-overflow="true" data-menu-item-placement="bottom-start" data-menu-item-placement-rtl="bottom-end" data-menu-item-toggle="dropdown" data-menu-item-trigger="click|lg:hover">
+                <div class="flex menu-link border-b border-b-transparent menu-item-active:border-b-gray-800 text-gray-800 menu-item-hover:text-gray-900 menu-item-active:text-gray-900 menu-item-here:border-b-gray-800 menu-item-here:text-gray-900">
+                    <span class="highlight">
+                        <i class="ki-filled ki-chart-pie-simple"></i>
+                        <span class="menu-title font-medium text-gray-800 text-sm">
+                            Dashboard
+                        </span>
+                    </span>
+                </div>
+            </div>
+            <div class="menu-item @(ViewBag.MainManu=="Master"?"active":"") menu-item-dropdown" data-menu-item-offset="0,0|lg:0, 0" data-menu-item-offset-rtl="0,0|lg:20px, 0" data-menu-item-overflow="true" data-menu-item-placement="bottom-start" data-menu-item-placement-rtl="bottom-end" data-menu-item-toggle="dropdown" data-menu-item-trigger="click|lg:hover">
+                <div class="flex menu-link border-b border-b-transparent text-gray-800 menu-item-hover:text-gray-900 menu-item-active:text-gray-900 menu-item-here:border-b-gray-800 menu-item-here:text-gray-900">
+                    <span class="highlight">
+                        <i class="ki-filled ki-lots-shopping"></i>
+                        <span class="menu-title font-medium text-gray-800 text-sm items-center  flex gap-2">
+                            Masters
+                            <img src="~/assets/icons/arrowdown.svg" />
+                        </span>
+                    </span>
+                </div>
+                <div class="menu-dropdown floater menu-default py-2.5 w-full max-w-[220px]">
+                    <div class="menu-item @(ViewBag.SubMenu=="PIntent"?"active":"")">
+                        <a class="menu-link" href="@Url.Action("List","Agency")" tabindex="0">
+                            <span class="menu-icon">
+                                <i class="ki-filled ki-abstract-47"></i>
+                            </span>
+                            <span class="menu-title grow-0">
+                                Companies
+                            </span>
+                        </a>
+                    </div>
+                    <div class="menu-item @(ViewBag.SubMenu=="POList"?"active":"")">
+                        <a class="menu-link" href="@Url.Action("List","Client")" tabindex="0">
+                            <span class="menu-icon">
+                                <i class="ki-filled ki-users"></i>
+                            </span>
+                            <span class="menu-title grow-0">
+                                Clients
+                            </span>
+                        </a>
+                    </div>
+                    <div class="menu-item @(ViewBag.SubMenu=="QuoteCompareList"?"active":"")">
+                        <a class="menu-link" href="@Url.Action("List","Vessel")" tabindex="0">
+                            <span class="menu-icon">
+                                <i class="ki-filled ki-ship"></i>
+                            </span>
+                            <span class="menu-title grow-0">
+                                Vessels
+                            </span>
+                        </a>
+                    </div>
+                    <div class="menu-item @(ViewBag.SubMenu=="QuoteCompareList"?"active":"")">
+                        <a class="menu-link" href="@Url.Action("List","Vendor")" tabindex="0">
+                            <span class="menu-icon">
+                                <i class="ki-filled ki-purchase"></i>
+
+                            </span>
+                            <span class="menu-title grow-0">
+                                Vendors
+                            </span>
+                        </a>
+                    </div>
+
+                    <div class="menu-item @(ViewBag.SubMenu=="List"?"active":"")">
+                        <a class="menu-link" href="@Url.Action("List","user")" tabindex="0">
+                            <span class="menu-icon">
+                                <i class="ki-filled ki-key"></i>
+
+                            </span>
+                            <span class="menu-title grow-0">
+                                Users
+                            </span>
+                        </a>
+                    </div>
+
+                    <div class="menu-item @(ViewBag.SubMenu=="TermsandConditionsList"?"active":"")">
+                        <a class="menu-link" href="@Url.Action("List","TermsandConditions")" tabindex="0">
+                            <span class="menu-icon">
+                                <i class="ki-filled ki-key"></i>
+
+                            </span>
+                            <span class="menu-title grow-0">
+                                Terms and Conditions
+                            </span>
+                        </a>
+                    </div>
+                    <div class="menu-item @(ViewBag.SubMenu=="VIList"?"active":"")">
+                        <a class="menu-link" href="@Url.Action("List","JobType")" tabindex="0">
+                            <span class="menu-icon">
+                                <i class="ki-filled ki-purchase"></i>
+
+                            </span>
+                            <span class="menu-title grow-0">
+                                Job Types
+                            </span>
+                        </a>
+                    </div>
+
+                </div>
+            </div>
+            <div class="menu-item @(ViewBag.MainManu=="Container"?"active":"") menu-item-dropdown" data-menu-item-offset="0,0|lg:0, 0" data-menu-item-offset-rtl="0,0|lg:20px, 0" data-menu-item-overflow="true" data-menu-item-placement="bottom-start" data-menu-item-placement-rtl="bottom-end" data-menu-item-toggle="dropdown" data-menu-item-trigger="click|lg:hover">
+                <div class="flex items-center menu-link border-b border-b-transparent text-gray-800 menu-item-hover:text-gray-900 menu-item-active:text-gray-900 menu-item-here:border-b-gray-800 menu-item-here:text-gray-900">
+                    <span class="highlight">
+                        <i class="ki-filled ki-logistic"></i>
+                        <span class="menu-title font-medium text-gray-800 text-sm items-center flex gap-2">
+                            Container
+                            <img src="~/assets/icons/arrowdown.svg" />
+                        </span>
+                    </span>
+                </div>
+                <div class="menu-dropdown floater menu-default py-2.5 w-full max-w-[220px]">
+                    <div class="menu-item">
+                        <a class="menu-link" href="@Url.Action("List","ContainerModel")" tabindex="0">
+                            <span class="menu-icon">
+                                <i class="ki-filled ki-logistic"></i>
+                            </span>
+                            <span class="menu-title">
+                                Container Models
+                            </span>
+                        </a>
+                    </div>
+                    <div class="menu-item">
+                        <a class="menu-link" href="@Url.Action("List","Location")" tabindex="0">
+                            <span class="menu-icon">
+                                <i class="ki-filled ki-geolocation"></i>
+                            </span>
+                            <span class="menu-title grow-0">
+                                Locations
+                            </span>
+                        </a>
+                    </div>
+                    <div class="menu-item">
+                        <a class="menu-link" href="@Url.Action("List","Container")" tabindex="0">
+                            <span class="menu-icon">
+                                <i class="ki-filled ki-logistic"></i>
+
+                            </span>
+                            <span class="menu-title">
+                                Containers
+                            </span>
+                        </a>
+                    </div>
+
+                    <div class="menu-item">
+                        <a class="menu-link" href="@Url.Action("List","Voyage")" tabindex="0">
+                            <span class="menu-icon">
+                                <i class="ki-filled ki-route"></i>
+
+                            </span>
+                            <span class="menu-title">
+                                Voyages
+                            </span>
+                        </a>
+                    </div>
+
+                </div>
+            </div>
+            <div class="menu-item @(ViewBag.MainManu=="Booking"?"active":"") menu-item-dropdown" data-menu-item-offset="0,0|lg:0, 0" data-menu-item-offset-rtl="0,0|lg:20px, 0" data-menu-item-overflow="true" data-menu-item-placement="bottom-start" data-menu-item-placement-rtl="bottom-end" data-menu-item-toggle="dropdown" data-menu-item-trigger="click|lg:hover">
+                <div class="flex items-center menu-link border-b border-b-transparent text-gray-800 menu-item-hover:text-gray-900 menu-item-active:text-gray-900 menu-item-here:border-b-gray-800 menu-item-here:text-gray-900">
+                    <span class="highlight">
+                        <i class="ki-filled ki-calendar"></i>
+                        <span class="menu-title font-medium text-gray-800 text-sm items-center flex gap-2">
+                            Booking
+                            <img src="~/assets/icons/arrowdown.svg" />
+                        </span>
+                    </span>
+
+                </div>
+                <div class="menu-dropdown floater menu-default py-2.5 w-full max-w-[220px]">
+                    <div class="menu-item">
+                        <a class="menu-link" href="@Url.Action("CustomerSelection","Booking")" tabindex="0">
+                            <span class="menu-icon">
+                                <i class="ki-filled ki-plus"></i>
+                            </span>
+                            <span class="menu-title grow-0">
+                                Create Booking
+                            </span>
+                        </a>
+                    </div>
+                    <div class="menu-item">
+                        <a class="menu-link" href="@Url.Action("List","Booking")" tabindex="0">
+                            <span class="menu-icon">
+                                <i class="ki-filled ki-calendar-2"></i>
+                            </span>
+                            <span class="menu-title grow-0">
+                                Booking List
+                            </span>
+                        </a>
+                    </div>
+                    <div class="menu-item">
+                        <a class="menu-link" href="@Url.Action("QuotationList","Booking")" tabindex="0">
+                            <span class="menu-icon">
+                                <i class="ki-filled ki-calendar-2"></i>
+                            </span>
+                            <span class="menu-title grow-0">
+                                Quotation List
+                            </span>
+                        </a>
+                    </div>
+                    <div class="menu-item">
+                        <a class="menu-link" href="@Url.Action("List","Pricing")" tabindex="0">
+                            <span class="menu-icon">
+                                <i class="ki-filled ki-calendar-2"></i>
+                            </span>
+                            <span class="menu-title grow-0">
+                                Pricing Templates
+                            </span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            @*<label class="input input-sm">
+                    <i class="ki-filled ki-magnifier">
+                    </i>
+                    <input data-datatable-search="#TablePurchaseIntentList" placeholder="Search" type="text" value="">
+                </label>*@
+            @*<div class="menu-item @(ViewBag.MainManu=="RFQ"?"active":"")">
+                    <a class="menu-link lg:py-3.5 border-b border-b-transparent menu-item-active:border-b-gray-800 text-gray-800 menu-item-hover:text-gray-900 menu-item-active:text-gray-900 menu-item-here:border-b-gray-800 menu-item-here:text-gray-900" href="@Url.Action("PIList","Purchase")">
+                        <span class="menu-title font-medium text-gray-800 text-sm">
+                            Request for Quotes
+                        </span>
+                    </a>
+                </div>
+                <div class="menu-item @(ViewBag.MainManu=="Compare"?"active":"")">
+                    <a class="menu-link lg:py-3.5 border-b border-b-transparent menu-item-active:border-b-gray-800 text-gray-800 menu-item-hover:text-gray-900 menu-item-active:text-gray-900 menu-item-here:border-b-gray-800 menu-item-here:text-gray-900" href="@Url.Action("PIList","Purchase")">
+                        <span class="menu-title font-medium text-gray-800 text-sm">
+                            Quote Comparisions
+                        </span>
+                    </a>
+                </div>
+
+                <div class="menu-item @(ViewBag.MainManu=="PurchaseOrders"?"active":"")">
+                    <a class="menu-link lg:py-3.5 border-b border-b-transparent menu-item-active:border-b-gray-800 text-gray-800 menu-item-hover:text-gray-900 menu-item-active:text-gray-900 menu-item-here:border-b-gray-800 menu-item-here:text-gray-900" href="@Url.Action("PIList","Purchase")">
+                        <span class="menu-title font-medium text-gray-800 text-sm">
+                            Purchase Orders
+                        </span>
+                    </a>
+                </div>
+
+                <div class="menu-item @(ViewBag.MainManu=="VendorInvoices"?"active":"")">
+                    <a class="menu-link lg:py-3.5 border-b border-b-transparent menu-item-active:border-b-gray-800 text-gray-800 menu-item-hover:text-gray-900 menu-item-active:text-gray-900 menu-item-here:border-b-gray-800 menu-item-here:text-gray-900" href="@Url.Action("VIList","VendorInvoice")">
+                        <span class="menu-title font-medium text-gray-800 text-sm">
+                            Vendor Invoices
+                        </span>
+                    </a>
+                </div>
+
+                <div class="menu-item">
+                    <a class="menu-link lg:py-3.5 border-b border-b-transparent menu-item-active:border-b-gray-800 text-gray-800 menu-item-hover:text-gray-900 menu-item-active:text-gray-900 menu-item-here:border-b-gray-800 menu-item-here:text-gray-900" href="@Url.Action("VIList","Purchase")">
+                        <span class="menu-title font-medium text-gray-800 text-sm">
+                            Invoices
+                        </span>
+                    </a>
+                </div>*@
+
+
+        </div>
+
+
+        <!-- End of Mega Menu -->
+
+
+    </div>
+    <!-- End of Container -->
+</div>
+<!--<div class="bg-[--tw-navbar-bg] dark:bg-[--tw-navbar-bg-dark] hidden lg:flex lg:items-stretch " data-drawer="true" data-drawer-class="drawer drawer-start fixed z-10 top-0 bottom-0 w-full mr-5 max-w-[250px] p-5 lg:p-0 overflow-auto" data-drawer-enable="true|lg:false" id="navbar">-->
+<!-- Container -->
+<!--<div class="container-fluid flex flex-wrap justify-between items-center gap-2 px-0 lg:px-7.5">-->
+<!-- Mega Menu -->
+<!--<div class="menu items-stretch flex-col lg:flex-row gap-5 lg:gap-7.5 grow lg:grow-0" data-menu="true" id="mega_menu">
+    <div class="menu-item">
+        <a class="menu-link lg:py-3.5 border-b border-b-transparent menu-item-active:border-b-gray-800 text-gray-800 menu-item-hover:text-gray-900 menu-item-active:text-gray-900 menu-item-here:border-b-gray-800 menu-item-here:text-gray-900" href="@Url.Action("PIList","Purchase")">
+            <span class="menu-title font-semibold text-gray-800 text-lg">
+                Purchase Order
+            </span>
+        </a>
+    </div>
+</div>-->
+<!-- End of Mega Menu -->
+<!--</div>-->
+<!-- End of Container -->
+<!--</div>-->

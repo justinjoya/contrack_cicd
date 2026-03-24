@@ -1,0 +1,53 @@
+﻿@using Contrack;
+@model Contrack.DocumentModal
+<div class="modal" data-modal="true" data-modal-backdrop-static="true" data-modal-autofocus="true" id="ModalDocumentUpload">
+    <div class="modal-content  top-[10%] model-width-medium">
+        <div class="modal-header">
+            <h3 class="modal-title">
+                Document Upload
+            </h3>
+            <button class="btn btn-xs btn-icon btn-light" data-modal-dismiss="true">
+                <i class="ki-outline ki-cross">
+                </i>
+            </button>
+        </div>
+        <div class="modal-body scrollable-y max-h-[95%]">
+            <form id="formDocumentUpload">
+                <div>
+                    @Html.HiddenFor(x => x.parentuuid)
+                    @Html.HiddenFor(x => x.documenttypeid, new { id = "hdn_documenttypeid" })
+                    @Html.HiddenFor(x => x.targetuuid, new { id = "hdn_targetuuid" })
+                    @Html.HiddenFor(x => x.targetid)
+                    <div class="flex flex-col items-center1 gap-5">
+                        <div class="p-5 flex flex-col1 items-center flex-wrap lg:flex-nowrap gap-3">
+                            <div class="flex flex-col w-full">
+                                <input class="file-input" id="AttachmentFileInput" name="uploadfile" type="file" multiple />
+                            </div>
+                            <button class="btn btn-primary" type="button" onclick="UploadAttachmentFiles();">
+                                <i class="ki-filled ki-add-files"></i>
+                                Upload
+                            </button>
+                        </div>
+                        <div class="card1">
+                            <div class="scrollable-x-auto">
+                                <div class="scrollable-auto" id="div_Document_inner">
+                                    @Html.Partial("_DocumentList", Model)
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+
+
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer justify-end">
+            <div class="flex gap-3">
+                <button class="btn btn-light" data-modal-dismiss="true">
+                    Close
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,35 @@
+﻿@model Contrack.QuotationListFilter
+@using Contrack
+
+@{
+    ViewBag.Title = "Quotation List";
+    ViewBag.MainManu = "Booking";
+    ViewBag.SubManu = "Quotation List";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="breadscrumb-holder">
+    <div class="container-fluid flex items-center justify-between flex-wrap gap-5">
+
+        <div class="flex flex-col justify-center items-start flex-wrap gap-1 lg:gap-2">
+            <h1 class="page-header">Dashboard</h1>
+            <div class="flex items-center gap-1 text-sm font-normal">
+                <span class="text-gray-700">Manage all Quotation  with customer and quotation schedule details.</span>
+            </div>
+        </div>
+    </div>
+</div>
+@{
+    var ActiveTab = PageSessionManager.GetAttribute<int>(PageKeys.Dashboard, "ActiveTab", 0);
+}
+<div class="container-fluid">
+    <div class="grid">
+        @Html.Partial("_QuotationList")
+    </div>
+</div>
+<div id="modalsection"></div>
+
+@section PageScripts {
+    <script src="~/js/ContainerBooking/QuotationList.js?v=1.0.1"></script>
+    <script src="~/js/port.js"></script>
+    <script src="~/js/customizecolumn.js?v=1.0.0"></script>
+}

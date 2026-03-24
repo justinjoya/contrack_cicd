@@ -1,0 +1,99 @@
+﻿@using Contrack;
+@model Contrack.AddressDTO
+<div class="modal hidden" data-modal="true" data-modal-backdrop-static="true" data-modal-autofocus="true" id="ModalClientAddress">
+    <div class="modal-content modal-center max-w-[600px]">
+        <div class="modal-header">
+            <h3 class="modal-title">
+                Add Address
+            </h3>
+            <button class="btn btn-xs btn-icon btn-light" data-modal-dismiss="true">
+                <i class="ki-outline ki-cross">
+                </i>
+            </button>
+        </div>
+        <div class="modal-body">
+            @*<div class="model-req flex items-center grow rounded-xl border border-dashed gap-4 p-2 mb-3 border-primary bg-primary-light">
+                    <i class="ki-outline ki-information-1 text-3xl text-primary">
+                    </i>
+                    <div class="flex flex-col gap-0.5">
+                        <p class="text text-2sm font-normal">
+                            Fields marked with <span class="text-danger"> * </span> are mandatory.
+                        </p>
+                    </div>
+                </div>*@
+            <form id="formClientAddress">
+                <div>
+                    <div class="flex flex-col gap-5">
+                        @Html.HiddenFor(m => m.clientid.EncryptedValue)
+                        @Html.HiddenFor(m => m.addressid.EncryptedValue)
+                        <div class="flex flex-col1 items-baseline flex-wrap lg:flex-nowrap gap-1.5">
+                            <label class="form-label max-w-32">
+                                Address Type <span class="text-danger ps-2">*</span>
+                            </label>
+                            <div class="flex flex-col w-full items-baseline">
+
+                                <div class="grid grid-cols-1 lg:grid-cols-1 xl:grid-cols-1 gap-5">
+                                    <label for="radio1" class="form-label flex items-center gap-2.5 text-nowrap">
+                                        <input datarequired="yes" datarequired-message="Please select address type" id="radio1" class="radio" name="addresstypeid.EncryptedValue" type="radio" value="@Common.Encrypt(1)" @(Model.addresstypeid.NumericValue == 1 ? "checked" : "")>
+                                        Communication Address
+                                    </label>
+                                    <label for="radio2" class="form-label flex items-center gap-2.5 text-nowrap">
+                                        <input datarequired="yes" datarequired-message="Please select address type" id="radio2" class="radio" name="addresstypeid.EncryptedValue" type="radio" value="@Common.Encrypt(2)" @(Model.addresstypeid.NumericValue == 2 || Model.addresstypeid.NumericValue == 0 ? "checked" : "")>
+                                        Billing Address
+                                    </label>
+                                </div>
+
+                            </div>
+                        </div>
+                        <div class="flex flex-col1 items-baseline flex-wrap lg:flex-nowrap gap-1.5">
+                            <label class="form-label max-w-32">
+                                Alias <span class="text-danger ps-2">*</span>
+                            </label>
+                            <div class="flex flex-col w-full">
+                                @Html.TextBoxFor(m => m.addressname, new { @class = "input", @placeholder = "Enter Alias", @datarequired = "yes", @datarequired_message = "Please enter alias" })
+                            </div>
+                        </div>
+                        <div class="flex flex-col1 items-baseline flex-wrap lg:flex-nowrap gap-1.5">
+                            <label class="form-label max-w-32">
+                                Address <span class="text-danger ps-2">*</span>
+                            </label>
+                            <div class="flex flex-col w-full">
+                                @Html.TextAreaFor(m => m.address, new { @class = "textarea", @rows = "4", @placeholder = "Enter Address", @datarequired = "yes", @datarequired_message = "Please enter Address" })
+                            </div>
+                        </div>
+
+                        <div class="flex flex-col1 items-baseline flex-wrap lg:flex-nowrap gap-1.5">
+                            <label class="form-label max-w-32">
+
+                            </label>
+                            <label class="switch">
+                                @Html.CheckBoxFor(m => m.isdefault)
+                                @*<input name="check" type="checkbox" value="true" @(Model.isprimary ? "checked" : "") />*@
+                                <span class="switch-label">
+                                    Is Primary?
+                                </span>
+                            </label>
+                        </div>
+
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer justify-end">
+            <div class="flex gap-4">
+                <button class="btn btn-light" data-modal-dismiss="true">
+                    Close
+                </button>
+                @*@if (PagePermission.GetPermissions().Client.edit)
+                    {
+                        <button class="btn btn-primary" onclick="SaveAddress();">
+                            Save
+                        </button>
+                    }*@
+                <button class="btn btn-primary" onclick="SaveAddress();">
+                    Save
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

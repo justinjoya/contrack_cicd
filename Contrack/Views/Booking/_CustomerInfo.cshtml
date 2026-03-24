@@ -1,0 +1,147 @@
+﻿@using Contrack;
+@model ContainerBooking
+@if (Model.booking.customer.client.clientdetailid.NumericValue == 0)
+{
+    <div class="emptycard">
+        <img src="~/assets/img/no-customer.png" />
+        <span class="content">
+            <span class="maintext">
+                You haven’t selected a customer yet
+            </span>
+            <span class="subtext">
+                (choose one from the list)
+            </span>
+        </span>
+    </div>
+}
+else
+{
+    <div>
+        <div class="top-section">
+            <div class="nameinfo">
+                <div class="avatar">
+                    <span class="avatar-lable">
+                        @Common.GetShortcode(Model.booking.customer.client.clientname)
+                    </span>
+                </div>
+
+                <div class="details">
+                    <h3 class="name">@Model.booking.customer.client.clientname</h3>
+                    <p class="address">
+                        @Html.Raw(string.IsNullOrEmpty(Model.booking.customer.client.address) ? "No Address" : Model.booking.customer.client.address.Replace("\n", "<br/>"))
+                    </p>
+                </div>
+            </div>
+            <div class="contact">
+                <span class="email">
+                    @Html.Partial("_FormatWithCount", new FormatDisplay() { Name = "Email", Text = string.IsNullOrEmpty(Model.booking.customer.client.email) ? "No Email" : Model.booking.customer.client.email, Delimiter = ";" })
+                </span>
+                <span class="phone">
+                    @Html.Partial("_FormatWithCount", new FormatDisplay() { Name = "Phone", Text = string.IsNullOrEmpty(Model.booking.customer.client.phone) ? "No Phone" : Model.booking.customer.client.phone, Delimiter = "," })
+                </span>
+            </div>
+        </div>
+        @if (Model.booking.customer.analytics.totalenquiries > 0)
+        {
+            <div class="stats-box">
+                <div class="enquiry">
+                    <div class="stat">
+                        <h4>@Model.booking.customer.analytics.totalenquiries</h4>
+                        <p>Total Enquiries</p>
+                    </div>
+
+                    <div class="stat">
+                        <h4>@Model.booking.customer.analytics.converted</h4>
+                        <p>Converted</p>
+                    </div>
+
+                    <div class="stat">
+                        <h4>@Model.booking.customer.analytics.conversionrate.ToString("0")%</h4>
+                        <p>Conversion rate</p>
+                    </div>
+                </div>
+                <div class="divider">
+                    <img src="~/assets/img/divider.svg">
+                </div>
+                <div class="stat unpaid">
+                    <h4>@Model.booking.customer.analytics.unpaidtotalinvoice<span>/@Model.booking.customer.analytics.totalinvoice</span></h4>
+                    <p>Invoices unpaid</p>
+                </div>
+
+            </div>
+        }
+        <div class="customer-type-title">Customer type  <span class="text-danger">*</span></div>
+        <div class="customer-type">
+
+            <label class="type-option">
+                <input type="radio" name="booking.customer.customertype.EncryptedValue" value="@Common.Encrypt(1)" @(Model.booking.customer.customertype.NumericValue == 1 ? "checked" : "") onclick="ChooseCustomerType(this);">
+                <span class="chip">Shipper</span>
+                <img src="~/assets/img/tick-circle.svg" />
+            </label>
+
+            <label class="type-option">
+                <input type="radio" name="booking.customer.customertype.EncryptedValue" value="@Common.Encrypt(2)" @(Model.booking.customer.customertype.NumericValue == 2 ? "checked" : "") onclick="ChooseCustomerType(this);">
+                <span class="chip">Consignee</span>
+                <img src="~/assets/img/tick-circle.svg" />
+            </label>
+
+            <label class="type-option">
+                <input type="radio" name="booking.customer.customertype.EncryptedValue" value="@Common.Encrypt(3)" @(Model.booking.customer.customertype.NumericValue == 3 ? "checked" : "") onclick="ChooseCustomerType(this);">
+                <span class="chip">Forwarder</span>
+                <img src="~/assets/img/tick-circle.svg" />
+            </label>
+
+        </div>
+
+        <div class="grid grid-cols-3 pt-6 gap-5">
+
+            <div class="flex flex-col items-baseline flex-wrap lg:flex-nowrap gap-2.5">
+                <label class="form-label flex items-center gap-1 max-w-56">
+                    Booking Date <span class="text-danger">*</span>
+                </label>
+                <div class="input-group w-full">
+                    @Html.TextBoxFor(m => m.booking.customer.bookingdate, new { @data_trigger = "btnTarget", @class = "datetimepicker-here input", @placeholder = "dd/mm/yyyy hh:mm", @datarequired = "yes", @datarequired_message = "Please enter Date of Joining", @id = "txt_DateTimePI", @data_provider = "flatpickr1", @readonly = true })
+                    <button type="button" id="btnTarget" class="btn btn-icon btn-outline btn-icon-lg btn-light">
+                        <i class="ki-filled ki-calendar-2"></i>
+                    </button>
+                </div>
+            </div>
+
+
+            <div class="w-full">
+                <div class="flex flex-col items-baseline flex-wrap lg:flex-nowrap gap-2.5">
+                    <label class="form-label flex items-center gap-1 max-w-56">
+                        Company<span class="text-danger">*</span>
+                    </label>
+                    @if (string.IsNullOrEmpty(Model.booking.bookinguuid))
+                    {
+                        @Html.DropDownListFor(m => m.booking.customer.agencydetailid.EncryptedValue, new SelectList(@ViewBag.AgenciesDropdown, "Value", "Text", "") { }, new { @id = "ddlAgencies", @placeholder = "Select Company", @class = "form-control select2", @datarequired = "yes", @datarequired_message = "Please select Company", @data_append_parent = "yes", @style = "width:100%;" })
+                    }
+                    else
+                    {
+                        @Html.DropDownListFor(m => m.booking.customer.agencydetailid.EncryptedValue, new SelectList(@ViewBag.AgenciesDropdown, "Value", "Text", "") { }, new { @id = "ddlAgencies", @placeholder = "Select Company", @class = "form-control select2", @datarequired = "yes", @datarequired_message = "Please select Company", @data_append_parent = "yes", @style = "width:100%;", @disabled = true })
+                        @Html.HiddenFor(m => m.booking.customer.agencydetailid.EncryptedValue)
+                    }
+                </div>
+            </div>
+
+            <div class="w-full">
+                <div class="flex flex-col items-baseline flex-wrap lg:flex-nowrap gap-2.5">
+                    <label class="form-label flex items-center gap-1 max-w-56">
+                        Mode <span class="text-danger">*</span>
+                    </label>
+                    @Html.DropDownListFor(m => m.booking.customer.mode.EncryptedValue, new SelectList(@ViewBag.ModeDropdown, "Value", "Text", ""), new { @id = "ddlMode", @placeholder = "Select Mode", @class = "form-control select2", @datarequired = "yes", @datarequired_message = "Please select Mode", @data_append_parent = "yes", @style = "width:100%;" })
+                </div>
+            </div>
+            <div class="w-full">
+                <div class="flex flex-col items-baseline flex-wrap lg:flex-nowrap gap-2.5">
+                    <label class="form-label flex items-center gap-1 max-w-56">
+                        Full/Empty <span class="text-danger">*</span>
+                    </label>
+                    @Html.DropDownListFor(m => m.booking.customer.fullempty, new SelectList(@ViewBag.FullOREmptyDropdown, "Value", "Text", ""), new { @id = "ddlFullEmpty", @placeholder = "Select Full/Empty", @class = "form-control select2", @datarequired = "yes", @datarequired_message = "Please select Full/Empty", @data_append_parent = "yes", @style = "width:100%;" })
+                </div>
+            </div>
+
+        </div>
+    </div>
+}

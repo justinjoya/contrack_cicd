@@ -1,0 +1,199 @@
+﻿@using Contrack;
+@model BookedContainer
+@{
+    ViewBag.Title = "Container Selection";
+    ViewBag.MainManu = "Booking";
+    ViewBag.SubManu = "UnitSelection";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<link href="~/css/Booking/booking.css?v=1.0.2" rel="stylesheet" />
+<link href="~/css/Booking/allocation.css?v=1.0.0" rel="stylesheet" />
+<link href="~/css/Booking/container-list.css?v=2.0.2" rel="stylesheet" />
+<link href="~/css/Container/tracking.css?v=1.0.0" rel="stylesheet" />
+@Html.Partial("_BookingHeader", Model.booking.bookinguuid)
+
+<div class="container-fluid nobottom">
+    <div class="booking-section full-width flex flex-col">
+        <div class="booking-info">
+            <div class="booking-max-width ">
+                <div class="booking-content">
+                    <div class="flex justify-between items-center">
+                        <div class="page-header-holder">
+                            <span class="head">Allotted Containers</span>
+                            <span class="subhead">Containers that have been assigned and reserved for this booking.</span>
+                        </div>
+                        <div class="flex flex-wrap">
+                            <label class="input input-md">
+                                <i class="ki-filled ki-magnifier"></i>
+                                <input placeholder="Search Container..." type="text" />
+                            </label>
+                        </div>
+                    </div>
+                    <div class="left-section">
+                        <div class="allocation-section">
+                            <div class="cont-main-wrapper">
+                                <div class="containergrid">
+                                    @foreach (var item in Model.containers)
+                                    {
+                                        <div class="container-card">
+                                            <div class="card-top">
+                                                <div>
+                                                    <a href="@Url.Action("TrackContainer", "Tracking", new { containeruuid = item.ContainerUuid, bookinguuid = Model.booking.bookinguuid })">
+                                                        <div class="container-number">@item.ContainerNo</div>
+                                                    </a>
+                                                    <div class="container-sub iso">ISO: @item.IsoCode</div>
+                                                </div>
+                                                <div class="menu justify-center" data-menu="true">
+                                                    <div class="menu-item menu-item-dropdown" data-menu-item-offset="0, 10px" data-menu-item-placement="bottom-end" data-menu-item-placement-rtl="bottom-start" data-menu-item-toggle="dropdown" data-menu-item-trigger="click|lg:click">
+                                                        <button class="menu-toggle btn btn-sm btn-icon btn-light btn-clear">
+                                                            <i class="ki-filled ki-dots-vertical"></i>
+                                                        </button>
+                                                        <div class="menu-dropdown menu-default w-full max-w-[200px]" data-menu-dismiss="true">
+
+                                                            <div class="menu-item">
+                                                                <a class="menu-link" href="javascript:void(0);" data-containerid="@item.ContainerId.EncryptedValue"
+                                                                   data-bookingid="@Model.booking.bookingid.EncryptedValue" onclick="TriggerSingleRecordMove(this)">
+                                                                    <span class="menu-icon">
+                                                                        <i class="ki-filled ki-arrow-right-left"></i>
+                                                                    </span>
+                                                                    <span class="menu-title">
+                                                                        Record Move
+                                                                    </span>
+                                                                </a>
+                                                            </div>
+
+                                                            <div class="menu-item">
+                                                                <a class="menu-link" href="@Url.Action("TrackContainer", "Tracking", new { containeruuid = item.ContainerUuid, bookinguuid = Model.booking.bookinguuid })">
+                                                                    <span class="menu-icon">
+                                                                        <i class="ki-filled ki-geolocation"></i>
+                                                                    </span>
+                                                                    <span class="menu-title">
+                                                                        Moves Details
+                                                                    </span>
+                                                                </a>
+                                                            </div>
+                                                            <div class="menu-item">
+                                                                <a class="menu-link" href="javascript:void(0);" onclick="DeleteContainerFromBooking('@Model.booking.bookinguuid','@item.ContainerUuid')">
+                                                                    <span class="menu-icon">
+                                                                        <i class="ki-filled ki-trash"></i>
+                                                                    </span>
+                                                                    <span class="menu-title">
+                                                                        Remove from booking
+                                                                    </span>
+                                                                </a>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="divider">
+                                                <img src="~/assets/img/Vector 184.svg" />
+                                            </div>
+
+                                            <div class="container-sub bottom-text">@item.ContainerSizeName @item.ContainerTypeName</div>
+
+                                            <div class="owned-row">
+                                                <span class="owned">
+                                                    <img src="/assets/img/user.svg" class="owned-img" />
+                                                    @IDReferences.GetOwnership(item.OperatorCode).ToUpper()
+                                                </span>
+                                            </div>
+
+                                            @if (!string.IsNullOrEmpty(item.MoveName))
+                                            {
+                                                <div class="last-move-box @(item.IsEmpty?"":"full")">
+                                                    <div class="move-container">
+                                                        <div class="move-icon">
+                                                            @Html.Raw(Common.GetSelectedIconPath(item.MoveIconID))
+                                                        </div>
+                                                        <div class="move-info">
+                                                            <span class="move-name">@item.MoveName</span>
+                                                            <span class="move-date">@item.LastMoveDate</span>
+                                                        </div>
+                                                    </div>
+                                                    <div class="empty-status">
+                                                        @(item.IsEmpty?"Empty":"Full")
+                                                    </div>
+                                                </div>
+                                            }
+                                            else
+                                            {
+                                                <div class="empty-move">
+                                                    <span>No Tracking available</span>
+                                                    <div>
+                                                        <button class="btn btn-link" data-containerid="@item.ContainerId.EncryptedValue"
+                                                                data-bookingid="@Model.booking.bookingid.EncryptedValue" onclick="TriggerSingleRecordMove(this)">
+                                                            Record Move
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            }
+                                            @*<div class="route-box">
+                                                    <div class="route-top">
+                                                        <div class="route-side">
+                                                            <img src="@Common.FlagFolder@item.PolCountryFlag" class="route-flag" />
+                                                            <div class="route-info">
+                                                                <div class="route-label">POL</div>
+                                                                <div class="route-value">
+                                                                    @item.PolPortName
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="route-arrow"></div>
+                                                        <div class="route-side right">
+                                                            <div class="route-info">
+                                                                <div class="route-label">POD</div>
+                                                                <div class="route-value">
+                                                                    @item.PodPortName
+                                                                </div>
+                                                            </div>
+                                                            <img src="@Common.FlagFolder@item.PodCountryFlag" class="route-flag" />
+                                                        </div>
+                                                    </div>
+                                                    <div class="voyage">
+                                                        Voyage: <span>@Display.DisplayStringNA(item.VoyageNumber)</span>
+                                                    </div>
+                                                </div>*@
+
+
+                                            <div class="location-row">
+                                                <i class="ki-filled ki-geolocation"></i>
+                                                <span>@item.CurrentLocationName</span>
+                                            </div>
+
+                                            @*<div class="status-footer">
+                                                    <span>In Transit</span>
+                                                    <span class="">75%</span>
+                                                </div>
+
+                                                <div class="progress-wrapper">
+                                                    <div class="progress-fill"><img src="~/assets/img/Vector 186.png" /></div>
+                                                </div>*@
+                                        </div>
+                                    }
+
+
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+
+<div id="modalsection">
+</div>
+
+@section PageScripts
+{
+    <script src="~/js/Tracking/tracking.js"></script>
+    <script src="~/js/ContainerBooking/selection.js?v=1.0.2"></script>
+    <script src="~/js/voyageselect2.js"></script>
+}

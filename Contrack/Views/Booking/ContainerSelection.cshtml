@@ -1,0 +1,85 @@
+﻿@using Contrack;
+@model ContainerBooking
+
+@{
+    ViewBag.Title = "Container List";
+    ViewBag.MainManu = "Booking";
+    ViewBag.SubManu = "Booking";
+    ViewBag.TabName = "Container";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<link href="~/css/Booking/booking.css?v=1.0.2" rel="stylesheet" />
+<link href="~/css/Container/containerBooking.css?v=2.0.1" rel="stylesheet" />
+
+@using (Html.BeginForm("ContainerSelection", "Booking", FormMethod.Post, new { @id = "frmContainerSelection" }))
+{
+    @Html.HiddenFor(x => x.booking.bookinguuid, new { @id = "hdnbookinguuid" })
+    @Html.Hidden("SaveOnly", (bool)(ViewBag.SaveOnly ?? false))
+    @Html.Partial("_BookingHeader", Model.booking.bookinguuid)
+    <div class="container-fluid nobottom">
+        <div class="booking-section flex flex-col">
+            <div class="booking-info">
+                @*@Html.Partial("_Stepper", 3)*@
+
+                <div class="booking-max-width">
+                    <div class="booking-content">
+                        <div class="flex justify-between items-center">
+                            <div class="page-header-holder hide">
+                                <span class="head">3. Container Details</span>
+                                <span class="subhead">
+                                    Specify the container details, size, type, and add on’s.
+                                </span>
+
+                            </div>
+
+                        </div>
+
+                        <div class="left-section page-header-holder">
+                            <div id="cargo_placeholder">
+                                @Html.Partial("_CargoStep", Model)
+
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="booking-summary">
+                <div class="summary-content" id="summarycard">
+                    @Html.Partial("_SummaryFixed", Model)
+                </div>
+
+                <div class="summary-footer">
+                    <div class="flex flex-col justify-center gap-3">
+                        <a href="@Url.Action("LocationSelection", "Booking", new { refid = Model.booking.bookinguuid })"
+                           class="btn btn-gray actionbutton">
+                            Back to Location
+                        </a>
+
+                        @*<a href="@Url.Action("FinalSummary", "Booking", new { refid = Model.booking.bookinguuid })"
+                               id="btnContainerSelection"
+                               class="btn btn-primary actionbutton">
+                                @(ViewBag.SaveOnly == true ? "Save" : "Next: Preview")
+                            </a>*@
+                        <button type="button" class="btn btn-primary actionbutton" id="btnLocationSelection" onclick="SaveBookingAdditionalServices()">
+                            @(ViewBag.SaveOnly == true ? "Save" : "Next: Preview")
+                        </button>
+
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+}
+
+<div id="modalsection"></div>
+
+@section PageScripts
+{
+    <script src="~/js/customer.js"></script>
+    <script src="~/js/ContainerBooking/Booking.js?v=1.0.1"></script>
+    <script src="~/js/ContainerBooking/booking-container.js"></script>
+}

@@ -1,0 +1,56 @@
+﻿@using Contrack;
+@model SendApproval
+<div class="modal hidden" data-modal="true" data-modal-backdrop-static="true" data-modal-autofocus="true" id="ModalQuoteSendApproval">
+    <div class="modal-content modal-center max-w-[600px]">
+        <div class="modal-header">
+            <h3 class="modal-title">
+                Send for Approval
+            </h3>
+            <button class="btn btn-xs btn-icon btn-light" data-modal-dismiss="true">
+                <i class="ki-outline ki-cross">
+                </i>
+            </button>
+        </div>
+        <div class="modal-body">
+            <form id="formQuoteApprovalAction" class="flex flex-col gap-5">
+                @Html.HiddenFor(x => x.ID.EncryptedValue)
+                @Html.HiddenFor(x => x.UUID)
+                @Html.HiddenFor(x => x.ApproveStatus)
+                @Html.HiddenFor(x => x.ApproveOrder)
+                @Html.HiddenFor(x => x.ApprovalType)
+                <div class="flex flex-col items-baseline flex-wrap lg:flex-nowrap gap-1.5">
+                    <label class="form-label max-w-[170px]">
+                        Approver <span class="px-2 text-danger">*</span>
+                    </label>
+                    <div class="flex flex-col w-full ">
+                        <div class="flex">
+                            @Html.DropDownListFor(m => m.AssignedTo.EncryptedValue, new SelectList(@ViewBag.ApprovalUserDropdown, "Value", "Text", "") { }, new { @id = "ddlApprovalUser", @placeholder = "Select approver", @class = "form-control select2", @datarequired = "yes", @datarequired_message = "Please select Approver", @data_append_parent = "yes", @style = "width:100%;" })
+                        </div>
+                    </div>
+                </div>
+                <div class="flex flex-col items-baseline flex-wrap lg:flex-nowrap gap-1.5">
+                    <label class="form-label max-w-[170px]">
+                        Comments
+                    </label>
+                    <div class="flex flex-col w-full ">
+                        <div class="flex">
+                            @Html.TextAreaFor(m => m.Comments, new { @class = "textarea", @rows = 4, @placeholder = "Enter Comments", @datarequired = "no", @datarequired_message = "Please enter Comments", @id = "txt_Comments" })
+                        </div>
+                    </div>
+                </div>
+
+            </form>
+        </div>
+        <div class="modal-footer justify-end">
+            <div class="flex gap-4">
+                <button class="btn btn-light" data-modal-dismiss="true">
+                    Close
+                </button>
+                <button class="btn btn-primary" type="button" onclick="SaveApprovalAction();">
+                    Send for Approval
+                </button>
+
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,54 @@
+﻿@model Contrack.ContainerTypeDTO
+@using Contrack;
+
+<div class="modal" data-modal="true" data-modal-backdrop-static="true"
+     data-modal-autofocus="true" id="ModalAddContainerType">
+
+    <div class="modal-content modal-center-y max-w-[500px] max-h-[95%]">
+        <div class="modal-header">
+            <h3 class="modal-title">
+                @(Model.containertypeid.NumericValue == 0 ? "Add Container Type" : "Edit Container Type")
+            </h3>
+
+            <button class="btn btn-xs btn-icon btn-light" data-modal-dismiss="true">
+                <i class="ki-outline ki-cross"></i>
+            </button>
+        </div>
+
+        <div class="modal-body scrollable-y">
+
+            <div class="model-req flex items-center grow rounded-xl border border-dashed gap-4 p-2 mb-3 border-primary bg-primary-light">
+                <i class="ki-outline ki-information-1 text-3xl text-primary"></i>
+                <p class="text text-2sm font-normal">
+                    Fields marked with <span class="text-danger">*</span> are mandatory.
+                </p>
+            </div>
+
+            <form id="formContainerType">
+
+                @Html.HiddenFor(m => m.containertypeid.EncryptedValue)
+                @Html.HiddenFor(m => m.typeuuid)
+                @Html.HiddenFor(m => m.typeshortname)
+
+                <div class="grid lg:grid-cols-1 gap-5">
+                    <div class="flex items-baseline gap-1.5">
+                        <label class="form-label w-28 text-right">
+                            Type Name <span class="text-danger ps-2">*</span>
+                        </label>
+
+                        <div class="flex flex-col w-full">
+                            @Html.TextBoxFor(m => m.typename,new {@class = "input w-full",@placeholder = "Enter Type Name",@datarequired = "yes",@datarequired_message = "Please enter Type Name",@maxlength = "50"})
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <div class="modal-footer justify-end">
+            <div class="flex gap-4">
+                <button class="btn btn-light" data-modal-dismiss="true">Close</button>
+                <button class="btn btn-primary" onclick="SaveContainerType();">Save</button>
+            </div>
+        </div>
+    </div>
+</div>

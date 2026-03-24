@@ -1,0 +1,198 @@
+﻿@using Contrack;
+@model string
+
+@{
+    List<BookingStepCount> list = BookingStepCount.GetBookingCount(Model);
+    string bookingno = list.FirstOrDefault()?.bookingno ?? "";
+    string bookinguuid = list.FirstOrDefault()?.bookinguuid ?? "";
+    int StepsCompleted = list.Where(x => new[] { "Step1", "Step2", "Step3" }.Contains(x.document_type)).Sum(x => x.count);
+
+    decimal StepsCompletedPercentage = ((decimal)StepsCompleted / 3) * 100;
+
+    int QuotationCount = list.Where(x => x.document_type == "QuotationCount").Sum(x => x.count);
+    int AllocationCount = list.Where(x => x.document_type == "AllocationCount").Sum(x => x.count);
+    int SummaryCount = list.Where(x => x.document_type == "SummaryCount").Sum(x => x.count);
+    int SelectionCount = list.Where(x => x.document_type == "SelectionCount").Sum(x => x.count);
+
+    int CustomerStepCount = list.Where(x => x.document_type == "Step1").Sum(x => x.count);
+    int LocationStepCount = list.Where(x => x.document_type == "Step2").Sum(x => x.count);
+    int ContainerStepCount = list.Where(x => x.document_type == "Step3").Sum(x => x.count);
+
+    int IsConfirmed = list.Where(x => x.document_type == "IsConfirmed").Sum(x => x.count);
+
+
+    int ContainerCount = list.Where(x => x.document_type == "ContainerCount").Sum(x => x.count);
+
+    decimal AllocationPercentage = ContainerCount == 0 ? 0 : (((decimal)AllocationCount / ContainerCount) * 100);
+    decimal SelectionPercentage = ContainerCount == 0 ? 0 : (((decimal)SelectionCount / ContainerCount) * 100);
+
+    string step1class = StepsCompleted == 3 ? "completed" : "partial";
+    string step2class = QuotationCount > 0 ? "completed" : (ContainerStepCount > 0 ? "partial" : "pending");
+    string step3class = ContainerCount == AllocationCount && ContainerCount > 0 ? "completed" : (ContainerStepCount > 0 ? "partial" : "pending");
+    string step4class = ContainerCount == SelectionCount && ContainerCount > 0 ? "completed" : (ContainerStepCount > 0 ? "partial" : "pending");
+
+    string bookingurl = "";
+    if (ContainerStepCount > 0)
+    {
+        bookingurl = Url.Action("FinalSummary", "Booking", new { refid = Model });
+    }
+    else if (LocationStepCount > 0)
+    {
+        bookingurl = Url.Action("ContainerSelection", "Booking", new { refid = Model });
+    }
+    else if (CustomerStepCount > 0)
+    {
+        bookingurl = Url.Action("LocationSelection", "Booking", new { refid = Model });
+    }
+    else
+    {
+        bookingurl = Url.Action("CustomerSelection", "Booking", new { refid = Model });
+    }
+}
+
+
+<div class="bookingtab">
+    <a href="@Url.Action("List", "Booking")" class="close">
+        <i class="ki-filled ki-cross"></i>
+    </a>
+    <div class="tab-items">
+        <a href="@(string.IsNullOrEmpty(bookinguuid) ? "javascript:void(0);" : bookingurl)" class="tabitem @step1class @(ViewBag.SubManu == "Booking" ? "active" : "")">
+            <div class="content">
+                <span class="finish">
+                    @Html.Raw(StepsCompleted == 3 ? "Completed" : "Pending")
+                </span>
+                <span class="heading">
+                    1. Booking Details
+                </span>
+                <div class="subheading">
+                    @if (StepsCompleted < 3)
+                    {
+                        <div class="flex gap-2 items-center">
+                            <div class="progress @(StepsCompleted == 3 ? "progress-success" : "progress-warning")">
+                                <div class="progress-bar" style="width: @StepsCompletedPercentage%"></div>
+                            </div>
+                            <span class="text-gray-700 font-semibold">@StepsCompleted/3</span>
+                        </div>
+                    }
+                    else
+                    {
+                        <span>@bookingno</span>
+                    }
+
+                </div>
+            </div>
+            @if (StepsCompleted == 3)
+            {
+                <i class="ki-solid ki-check-circle"></i>
+
+            }
+        </a>
+        <a href="@(string.IsNullOrEmpty(bookinguuid) || ContainerStepCount == 0 ? "javascript:void(0);" : Url.Action("BookingQuotationList", "Booking", new { refid = Model }))" class="tabitem @step2class @(ViewBag.SubManu == "Quote" ? "active" : "")">
+            <div class="content">
+                <span class="finish">
+                    @Html.Raw(QuotationCount > 0 ? "Completed" : "Pending")
+                </span>
+                <span class="heading">
+                    2. Quote & Approval <span class="text-primary">(@QuotationCount)</span>
+                </span>
+                <span class="subheading">
+                    Quotation
+                </span>
+            </div>
+            @if (QuotationCount > 0)
+            {
+                <i class="ki-solid ki-check-circle"></i>
+            }
+        </a>
+        @if (IsConfirmed <= 0)
+        {
+            <a href="@(string.IsNullOrEmpty(bookinguuid) || ContainerStepCount == 0 ? "javascript:void(0);" : Url.Action("AllocationDecider", "Reserve", new { refid = Model }))" class="tabitem @step3class @(ViewBag.SubManu == "Allocation" ? "active" : "")">
+                <div class="content">
+                    <span class="finish">
+                        @Html.Raw(ContainerCount == AllocationCount && ContainerCount > 0 ? "Completed" : "Pending")
+                    </span>
+                    <span class="heading">
+                        3. Quantity Allocation
+                    </span>
+                    @if (ContainerStepCount == 0)
+                    {
+                        <span class="subheading">
+                            Allocation
+                        </span>
+                    }
+                    else if (ContainerCount == AllocationCount && ContainerCount > 0)
+                    {
+                        <span class="subheading">
+                            @AllocationCount Units allocated
+                        </span>
+                    }
+                    else
+                    {
+                        <div class="subheading">
+                            <div class="flex gap-2 items-center">
+                                <div class="progress @(ContainerCount == AllocationCount && ContainerCount > 0 ? "progress-success" : "progress-warning")">
+                                    <div class="progress-bar" style="width: @AllocationPercentage%"></div>
+                                </div>
+                                <span class="text-gray-700 font-semibold">@AllocationCount/@ContainerCount</span>
+                            </div>
+
+                        </div>
+                    }
+                </div>
+                @if (ContainerCount == AllocationCount && ContainerCount > 0)
+                {
+                    <i class="ki-solid ki-check-circle"></i>
+                }
+            </a>
+        }
+        <a href="@(string.IsNullOrEmpty(bookinguuid) || (ContainerCount == AllocationCount && ContainerCount > 0) || IsConfirmed>0 ? (IsConfirmed==0? Url.Action("ContainerSelection", "Reserve", new { refid = Model }): Url.Action("BookedContainers", "Reserve", new { refid = Model })) : "javascript:void(0);")" class="tabitem @step4class @(ViewBag.SubManu == "UnitSelection" ? "active" : "")">
+            <div class="content">
+                <span class="finish">
+                    @Html.Raw(ContainerCount == SelectionCount && ContainerCount > 0 ? "Completed" : "Pending")
+                </span>
+                @if (IsConfirmed == 0)
+                {
+                    <span class="heading">
+                        4. Unit Assignment
+                    </span>
+                }
+                else
+                {
+                    <span class="heading">
+                        3. Booked Containers
+                    </span>
+                }
+                @if (ContainerStepCount == 0)
+                {
+                    <span class="subheading">
+                        Selection
+                    </span>
+                }
+                else if (ContainerCount == SelectionCount && ContainerCount > 0)
+                {
+                    <span class="subheading">
+                        @SelectionCount Units Selected
+                    </span>
+                }
+                else
+                {
+                    <div class="subheading">
+                        <div class="flex gap-2 items-center">
+                            <div class="progress @(ContainerCount == SelectionCount && ContainerCount > 0?"progress-success":"progress-warning")">
+                                <div class="progress-bar" style="width: @SelectionPercentage%"></div>
+                            </div>
+                            <span class="text-gray-700 font-semibold">@SelectionCount/@ContainerCount</span>
+                        </div>
+
+                    </div>
+                }
+            </div>
+            @if (ContainerCount == SelectionCount && ContainerCount > 0)
+            {
+                <i class="ki-solid ki-check-circle"></i>
+            }
+        </a>
+
+
+    </div>
+</div>

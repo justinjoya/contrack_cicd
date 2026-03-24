@@ -1,0 +1,60 @@
+﻿@model Contrack.PricingTypeDTO
+<div class="modal" data-modal="true" data-modal-backdrop-static="true" data-modal-autofocus="true" id="ModalPricingType">
+    <div class="modal-content modal-center-y max-w-[600px] max-h-[95%]">
+        <div class="modal-header">
+            <h3 class="modal-title">
+                @if (Model.IsClone == 0)
+                {
+                    if (Model.TypeID.NumericValue == 0)
+                    {
+                        @Html.Raw("Add Transfer Type")
+                    }
+                    else
+                    {
+                        @Html.Raw("Edit Transfer Type")
+                    }
+                }
+                else
+                {
+                    @Html.Raw("Clone Transfer Type")
+                }
+            </h3>
+            <button class="btn btn-xs btn-icon btn-light" data-modal-dismiss="true">
+                <i class="ki-outline ki-cross"></i>
+            </button>
+        </div>
+        <div class="modal-body scrollable-y h-[300px] max-h-[95%]">
+
+            <form id="formPricingType">
+                @Html.HiddenFor(m => m.PricingUUID)
+                @Html.HiddenFor(m => m.TypeID.EncryptedValue)
+                @Html.HiddenFor(m => m.IsClone)
+
+                <div class="grid lg:grid-cols-1 items-stretch gap-5">
+
+
+                    <div class="flex flex-col items-baseline flex-wrap lg:flex-nowrap gap-1.5">
+                        <label class="form-label max-w-321 text-right">
+                            Transfer Type <span class="text-danger ps-2">*</span>
+                        </label>
+                        <div class="flex flex-col w-full">
+                            @Html.DropDownListFor(m => m.TransferType.EncryptedValue, new SelectList(ViewBag.TransferTypeDropdown, "Value", "Text", ""), new { @class = "form-control select2", @datarequired = "yes", @datarequired_message = "Please select Transfer Type" })
+                        </div>
+                    </div>
+
+                </div>
+            </form>
+            <!-- FORM END -->
+        </div>
+
+        <div class="modal-footer justify-between">
+            <span class="text-xs text-gray-600 italic">
+                <span class="text-danger">*</span> Required fields for template creation
+            </span>
+            <div class="flex gap-4">
+                <button class="btn btn-light" data-modal-dismiss="true">Close</button>
+                <button class="btn btn-primary" onclick="SavePricingType();">Save Transfer Type</button>
+            </div>
+        </div>
+    </div>
+</div>

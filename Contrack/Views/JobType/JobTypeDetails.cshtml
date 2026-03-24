@@ -1,0 +1,83 @@
+﻿@using Contrack
+@model Contrack.JobType
+@{
+    ViewBag.Title = Model.jobtype.jobtypename;
+    ViewBag.MainManu = "JobType";
+    ViewBag.SubManu = "JobTypeDetails";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="breadscrumb-holder">
+    <div class="container-fluid flex items-center justify-between flex-wrap gap-5">
+        <div class="flex flex-col justify-center items-start flex-wrap gap-1.5">
+            <h1 class="page-header">
+                @Html.Partial("_GoBack") @ViewBag.Title
+            </h1>
+        </div>
+        <div class="flex items-center flex-wrap gap-1.5 lg:gap-3.5">           
+            <button class="btn btn-md btn-primary" onclick="OpenJobTypeDetailModal('','@Model.jobtype.jobtypeid.EncryptedValue')">
+                <i class="ki-filled ki-plus"></i> Add Line Item
+            </button>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid">
+    <div class="grid">
+        <div class="card card-grid min-w-full">         
+            <div class="card-body p-0">
+                <div id="job-details-list-container" class="custom-dt">
+                    <div class="card-table scrollable-x-auto">
+                        <table class="table table-auto table-border align-middle text-sm" id="jobTypeDetailsTable">
+                            <thead class="text-gray-600 font-semibold bg-gray-100">
+                                <tr class="border-b-gray-200">
+                                    <th class="px-4 py-3">Description</th>
+                                    <th class="px-4 py-3 w-[150px] text-center">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody class="text-gray-700">
+                                @if (Model.jobtype.JobTypeDetails == null || !Model.jobtype.JobTypeDetails.Any())
+                                {
+                                    <tr id="no-details-row">
+                                        <td colspan="2" class="text-center text-gray-500 p-4">No details have been added for this job type.</td>
+                                    </tr>
+                                }
+                                else
+                                {
+                                    foreach (var item in Model.jobtype.JobTypeDetails)
+                                    {
+                                        <tr class="border-b-gray-200 hover:bg-gray-50" id="detail-row-@item.jobtypedetailid.EncryptedValue">
+                                            <td class="px-4 py-3 font-medium">@item.description</td>
+                                            <td class="px-4 py-3 text-center">
+                                                <a onclick="OpenJobTypeDetailModal('@item.jobtypedetailid.EncryptedValue', '@Model.jobtype.jobtypeid.EncryptedValue')"
+                                                   class="btn btn-sm btn-icon btn-clear btn-light"
+                                                   href="javascript:void(0);"
+                                                   title="Edit Detail">
+                                                    <i class="ki-filled ki-notepad-edit"></i>
+                                                </a>
+
+                                                <button type="button"
+                                                        class="btn btn-sm btn-icon btn-clear btn-light delete-detail-btn"
+                                                        data-refid="@item.jobtypedetailid.EncryptedValue"
+                                                        data-parent-refid="@Model.jobtype.jobtypeid.EncryptedValue"
+                                                        title="Delete Detail">
+                                                    <i class="ki-filled ki-trash"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="modalsection"></div>
+
+@section PageScripts {
+    <script src="~/js/Masters/job-type-details.js?v=1.0.3"></script>
+}

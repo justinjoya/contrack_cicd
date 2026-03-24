@@ -1,0 +1,59 @@
+﻿@model Contrack.VoyageExtention
+@using Contrack;
+
+
+<div class="modal" data-modal="true" data-modal-backdrop-static="true" data-modal-autofocus="true" id="ModalAddDepartured">
+    <div class="modal-content modal-center-y max-w-[600px] max-h-[95%]">
+        <div class="modal-header">
+            <h3 class="modal-title">
+                @{
+                        @Html.Raw("Mark As Departured")                   
+                }
+            </h3>
+
+            <button class="btn btn-xs btn-icon btn-light" data-modal-dismiss="true">
+                <i class="ki-outline ki-cross"></i>
+            </button>
+        </div>
+
+        <div class="modal-body scrollable-y">
+            <div class="model-req flex items-center grow rounded-xl border border-dashed gap-4 p-2 mb-3 border-primary bg-primary-light">
+                <i class="ki-outline ki-information-1 text-3xl text-primary"></i>
+                <div class="flex flex-col gap-0.5">
+                    <p class="text text-2sm font-normal">
+                        Fields marked with <span class="text-danger"> * </span> are mandatory.
+                    </p>
+                </div>
+            </div>
+
+            <form id="formDepature">
+                @Html.HiddenFor(m => m.VoyageExtendedDTO.VoyageDetails.VoyageDetailId.EncryptedValue)
+                @Html.HiddenFor(m => m.VoyageExtendedDTO.VoyageId.EncryptedValue)
+                <div class="grid lg:grid-cols-1 gap-5">
+                    <div class="flex flex-col1 items-baseline gap-1.5">
+                        <label class="form-label max-w-32">ATD </label>
+                        <div class="input-group w-full">
+                            @Html.TextBoxFor(m => m.VoyageExtendedDTO.VoyageDetails.ATD.Text, new { @class = "datetimepicker-here input", @placeholder = "dd/mm/yyyy hh:mm", @datarequired = "no", @datarequired_message = "Please enter ATA", @id = "ATA_Date", @data_provider = "flatpickr1" })
+                            <button type="button" id="btnTarget" class="btn btn-icon btn-outline btn-icon-lg btn-light">
+                                <i class="ki-filled ki-calendar-2"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="flex flex-col1 items-baseline gap-1.5">
+                        <label class="form-label max-w-32">Departure Captain</label>
+                        @Html.TextBoxFor(m => m.VoyageExtendedDTO.VoyageDetails.DepartureCaptain, new { @class = "input", @placeholder = "Enter Departure Captain" })
+                    </div>
+
+
+                </div>
+            </form>
+        </div>
+
+        <div class="modal-footer justify-end">
+            <div class="flex gap-4">
+                <button class="btn btn-light" data-modal-dismiss="true">Close</button>
+                <button type="button" class="btn btn-primary" onclick="SaveDepatured()">Save Voyage</button>
+            </div>
+        </div>
+    </div>
+</div>

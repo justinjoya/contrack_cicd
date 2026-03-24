@@ -1,0 +1,210 @@
+﻿@model Contrack.ContainerFilterPage
+@using Contrack;
+@{
+    ViewBag.Title = "Container List";
+    ViewBag.MainManu = "Container";
+    ViewBag.SubManu = "";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<link href="~/css/Container/container-list.css?v=2.0.1" rel="stylesheet" />
+<link href="~/css/Container/tracking.css?v=1.0.0" rel="stylesheet" />
+<div class="breadscrumb-holder">
+    <div class="container-fluid flex items-center justify-between flex-wrap gap-5">
+        <div class="flex flex-col justify-center items-start flex-wrap gap-1.5">
+            <h1 class="page-header">Containers</h1>
+            <div class="flex items-center gap-1 text-sm font-normal">
+                <span class="text-gray-700">Manage and track all containers across your fleet from one place.</span>
+            </div>
+        </div>
+        <div class="flex items-center flex-wrap gap-1.5 lg:gap-2">
+            <div class="">
+                <label class="input input-md">
+                    <i class="ki-filled ki-magnifier"></i>
+                    <input data-datatable-search="#TableContainers" placeholder="Search Equip No, Size, Model..." type="text" id="txtSearchDisplay" />
+                </label>
+            </div>
+            <button id="btnRecordMove" class="btn btn-md text-md btn-outline original btn-light" onclick="OpenBulkRecordMoveModal()" disabled>
+                <i class="ki-filled ki-route"></i>  Record Move
+            </button>
+            <button class="btn btn-md text-md btn-outline original btn-light dropdown-toggle" data-drawer-toggle="#drawer_filter">
+                <i class="ki-filled ki-setting-4"></i>
+                Filters
+                @{
+                    int count = Model.GetFilterCount();
+                    if (count > 0)
+                    {
+                        <span class="badge text-2xs badge-xs batch-new badge-primary">@count</span>
+                    }
+                }
+            </button>
+            @Html.Partial("_CustomizeColumn", 9)
+            <button class="btn btn-md btn-primary text-md" onclick="OpenContainerModal('')">
+                <i class="ki-filled ki-plus"></i> Add Container
+            </button>
+        </div>
+    </div>
+</div>
+@{
+    var ActiveTab = PageSessionManager.GetAttribute<int>(PageKeys.Container, "ActiveTab", 0);
+}
+<div class="container-fluid">
+    <div class="grid">
+        <div class="card-summary-flat">
+            <a data-tooltip='#tooltip_C_0' class="card-stat @(ActiveTab == 0 ? "active" : "")" href="@Url.Action("ListStatus", "Container", new { status = 0 })">
+                <span class="header">All Containers</span>
+                <span class="stat-count">@Common.FormatNumberInteger(Model.StatusCount.Sum(x => x.status_count))</span>
+                @Html.Partial("_ToolTip", new Tooltip() { ID = "tooltip_C_0", Message = "All Containers : " + Model.StatusCount.Sum(x => x.status_count) })
+            </a>
+            <a data-tooltip='#tooltip_C_1' class="card-stat @(ActiveTab == 1 ? "active" : "")" href="@Url.Action("ListStatus", "Container", new { status = 1 })">
+                <span class="header">Available</span>
+                <span class="stat-count">@Common.FormatNumberInteger(Model.StatusCount.Where(x => x.status_code == 1).Sum(x => x.status_count))</span>
+                @Html.Partial("_ToolTip", new Tooltip() { ID = "tooltip_C_1", Message = "Available : " + Model.StatusCount.Where(x => x.status_code == 1).Sum(x => x.status_count) })
+            </a>
+            @*<a data-tooltip='#tooltip_C_4' class="card-stat @(ActiveTab == 4 ? "active" : "")" href="@Url.Action("ListStatus", "Container", new { status = 4 })">
+                <span class="header">Blocked</span>
+                <span class="stat-count">@Common.FormatNumberInteger(Model.StatusCount.Where(x => x.status_code == 4).Sum(x => x.status_count))</span>
+                @Html.Partial("_ToolTip", new Tooltip() { ID = "tooltip_C_4", Message = "Blocked : " + Model.StatusCount.Where(x => x.status_code == 4).Sum(x => x.status_count) })
+            </a>*@
+            <a data-tooltip='#tooltip_C_2' class="card-stat @(ActiveTab == 2 ? "active" : "")" href="@Url.Action("ListStatus", "Container", new { status = 2 })">
+                <span class="header">Booked</span>
+                <span class="stat-count">@Common.FormatNumberInteger(Model.StatusCount.Where(x => x.status_code == 2).Sum(x => x.status_count))</span>
+                @Html.Partial("_ToolTip", new Tooltip() { ID = "tooltip_C_2", Message = "Booked : " + Model.StatusCount.Where(x => x.status_code == 2).Sum(x => x.status_count) })
+            </a>
+            <a data-tooltip='#tooltip_C_3' class="card-stat @(ActiveTab == 3 ? "active" : "")" href="@Url.Action("ListStatus", "Container", new { status = 3 })">
+                <span class="header">Damaged</span>
+                <span class="stat-count">@Common.FormatNumberInteger(Model.StatusCount.Where(x => x.status_code == 3).Sum(x => x.status_count))</span>
+                @Html.Partial("_ToolTip", new Tooltip() { ID = "tooltip_C_3", Message = "Damaged : " + Model.StatusCount.Where(x => x.status_code == 3).Sum(x => x.status_count) })
+            </a>
+        </div>
+        <div class="card card-grid min-w-full">
+            <div class="card-body carddatatable">
+                <div id="TableContainers" class="custom-dt norightborder1">
+                    <div class="scrollable-x-auto">
+                        <table class="table table-auto table-border align-middle text-gray-700 font-medium text-sm" data-datatable-table="true">
+                            <thead>
+                                <tr>
+                                    <th class="w-[50px] text-center" data-datatable-column="checkbox">
+                                        <input class="checkbox checkbox-sm checkall" type="checkbox">
+                                    </th>
+                                    <th class="min-w-[150px]" data-datatable-column="equipmentno">Equipment No</th>
+                                    <th class="w-[50px] text-center"><img src="~/assets/img/explaim.svg" class="listdamage" /></th>
+                                    <th class="w-[50px] text-center"><i class="text-xl ki-filled ki-cube-2"></i></th>
+                                    <th class="w-[50px] text-center">
+                                        <span class="booked-circle"></span>
+                                    </th>
+                                    <th class="min-w-[140px]" data-datatable-column="model">Model</th>
+                                    <th class="min-w-[180px]" data-datatable-column="location">Location</th>
+                                    <th class="min-w-[180px] text-center1" data-datatable-column="booking">Booking</th>
+                                    <th class="text-center1" data-datatable-column="route">POL / POD</th>
+                                    <th class="min-w-[180px]" data-datatable-column="activity">Last Move</th>
+                                    <th class="w-[100px] text-center" data-datatable-column="action">Action</th>
+                                </tr>
+                            </thead>
+                        </table>
+                    </div>
+                    <div class="card-footer justify-center md:justify-between flex-col md:flex-row gap-3 text-gray-600 text-2sm font-medium">
+                        <div class="flex items-center gap-2">Show <select class="select select-sm w-16" data-datatable-size="true" name="perpage"></select> per page</div>
+                        <div class="flex items-center gap-4"><span data-datatable-info="true"></span><div class="pagination" data-datatable-pagination="true"></div></div>
+                    </div>
+                </div>
+            </div>
+            <div class="emptydatatable hidden">
+                @Html.Partial("_EmptyTable", new EmptyTable()
+               {
+                   Heading = "No Container found",
+                   SubHead = "Try adjusting your search or add a new container to get started",
+                   Icon = "<img src='/assets/img/container-empty.svg'/>",
+
+               })
+            </div>
+        </div>
+    </div>
+</div>
+@using (Html.BeginForm("List", "Container", FormMethod.Post, new { @id = "frmContainerList" }))
+{
+    <div class="drawer drawer-end flex flex-col h-full filter-width" data-drawer="true" id="drawer_filter">
+        <div class="flex items-center justify-between p-5 border-b">
+            <h3 class="text-base font-semibold text-gray-900">Filters</h3>
+            <button type="button" class="btn btn-xs btn-icon btn-light" data-drawer-dismiss="true"><i class="ki-outline ki-cross"></i></button>
+        </div>
+
+        <div class="scrollable-y flex-grow py-5 px-5">
+            <div class="grid lg:grid-cols-2 gap-5">
+                <div class="w-full lg:col-span-2">
+                    <div class="flex flex-col items-baseline flex-wrap lg:flex-nowrap gap-2.5">
+                        <label class="form-label flex items-center gap-1 max-w-56">Container Type</label>
+                        <div class="input-group w-full">
+                            @Html.DropDownListFor(m => m.filters.containertype_encry, new SelectList(ViewBag.ContainerTypes, "Value", "Text"), new { @class = "form-control select2", @style = "width:100%;" })
+                        </div>
+                    </div>
+                </div>
+                <div class="w-full lg:col-span-2">
+                    <div class="flex flex-col items-baseline flex-wrap lg:flex-nowrap gap-2.5">
+                        <label class="form-label flex items-center gap-1 max-w-56">Size</label>
+                        <div class="input-group w-full">
+                            @Html.DropDownListFor(m => m.filters.containersize_encry, new SelectList(ViewBag.ContainerSizes, "Value", "Text"), new { @class = "form-control select2", @style = "width:100%;" })
+                        </div>
+                    </div>
+                </div>
+
+                <div class="w-full lg:col-span-2">
+                    <div class="flex flex-col items-baseline flex-wrap lg:flex-nowrap gap-2.5">
+                        <label class="form-label flex items-center gap-1 max-w-56">Container Model</label>
+                        <div class="input-group w-full">
+                            @Html.DropDownListFor(m => m.filters.containermodel_encry, new SelectList(ViewBag.ContainerModels, "Value", "Text"), new { @class = "form-control select2", @style = "width:100%;" })
+                        </div>
+                    </div>
+                </div>
+
+                <div class="w-full lg:col-span-2">
+                    <div class="flex flex-col items-baseline flex-wrap lg:flex-nowrap gap-2.5">
+                        <label class="form-label flex items-center gap-1 max-w-56">Location</label>
+                        <div class="input-group w-full">
+                            @Html.DropDownListFor(m => m.filters.location_encry, new SelectList(ViewBag.Locations, "Value", "Text"), new { @class = "form-control select2", @style = "width:100%;" })
+                        </div>
+                    </div>
+                </div>
+                <div class="w-full lg:col-span-2">
+                    <div class="flex flex-col items-baseline flex-wrap lg:flex-nowrap gap-2.5">
+                        <label class="form-label flex items-center gap-1 max-w-56">POL</label>
+                        <div class="input-group w-full">
+                            @Html.DropDownListFor(m => m.filters.pol_encry, new SelectList(ViewBag.Ports, "Value", "Text"), new { @class = "form-control select2", @style = "width:100%;" })
+                        </div>
+                    </div>
+                </div>
+                <div class="w-full lg:col-span-2">
+                    <div class="flex flex-col items-baseline flex-wrap lg:flex-nowrap gap-2.5">
+                        <label class="form-label flex items-center gap-1 max-w-56">POD</label>
+                        <div class="input-group w-full">
+                            @Html.DropDownListFor(m => m.filters.pod_encry, new SelectList(ViewBag.Ports, "Value", "Text"), new { @class = "form-control select2", @style = "width:100%;" })
+                        </div>
+                    </div>
+                </div>
+
+                <div class="w-full lg:col-span-2">
+                    <div class="flex flex-col items-baseline flex-wrap lg:flex-nowrap gap-2.5">
+                        <label class="form-label flex items-center gap-1 max-w-56">Status</label>
+                        <div class="input-group w-full">
+                            @Html.DropDownListFor(m => m.filters.status, new SelectList(ViewBag.StatusDropdown, "Value", "Text"), "- All Statuses -", new { @id = "ddlStatus", @class = "form-control select2", @style = "width:100%;" })
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="flex justify-between items-center p-5 border-t mt-auto">
+            <button type="button" class="btn btn-light" data-drawer-dismiss="true">Close</button>
+            <div class="flex gap-2">
+                <button type="submit" name="action" value="Reset" class="btn btn-light">Reset Filter</button>
+                <button type="submit" name="action" value="filter" class="btn btn-dark">Apply Filter</button>
+            </div>
+        </div>
+    </div>
+}
+<div id="modalsection"></div>
+@section PageScripts {
+    <script src="~/js/Tracking/tracking.js?v=1.0.0"></script>
+    <script src="~/js/voyageselect2.js"></script>
+    <script src="~/js/Masters/container.js?v=3.0.10"></script>
+    <script src="~/js/customizecolumn.js?v=1.0.0"></script>
+}

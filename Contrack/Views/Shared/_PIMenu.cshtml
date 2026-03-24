@@ -1,0 +1,93 @@
+﻿@using Contrack
+@model Contrack.PurchaseIntentDTO
+<div class="mb-5">
+    <!-- Container -->
+    <div class="container-fluid flex items-center justify-between flex-wrap gap-5">
+        <div class="flex flex-col justify-center items-start flex-wrap gap-1">
+            <h1 class="font-medium text-lg text-gray-900 flex items-center gap-2">
+                @Html.Partial("_GoBack") <span>@Html.Raw(ViewBag.Title)</span>
+            </h1>
+            @*<div class="flex items-center gap-1 text-sm font-normal">
+                    <span class="text-gray-700">
+                        Order form for products or services with pricing and terms
+                    </span>
+                </div>*@
+        </div>
+
+    </div>
+    <!-- End of Container -->
+</div>
+@if (!string.IsNullOrEmpty(Model.PurchaseIntentUUIDID))
+{
+    // FIX: Accessing stats directly from the Model property populated by the Service
+    var rfqCount = Model.Stats.FirstOrDefault(x => x.document_type == "RFQ")?.count;
+    var compareCount = Model.Stats.FirstOrDefault(x => x.document_type == "Quote Comparison")?.count;
+    var quoteCount = Model.Stats.FirstOrDefault(x => x.document_type == "Quotation")?.count;
+    var poCount = Model.Stats.FirstOrDefault(x => x.document_type == "Purchase Order")?.count;
+    var viCount = Model.Stats.FirstOrDefault(x => x.document_type == "Vendor Invoice")?.count;
+
+    <div class="container-fluid w-full flex">
+        <div class="flex justify-between items-center gap-5 mb-4">
+            <div class="btn-tabs primary" data-tabs="true">
+                <a class="btn btn-md @(ViewBag.SubManu=="PIInfo"?"active":"")" href="@Url.Action("CreatePI", "Purchase", new { refid = Model.PurchaseIntentUUIDID })">
+                    Request Details
+                </a>
+                @*<a class="btn btn-md @(ViewBag.SubManu=="PILogs"?"active":"")" href="javascript:void(0);">
+                        Logs
+                    </a>*@
+                <a class="btn btn-md @(ViewBag.SubManu=="PIRFQs"?"active":"")" href="@Url.Action("PIRFQs", "Purchase", new { refid = Model.PurchaseIntentUUIDID })">
+                    RFQs
+                    @if (rfqCount != null && rfqCount > 0)
+                    {
+                        <span class="badge text-2xs badge-xs badge-pill1 badge-outline1 badge-primary">
+                            @rfqCount
+                        </span>
+                    }
+                </a>
+                <a class="btn btn-md @(ViewBag.SubManu=="QCompare"?"active":"")" href="@Url.Action("PIQuoteComparisons", "Purchase", new { refid = Model.PurchaseIntentUUIDID })">
+                    Comparison & Approvals
+                    @if (compareCount != null && compareCount > 0)
+                    {
+                        <span class="badge text-2xs badge-xs badge-pill1 badge-outline1 badge-primary">
+                            @compareCount
+                        </span>
+                    }
+                </a>
+                <a class="btn btn-md @(ViewBag.SubManu == "PIQuote" ? "active" : "")" href="@Url.Action("PIQuotes", "Quote", new { refid = Model.PurchaseIntentUUIDID })">
+                    Quotations
+                    @if (quoteCount != null && quoteCount > 0)
+                    {
+                        <span class="badge text-2xs badge-xs badge-pill1 badge-outline1 badge-primary">
+                            @quoteCount
+                        </span>
+                    }
+                </a>
+                <a class="btn btn-md @(ViewBag.SubManu == "PIPO" ? "active" : "")" href="@Url.Action("PIPOList", "PO", new { refid = Model.PurchaseIntentUUIDID })">
+                    POs
+                    @if (poCount != null && poCount > 0)
+                    {
+                        <span class="badge text-2xs badge-xs badge-pill1 badge-outline1 badge-primary">
+                            @poCount
+                        </span>
+                    }
+                </a>
+                <a class="btn btn-md @(ViewBag.SubManu == "PIVendorInvoice" ? "active" : "")" href="@Url.Action("PIVIList", "VendorInvoice", new { refid = Model.PurchaseIntentUUIDID })">
+                    Vendor Invoices
+                    @if (viCount != null && viCount > 0)
+                    {
+                        <span class="badge text-2xs badge-xs badge-pill1 badge-outline1 badge-primary">
+                            @viCount
+                        </span>
+                    }
+
+                </a>
+                <a class="btn btn-md @(ViewBag.SubManu == "PIInvoice" ? "active" : "")" href="@Url.Action("PIInvoiceList", "Invoice", new { refid = Model.PurchaseIntentUUIDID })">
+                    Invoice
+                </a>
+            </div>
+            @*<div class="text-end">
+                    Purchase Order
+                </div>*@
+        </div>
+    </div>
+}

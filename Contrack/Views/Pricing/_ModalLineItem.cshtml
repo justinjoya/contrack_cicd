@@ -1,0 +1,103 @@
+﻿@model Contrack.PricingDetailDTO
+<div class="modal" data-modal="true" data-modal-backdrop-static="true" data-modal-autofocus="true" id="ModalPricingDetail">
+    <div class="modal-content modal-center-y max-w-[600px] max-h-[95%]">
+        <div class="modal-header">
+            <h3 class="modal-title">
+                @if (Model.DetailID.NumericValue == 0)
+                {
+                    @Html.Raw("Add Line Item")
+                }
+                else
+                {
+                    @Html.Raw("Edit Line Item")
+                }
+            </h3>
+            <button class="btn btn-xs btn-icon btn-light" data-modal-dismiss="true">
+                <i class="ki-outline ki-cross"></i>
+            </button>
+        </div>
+        <div class="modal-body scrollable-y h-[300px] max-h-[95%]">
+
+            <form id="formPricingDetail">
+                @Html.HiddenFor(m => m.TypeID.EncryptedValue)
+                @Html.HiddenFor(m => m.DetailID.EncryptedValue)
+
+                <div class="grid lg:grid-cols-1 items-stretch gap-5">
+
+                    <div class="flex flex-col items-baseline flex-wrap lg:flex-nowrap gap-1.5">
+                        <label class="form-label max-w-321 text-right">
+                            Container Type<span class="text-danger ps-2">*</span>
+                        </label>
+                        <div class="flex flex-col w-full">
+                            @Html.DropDownListFor(m => m.TypeSizeCombinedValue, new SelectList(ViewBag.ContainerTypeSizeDropdown, "Value", "Text", ""), new { @id = "ddlTypeSizeCombinedValue", @class = "form-control select2", @datarequired = "no", @datarequired_message = "Please select Container Type" })
+                        </div>
+                    </div>
+                    <div class="flex flex-col items-baseline flex-wrap lg:flex-nowrap gap-1.5">
+                        <label class="form-label max-w-321 text-right">
+                            Empty/Full<span class="text-danger ps-2">*</span>
+                        </label>
+                        <div class="flex flex-col w-full">
+                            @Html.DropDownListFor(m => m.FullEmpty, new SelectList(ViewBag.FullEmptyDropdown, "Value", "Text", ""), new { @id = "ddlFullEmpty", @class = "form-control select2", @datarequired = "yes", @datarequired_message = "Please select Empty/Full" })
+                        </div>
+                    </div>
+                    <div class="flex flex-col items-baseline flex-wrap lg:flex-nowrap gap-1.5">
+                        <label class="form-label max-w-321 text-right">
+                            Line Item <span class="text-danger ps-2">*</span>
+                        </label>
+                        <div class="flex flex-col w-full">
+                            @Html.DropDownListFor(m => m.LineItemUUID, new SelectList(ViewBag.JobTypeDetailDropdown, "Value", "Text", ""), new { @id = "ddlLineItemUUID", @class = "form-control select2", @datarequired = "yes", @datarequired_message = "Please select Line Item" })
+                        </div>
+                    </div>
+                    <div class="flex justify-between gap-3">
+                        <div class="w-full flex flex-col items-baseline flex-wrap lg:flex-nowrap gap-1.5">
+                            <label class="form-label max-w-321 text-right">
+                                UOM <span class="text-danger ps-2">*</span>
+                            </label>
+                            <div class="flex flex-col w-full">
+                                @Html.DropDownListFor(m => m.UOM, new SelectList(ViewBag.UOMDropdown, "Value", "Text", ""), new { @class = "form-control select2", @datarequired = "yes", @datarequired_message = "Please select UOM" })
+                            </div>
+                        </div>
+                        <div class="w-full flex flex-col items-baseline flex-wrap lg:flex-nowrap gap-1.5">
+                            <label class="form-label max-w-321 text-right">
+                                Amount <span class="text-danger ps-2">*</span>
+                            </label>
+                            <div class="flex flex-col w-full">
+                                @Html.TextBoxFor(m => m.Amount, new { @id = "ddlAmount", @class = "input", @datatype = "decimal", @placeholder = "0.00", @datarequired = "yes", @datarequired_message = "Please enter Amount" })
+                            </div>
+                        </div>
+                    </div>
+                    <div class="w-full flex flex-col items-baseline flex-wrap lg:flex-nowrap gap-1.5">
+                        <label class="form-label max-w-321 text-right">
+                            Comments
+                        </label>
+                        <div class="flex flex-col w-full">
+                            @Html.TextAreaFor(m => m.Comments, new { @class = "textarea", @datatype = "decimal", @rows = 4, @placeholder = "", @datarequired = "no", @datarequired_message = "Please enter Comments" })
+                        </div>
+                    </div>
+                    <div class="flex flex-col1 items-baseline flex-wrap lg:flex-nowrap gap-1.5">
+
+                        <label class="switch">
+                            @Html.CheckBoxFor(m => m.IsFrightCharges)
+                            <span class="switch-label">
+                                Is this Fright Charge?
+                            </span>
+                        </label>
+                    </div>
+
+
+                </div>
+            </form>
+            <!-- FORM END -->
+        </div>
+
+        <div class="modal-footer justify-between">
+            <span class="text-xs text-gray-600 italic">
+                <span class="text-danger">*</span> Required fields for line item creation
+            </span>
+            <div class="flex gap-4">
+                <button class="btn btn-light" data-modal-dismiss="true">Close</button>
+                <button class="btn btn-primary" onclick="SavePricingDetail();">Save Line Item</button>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,83 @@
+﻿@using Contrack;
+@model ContainerBookingDTO
+<div class="card cardoverride overflow-hidden min-w-full">
+    <div class="card-header grey-small-header px-5 flex" id="basic_settings">
+        <h3 class="card-title text-md flex gap-3 align-items-center">
+            Booking Details
+        </h3>
+    </div>
+    <div class="card-body px-5 flex flex-col gap-4">
+        @*bg-border-greenshadow*@
+        <div class=" grid lg:grid-cols-5 gap-4">
+            <div class="w-full">
+                <div class="flex flex-col gap-0.5">
+                    <span class="text-xs font-normal text-gray-700">
+                        Company
+                    </span>
+                    <span data-tooltip='#tooltip_AgencyName' class="ellipsis-full text-sm font-medium text-gray-900 hover:text-primary-actives">
+                        @Model.customer.agencyname
+                    </span>
+                    @Html.Partial("_ToolTip", new Tooltip() { ID = "tooltip_AgencyName", Message = Model.customer.agencyname })
+                </div>
+            </div>
+
+            <div class="w-full">
+                <div class="flex flex-col gap-0.5">
+                    <span class="text-xs font-normal text-gray-700">
+                        Booking Number
+                    </span>
+                    <span class="text-md font-medium text-gray-900 text-primary hover:text-primary-actives">
+                        @Model.bookingno
+                    </span>
+
+                </div>
+            </div>
+            <div class="w-full">
+                <div class="flex flex-col gap-0.5">
+                    <span class="text-xs font-normal text-gray-700">
+                        Booking Created Date
+                    </span>
+                    <span class="text-md font-medium text-gray-900 hover:text-primary-actives">
+                        @Display.DisplayDateTimeHumanFriendly(Convert.ToDateTime(Model.customer.bookingdate))
+                    </span>
+                </div>
+            </div>
+
+            <div class="w-full">
+                <div class="flex flex-col gap-0.5">
+                    <span class="text-xs font-normal text-gray-700">
+                        Customer
+                    </span>
+                    <span data-tooltip='#tooltip_PortName' class="ellipsis-full text-md font-medium text-gray-900 hover:text-primary-actives">
+                        @Model.customer.client.clientname
+                    </span>
+                    @Html.Partial("_ToolTip", new Tooltip() { ID = "tooltip_PortName", Message = Model.customer.client.clientname })
+                </div>
+            </div>
+
+            <div class="w-full">
+                <div class="flex flex-col gap-0.5">
+                    <span class="text-xs font-normal text-gray-700">
+                        POL
+                    </span>
+                    <span data-tooltip='#tooltip_Requester' class="ellipsis-full text-md font-medium text-gray-900 hover:text-primary-actives">
+                        @Model.location.pol_portname
+                    </span>
+                    @Html.Partial("_ToolTip", new Tooltip() { ID = "tooltip_Requester", Message = Model.location.pol_portname })
+                </div>
+            </div>
+
+            <div class="w-full">
+                <div class="flex flex-col gap-0.5">
+                    <span class="text-xs font-normal text-gray-700">
+                        POD
+                    </span>
+                    <span data-tooltip='#tooltip_ClientName' class="ellipsis-full text-md font-medium text-gray-900 hover:text-primary-actives">
+                        @Model.location.pod_portname
+                    </span>
+                    @Html.Partial("_ToolTip", new Tooltip() { ID = "tooltip_ClientName", Message = Model.location.pod_portname })
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

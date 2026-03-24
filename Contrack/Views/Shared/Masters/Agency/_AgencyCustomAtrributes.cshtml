@@ -1,0 +1,51 @@
+﻿@using Contrack;
+@model Contrack.Agency
+@{
+    Model.agency.CustomAttributes = Model.agency.CustomAttributes.Where(x => !string.IsNullOrEmpty(x.KeyName)).ToList();
+    <div class="card-header p-3 flex items-between">
+        <div class="flex flex-col flex-center">
+            <h3 class="card-title">
+                Custom Fields
+            </h3>
+            @*<span class="text-2sm text-gray-600 leading-5">
+                    (Max. 10)
+                </span>*@
+        </div>
+
+        @if (Model.agency.CustomAttributes.Count < 10)
+        {
+            <button type="button" onclick="OpenAgencyCustomAttribute('');" class=" btn btn-xs btn-sm btn-outline btn-light">
+                <i class="ki-filled ki-plus">
+                </i>
+                Add Custom Field
+            </button>
+        }
+    </div>
+    <div class="card-body p-0">
+        <div class="card-table scrollable-x-auto pb-3">
+            <table class="table align-middle text-sm text-gray-500">
+                <tbody>
+                    @{
+                        if (Model.agency.CustomAttributes.Count > 0)
+                        {
+                            for (int i = 0; i < Model.agency.CustomAttributes.Count; i++)
+                            {
+                                <tr>
+                                    @Html.Raw(Common.DisplayInfoTableWithAddEditDelete(Model.agency.CustomAttributes[i].KeyName, Model.agency.CustomAttributes[i].KeyValue, "javascript:void(0);", "OpenAgencyCustomAttribute(\"" + Model.agency.CustomAttributes[i].UUID + "\");", "DeleteAgencyCustomAttribute(\"" + Model.agency.CustomAttributes[i].UUID + "\");", false))
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="3" style="padding-top:15px">
+                                    No custom fields added
+                                </td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+}

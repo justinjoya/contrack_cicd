@@ -1,0 +1,168 @@
+﻿@using Contrack;
+@{
+    ViewBag.Title = "Container Types";
+    ViewBag.MainManu = "Container";
+    ViewBag.SubManu = "";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<link href="~/css/Container/containertype.css?v=1.0.2" rel="stylesheet" />
+
+<div class="breadscrumb-holder">
+    <!-- Container -->
+    <div class="container-fluid flex items-center justify-between flex-wrap gap-5">
+        <div class="flex flex-col justify-center items-start flex-wrap gap-1.5">
+            <div class="flex items-center gap-1 text-sm font-normal">
+                <span class="text-gray-700">
+                    Home
+                </span>
+                <span class="text-gray-400 text-sm">
+                    /
+                </span>
+                <span class="text-gray-700">
+                    Container
+                </span>
+                <span class="text-gray-400 text-sm">
+                    /
+                </span>
+                <span class="text-gray-900">
+                    Container types
+                </span>
+            </div>
+            <h1 class="page-header">
+                Container types
+            </h1>
+
+        </div>
+        <div class="flex items-center flex-wrap gap-1.5 lg:gap-3.5">
+            <button class="btn btn-md btn-primary text-md" onclick="OpenAgencyModal('')">
+                <i class="ki-filled ki-plus">
+                </i>
+                Add Container type
+            </button>
+        </div>
+    </div>
+    <!-- End of Container -->
+</div>
+
+<!-- Container -->
+<div class="container-fluid">
+    <div class="grid">
+       
+        <div class="container-type-grid">
+            <div class="type-card flex flex-col">
+                <img src="~/assets/icons/container.svg" />
+                <div class="info flex flex-col">
+                    <span class="heading">Open top Container</span>
+                    <span class="subheading flex">
+                        <span>
+                            05 Models
+                        </span>
+                        <span class="badge badge-dot size-1 bg-gray-500">
+                        </span>
+                        <span>
+                            23 Containers
+                        </span>
+                    </span>
+                </div>
+            </div>
+
+            <div class="type-card flex flex-col">
+                <img src="~/assets/icons/container.svg" />
+                <div class="info flex flex-col">
+                    <span class="heading">Flat rack container</span>
+                    <span class="subheading flex">
+                        <span>
+                            05 Models
+                        </span>
+                        <span class="badge badge-dot size-1 bg-gray-500">
+                        </span>
+                        <span>
+                            23 Containers
+                        </span>
+                    </span>
+                </div>
+            </div>
+
+            <div class="type-card flex flex-col">
+                <img src="~/assets/icons/container.svg" />
+                <div class="info flex flex-col">
+                    <span class="heading">Tank container</span>
+                    <span class="subheading flex">
+                        <span>
+                            05 Models
+                        </span>
+                        <span class="badge badge-dot size-1 bg-gray-500">
+                        </span>
+                        <span>
+                            23 Containers
+                        </span>
+                    </span>
+                </div>
+            </div>
+
+            <div class="type-card flex flex-col">
+                <img src="~/assets/icons/container.svg" />
+                <div class="info flex flex-col">
+                    <span class="heading">Half height container</span>
+                    <span class="subheading flex">
+                        <span>
+                            05 Models
+                        </span>
+                        <span class="badge badge-dot size-1 bg-gray-500">
+                        </span>
+                        <span>
+                            23 Containers
+                        </span>
+                    </span>
+                </div>
+            </div>
+
+            <div class="type-card flex flex-col">
+                <img src="~/assets/icons/container.svg" />
+                <div class="info flex flex-col">
+                    <span class="heading">
+                        Open side storage container
+                    </span>
+                    <span class="subheading flex">
+                        <span>
+                            05 Models
+                        </span>
+                        <span class="badge badge-dot size-1 bg-gray-500">
+                        </span>
+                        <span>
+                            23 Containers
+                        </span>
+                    </span>
+                </div>
+            </div>
+            <div class="type-card flex flex-col">
+                <img src="~/assets/icons/container.svg" />
+                <div class="info flex flex-col">
+                    <span class="heading">
+                        Refrigirated  ISO container
+                    </span>
+                    <span class="subheading flex">
+                        <span>
+                            05 Models
+                        </span>
+                        <span class="badge badge-dot size-1 bg-gray-500">
+                        </span>
+                        <span>
+                            23 Containers
+                        </span>
+                    </span>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+<div id="modalsection">
+</div>
+
+@section PageScripts
+{
+    @*<script src="~/js/Masters/agency.js?v=1.0.3">
+        </script>*@
+}
+

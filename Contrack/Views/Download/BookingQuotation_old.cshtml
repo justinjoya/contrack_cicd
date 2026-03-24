@@ -1,0 +1,320 @@
+﻿@using Contrack
+@using System.Globalization
+@model QuotationWrapper
+
+@{
+    decimal subtotal = 0;
+    var currency = Model.Quotation.quotation.currency;
+}
+
+<!DOCTYPE html>
+<html class="light" lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Structured Information Quote</title>
+
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#197fe6",
+                        "background-light": "#f6f7f8",
+                        "background-dark": "#111921",
+                        "quote-accent": "#f3f4f6",
+                    },
+                    fontFamily: {
+                        "sans": ["Inter", "ui-sans-serif", "system-ui"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem"
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style type="text/tailwindcss">
+        @@layer base {
+            html {
+                font-family: "Inter", sans-serif;
+            }
+
+            body {
+                font-family: "Inter", sans-serif;
+                @@apply bg-background-light dark:bg-background-dark text-[#111418] dark:text-white transition-colors duration-200;
+            }
+        }
+
+        @@media print {
+            .no-print {
+                display: none !important;
+            }
+
+            .print-shadow-none {
+                box-shadow: none !important;
+            }
+
+            body {
+                background-color: white !important;
+            }
+
+            .layout-container {
+                padding: 0 !important;
+            }
+
+            .bg-quote-accent {
+                background-color: #f3f4f6 !important;
+            }
+        }
+
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+</head>
+
+<body class="font-sans">
+
+    <main class="layout-container flex flex-col items-center py-8 px-4">
+        <div class="w-full max-w-5xl bg-white dark:bg-[#1c2632] shadow-xl rounded-xl overflow-hidden border border-[#dce0e5] dark:border-[#343d48]">
+            <div class="h-1.5 w-full bg-primary"></div>
+            <div class="p-8 md:p-12">
+                <div class="flex flex-col md:flex-row justify-between items-start gap-8 mb-10">
+                    <div class="flex flex-col gap-6 w-full md:w-auto">
+                        <div class="flex flex-col gap-2">
+                            <div class="flex items-center gap-3">
+                                <p class="text-2xl font-extrabold leading-tight tracking-tight text-[#111418] dark:text-white">
+                                    Quote #@Model.Quotation.quotation.quotationno
+                                </p>
+                            </div>
+                            <p class="text-[#637588] dark:text-[#a0acb9] text-base">
+                                Issued on @Display.DisplayDateHumanFriendly(Convert.ToDateTime(Model.Quotation.quotation.quotedate.DBFormattedText))
+                                |
+                                <span class="font-semibold text-primary">
+                                    Valid until @Display.DisplayDateHumanFriendly(Convert.ToDateTime(Model.Quotation.quotation.expirydate.DBFormattedText))
+                                </span>
+                            </p>
+                        </div>
+                        <!--<div class="bg-quote-accent dark:bg-[#252f3a] p-6 rounded-xl border border-[#e5e7eb] dark:border-[#343d48] max-w-md w-full shadow-sm">
+                        <h2 class="text-[11px] font-black uppercase tracking-[0.2em] text-primary mb-4">
+                            Quoted To
+                        </h2>-->
+                        @*<p class="text-xl font-extrabold text-[#111418] dark:text-white leading-tight">
+                                @Model.Booking.booking.customer.client.clientname
+                            </p>*@
+                        @*<p class="text-sm text-[#4b5563] dark:text-[#a0acb9] leading-relaxed">*@
+                        <!--<div class="flex gap-3">-->
+                        @*     <span class="material-symbols-outlined text-[18px] text-[#637588] dark:text-[#a0acb9] mt-0.5">location_on</span>*@
+                        <!--<p class="text-sm text-[#4b5563] dark:text-[#a0acb9] leading-relaxed">-->
+                        @*@Html.Raw(Model.Quotation.quotation.billto.Replace("\n", "<br/>"))*@
+                        <!--</p>
+                            </div>
+                        </div>-->
+                        <div class="bg-quote-accent dark:bg-[#252f3a] p-6 rounded-xl border border-[#e5e7eb] dark:border-[#343d48] max-w-md w-full shadow-sm">
+                            <h2 class="text-[11px] font-black uppercase tracking-[0.2em] text-primary mb-4">
+                                Quoted To
+                            </h2>
+                            @{
+                                var billTo = Model.Quotation.quotation.billto ?? "";
+                                var billToLines = billTo.Split(new[] { '\n' }, StringSplitOptions.RemoveEmptyEntries);
+                                var companyName = billToLines.Length > 0 ? billToLines[0] : "";
+                                var address = billToLines.Length > 1
+                                    ? string.Join("\n", billToLines.Skip(1))
+                                    : "";
+                            }
+                            <p class="text-lg font-bold text-[#111418] dark:text-white">
+                            <p class="text-xl font-extrabold text-[#111418] dark:text-white leading-tight mb-2">
+                                @companyName
+                            </p>
+                            @if (!string.IsNullOrWhiteSpace(address))
+                            {
+                                <div class="flex gap-3">
+                                    <span class="material-symbols-outlined text-[18px] text-[#637588] dark:text-[#a0acb9] mt-0.5">
+                                        location_on
+                                    </span>
+                                    <p class="text-sm text-[#4b5563] dark:text-[#a0acb9] leading-relaxed">
+                                        @Html.Raw(address.Replace("\n", "<br/>"))
+                                    </p>
+                                </div>
+                            }
+                        </div>
+
+                    </div>
+                    <div class="text-left md:text-right">
+                        <div class="text-2xl font-black text-primary mb-2">
+                            @Model.Booking.booking.customer.client.agency.agencyname
+                        </div>
+                        <p class="text-sm text-[#637588] dark:text-[#a0acb9] leading-relaxed">
+                            @Html.Raw(Model.Booking.booking.customer.client.agency.address.Replace("\n", "<br/>"))
+                            <br />
+                            <span class="font-medium text-[#111418] dark:text-white">
+                                @Model.Booking.booking.customer.client.agency.email
+                            </span>
+                        </p>
+                    </div>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-0 border-y border-[#dce0e5] dark:border-[#343d48] mb-10">
+                    <div class="flex flex-col gap-1 py-8 md:pr-8 border-b md:border-b-0 md:border-r border-[#dce0e5] dark:border-[#343d48]">
+                        <p class="text-xs font-extrabold uppercase tracking-widest text-[#637588] dark:text-[#a0acb9] mb-3">
+                            Shipper / Exporter
+                        </p>
+                        <p class="text-lg font-bold text-[#111418] dark:text-white">
+                            @Model.Booking.booking.location.shippername
+                        </p>
+                        <p class="text-sm text-[#637588] dark:text-[#a0acb9] leading-relaxed">
+                            @Html.Raw(Model.Booking.booking.location.shipperaddress.Replace("\n", "<br/>"))
+                            <br />
+                            Attn: @Model.Booking.booking.location.shipperphone
+                        </p>
+                    </div>
+                    <div class="flex flex-col gap-1 py-8 md:pl-8">
+                        <p class="text-xs font-extrabold uppercase tracking-widest text-[#637588] dark:text-[#a0acb9] mb-3">
+                            Consignee / Importer
+                        </p>
+                        <p class="text-lg font-bold text-[#111418] dark:text-white">
+                            @Model.Booking.booking.location.consigneename
+                        </p>
+                        <p class="text-sm text-[#637588] dark:text-[#a0acb9] leading-relaxed">
+                            @Html.Raw(Model.Booking.booking.location.consigneeaddress.Replace("\n", "<br/>"))
+                            <br />
+                            Attn: @Model.Booking.booking.location.consigneephone
+                        </p>
+                    </div>
+                </div>
+                <div class="mb-10">
+                    <h2 class="text-sm font-extrabold uppercase tracking-[0.2em] text-primary mb-5 flex items-center gap-2">
+                        <span class="w-8 h-[1px] bg-primary/30"></span>
+                        Shipping Details
+                    </h2>
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-x-8 gap-y-6 p-8 bg-background-light dark:bg-[#111921] rounded-xl border border-[#dce0e5] dark:border-[#343d48]">
+                        <div>
+                            <p class="text-[11px] text-[#637588] dark:text-[#a0acb9] font-bold uppercase tracking-wider mb-1.5">
+                                Vessel / Voyage
+                            </p>
+                            <p class="text-sm font-bold text-[#111418] dark:text-white">
+                                @Model.Booking.booking.location.voyageuuid
+                            </p>
+                        </div>
+                        <div>
+                            <p class="text-[11px] text-[#637588] dark:text-[#a0acb9] font-bold uppercase tracking-wider mb-1.5">
+                                Port of Loading (POL)
+                            </p>
+                            <p class="text-sm font-bold text-[#111418] dark:text-white">
+                                @Model.Booking.booking.location.pol_portname
+                            </p>
+                        </div>
+                        <div>
+                            <p class="text-[11px] text-[#637588] dark:text-[#a0acb9] font-bold uppercase tracking-wider mb-1.5">
+                                Port of Discharge (POD)
+                            </p>
+                            <p class="text-sm font-bold text-[#111418] dark:text-white">
+                                @Model.Booking.booking.location.pod_portname
+                            </p>
+                        </div>
+                        <div>
+                            <p class="text-[11px] text-[#637588] dark:text-[#a0acb9] font-bold uppercase tracking-wider mb-1.5">ETD (Estimated Departure)</p>
+                            <p class="text-sm font-bold text-[#111418] dark:text-white">-</p>
+                        </div>
+                        <div>
+                            <p class="text-[11px] text-[#637588] dark:text-[#a0acb9] font-bold uppercase tracking-wider mb-1.5">ETA (Estimated Arrival)</p>
+                            <p class="text-sm font-bold text-[#111418] dark:text-white">-</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mb-10">
+                    <h2 class="text-sm font-extrabold uppercase tracking-[0.2em] text-primary mb-5 flex items-center gap-2">
+                        <span class="w-8 h-[1px] bg-primary/30"></span>
+                        Cost Breakdown
+                    </h2>
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="border-b-2 border-[#111418] dark:border-white">
+                                <th class="py-4 px-3 text-[11px] font-extrabold uppercase tracking-widest w-[55%]">
+                                    Description
+                                </th>
+                                <th class="py-4 px-3 text-[11px] font-extrabold uppercase tracking-widest text-center w-[10%]">
+                                    Qty
+                                </th>
+                                <th class="py-4 px-3 text-[11px] font-extrabold uppercase tracking-widest text-right w-[15%]">
+                                    Unit Price
+                                </th>
+                                <th class="py-4 px-3 text-[11px] font-extrabold uppercase tracking-widest text-right w-[20%]">
+                                    Amount
+                                </th>
+                            </tr>
+                        </thead>
+
+                        <tbody class="divide-y divide-[#f0f2f4] dark:divide-[#343d48]">
+                            @foreach (var item in Model.Quotation.quotation.details)
+                            {
+                                decimal unitPrice = item.amount;
+                                decimal rowAmount = item.qty * unitPrice;
+                                subtotal += rowAmount;
+
+                                <tr class="align-top">
+                                    <td class="py-5 px-3">
+                                        <p class="font-bold text-sm text-[#111418] dark:text-white">
+                                            @item.description
+                                        </p>
+
+                                        @if (!string.IsNullOrEmpty(item.remarks))
+                                        {
+                                            <p class="mt-1 text-xs text-[#637588] dark:text-[#a0acb9] leading-relaxed">
+                                                Remarks : @item.remarks
+                                            </p>
+                                        }
+                                    </td>
+                                    <td class="py-5 px-3 text-center text-sm font-medium">
+                                        @item.qty
+                                    </td>
+                                    <td class="py-5 px-3 text-right text-sm font-medium">
+                                        @currency @Display.DisplayCurrency(unitPrice)
+                                    </td>
+                                    <td class="py-5 px-3 text-right font-bold text-sm">
+                                        @currency @Display.DisplayCurrency(rowAmount)
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="flex flex-col items-end gap-2 mb-10">
+                    <div class="w-full md:w-1/3 flex justify-between px-3">
+                        <span class="text-[#637588] dark:text-[#a0acb9] text-sm font-medium">Subtotal</span>
+                        <span class="font-bold text-sm">@currency @Display.DisplayCurrency(subtotal)</span>
+                    </div>
+                    <div class="w-full md:w-2/5 mt-4 p-5 bg-primary/5 dark:bg-primary/10 rounded-xl flex justify-between items-center border border-primary/20">
+                        <span class="text-primary font-extrabold uppercase tracking-widest text-xs">Grand Total</span>
+                        <span class="text-3xl font-black text-primary">
+                            @currency @Display.DisplayCurrency(subtotal)
+                        </span>
+                    </div>
+                    <p class="text-[11px] text-[#637588] dark:text-[#a0acb9] mt-2 italic font-medium">
+                        Currency: @Model.Quotation.quotation.currency
+                    </p>
+                </div>
+                <div class="bg-background-light dark:bg-[#111921] p-8 rounded-xl border border-[#dce0e5] dark:border-[#343d48]">
+                    <h3 class="text-xs font-extrabold uppercase tracking-widest mb-4">
+                        Terms and Conditions
+                    </h3>
+                    <div class="text-xs leading-relaxed">
+                        @Html.Raw(Model.Quotation.quotation.termsandconditions)
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+</body>
+</html>

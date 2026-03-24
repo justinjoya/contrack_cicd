@@ -1,0 +1,100 @@
+﻿@using Contrack;
+@model Cabotage
+@{
+    ViewBag.Title = "Container List";
+    ViewBag.MainManu = "Booking";
+    ViewBag.SubManu = "Booking";
+    ViewBag.TabName = "Summary";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<link href="~/css/Booking/booking.css?v=1.0.2" rel="stylesheet" />
+<link href="~/css/Container/containerBooking.css?v=2.0.1" rel="stylesheet" />
+
+@Html.HiddenFor(m => m.booking.bookinguuid)
+<div class="container-fluid nobottom">
+    <div class="booking-section notopheader flex flex-col">
+        <div class="booking-info">
+            @*@Html.Partial("_Stepper", 4)*@
+            <div class="booking-max-width">
+                <div class="booking-content">
+                    <div class="page-header-holder">
+                        <span class="head">Shipment Confirmation</span>
+                        <span class="subhead">Download the shipment confirmation</span>
+                    </div>
+                    <div class="left-section">
+                        <div>
+                            <div class="folder-tab">
+                                <a style="min-width:245px;" href="@Url.Action("ShipmentConfirmation", "Booking", new { refid = Model.booking.bookinguuid})" class="tab-item z-10">
+                                    Shipment Confirmation
+                                </a>
+                                <a style="min-width:200px;" href="@Url.Action("CabotageHistory", "Booking", new { refid = Model.booking.bookinguuid})" class="tab-item active z-20">
+                                    Cabotage History
+                                </a>
+                            </div>
+                            <div class="card no-left-radius">
+
+                                <div class="card-table1 w-full">
+                                    <table class="table table-border" id="shipment_detail_table">
+                                        <thead>
+                                            <tr>
+
+                                                <th class="w-[50px] text-center !text-gray-700">
+                                                    S.No
+                                                </th>
+                                                <th class="text-start w-item !text-gray-700">
+                                                    Created Date
+                                                </th>
+                                                <th class="!text-gray-700">
+                                                    Created By
+                                                </th>
+                                                <th class="!text-gray-700">
+                                                    Container Count
+                                                </th>
+                                                <th class="!text-gray-700 text-center">
+                                                    Download
+                                                </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @for (int i = 0; i < Model.cabatages.Count; i++)
+                                            {
+                                                <tr>
+                                                    <td class="text-center">@(i+1)</td>
+                                                    <td class="text-gray-700">@Model.cabatages[i].createdat.Text</td>
+                                                    <td class="text-gray-700">@Model.cabatages[i].fullname</td>
+                                                    <td class="text-gray-700">@Model.cabatages[i].containercount Containers</td>
+                                                    <td class="text-center">
+                                                        <a target="_blank" class="text-primary" href="@Url.Action("PDFDownload","Download",new { refid = Model.cabatages[i].cabotageuuid,type="cabotage" })">Download</a>
+                                                    </td>
+                                                </tr>
+                                            }
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Persistent Booking Summary on the side -->
+        <div class="booking-summary">
+            <div class="summary-content" id="summarycard">
+                @Html.Partial("_SummaryFixed", new ContainerBooking()
+           {
+               booking = Model.booking,
+               voyage = Model.voyage
+           })
+            </div>
+
+        </div>
+    </div>
+</div>
+@section PageScripts
+{
+    <script src="~/js/ContainerBooking/shipmentconfirm.js">
+    </script>
+}
+
+
+

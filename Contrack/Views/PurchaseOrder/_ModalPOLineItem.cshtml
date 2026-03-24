@@ -1,0 +1,80 @@
+﻿@using Contrack
+@model Contrack.PurchaseOrderDetailDTO
+
+<div class="modal" data-modal="true" data-modal-backdrop-static="true" data-modal-autofocus="true" id="ModalPOLineItem">
+    <div class="modal-content modal-center-y max-w-[600px] max-h-[95%]">
+        <div class="modal-header">
+            <h3 class="modal-title">Add Line Item</h3>
+            <button class="btn btn-xs btn-icon btn-light" data-modal-dismiss="true"><i class="ki-outline ki-cross"></i></button>
+        </div>
+        <div class="modal-body scrollable-y">
+            <form id="formPOLineItem">
+                <div class="flex flex-col gap-5">
+                    @Html.HiddenFor(m => m.podetailuuid, new { id = "hdn_podetailuuid" })
+
+                    <div class="flex items-center gap-1.5">
+                        <label class="form-label w-[170px] shrink-0">Type <span class="text-danger ps-2">*</span></label>
+                        <div class="grid grid-cols-2 gap-5 w-full">
+                            <label class="form-label flex items-center gap-2.5 text-nowrap" onclick="ShowPOItemType('1');">
+                                <input class="radio" name="Type" type="radio" value="1" @(Model.Type == 1 ? "checked" : "")> Select Existing Item
+                            </label>
+                            <label class="form-label flex items-center gap-2.5 text-nowrap" onclick="ShowPOItemType('2');">
+                                <input class="radio" name="Type" type="radio" value="2" @(Model.Type == 2 ? "checked" : "")> Enter New Item
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="flex flex-col1 items-baseline flex-wrap lg:flex-nowrap gap-1.5 existing" style="@(Model.Type==1?"":"display:none")">
+                        <label class="form-label max-w-[170px]">Description <span class="text-danger ps-2">*</span></label>
+                        <div class="flex flex-col w-full">
+                            @Html.DropDownListFor(m => m.jobtypedetailuuid, new SelectList(ViewBag.JobTypeDetailDropdown, "Value", "Text", Model.jobtypedetailuuid), new { @id = "ddlJobTypeDetailUUID", @class = "form-control select2", @style = "width:100%;", @onchange = "FillDescription(this);" })
+                        </div>
+                    </div>
+
+                    <div class="flex flex-col1 items-baseline flex-wrap lg:flex-nowrap gap-1.5 newitem" style="@(Model.Type==2?"":"display:none")">
+                        <label class="form-label max-w-[170px]">Description <span class="text-danger ps-2">*</span></label>
+                        <div class="flex flex-col w-full">
+                            @Html.TextAreaFor(m => m.itemname, new { @rows = "4", @class = "textarea", @placeholder = "Enter Description", @id = "txt_Description" })
+                        </div>
+                    </div>
+
+                    <div class="flex flex-col1 items-baseline flex-wrap lg:flex-nowrap gap-1.5">
+                        <label class="form-label max-w-[170px]">Quantity <span class="text-danger ps-2">*</span></label>
+                        <div class="flex flex-col1 w-full gap-2.5 items-stretch justify-between">
+                            @Html.TextBoxFor(m => m.quantity, new { @class = "input text-end", @placeholder = "0.00", @datatype = "number", @id = "txt_Qty" })
+                            @Html.DropDownListFor(m => m.uom, new SelectList(Common.AlterUOM(ViewBag.UOMDropdown, Model.uom), "Value", "Text", Model.uom), new { @id = "ddlUOM", @class = "form-control select", @style = "width:100%;" })
+                        </div>
+                    </div>
+
+                    <div class="flex flex-col1 items-baseline flex-wrap lg:flex-nowrap gap-1.5">
+                        <label class="form-label max-w-[170px]">Amount <span class="text-danger ps-2">*</span></label>
+                        <div class="flex flex-col1 w-full gap-2.5 items-stretch justify-between">
+                            @Html.TextBoxFor(m => m.vendorprice, new { @class = "input text-end focus-input", @placeholder = "0.00", @datatype = "decimal", @id = "txt_Amount" })
+                        </div>
+                    </div>
+
+                    <div class="flex flex-col1 items-baseline flex-wrap lg:flex-nowrap gap-1.5">
+                        <label class="form-label max-w-[170px]">Tax</label>
+                        <div class="flex flex-col1 w-full input gap-2.5 items-stretch justify-between">
+                            @Html.TextBoxFor(m => m.tax, new { @class = "text-end focus-input border-none", @placeholder = "0.00", @datatype = "decimal", @id = "txt_Tax" }) %
+                        </div>
+                    </div>
+
+                    <div class="flex flex-col1 items-baseline flex-wrap lg:flex-nowrap gap-1.5">
+                        <label class="form-label max-w-[170px]">Remarks</label>
+                        <div class="flex flex-col w-full">
+                            @Html.TextAreaFor(m => m.remarks, new { @rows = "4", @class = "textarea", @placeholder = "Enter Remarks", @id = "txt_Remarks" })
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer justify-end">
+            <div class="flex gap-3">
+                <button type="button" class="btn btn-light" data-modal-dismiss="true">Close</button>
+                <button type="button" class="btn btn-outline btn-primary" onclick="SavePOLineItem(false);">Save & Close</button>
+                <button type="button" class="btn btn-primary" onclick="SavePOLineItem(true);">Save & Next <span class="py-1 badge badge-outline badge-secondary badge-sm"><kbd>Ctrl + S</kbd></span></button>
+            </div>
+        </div>
+    </div>
+</div>

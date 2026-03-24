@@ -1,0 +1,181 @@
+﻿@using Contrack;
+@model Contrack.Agency
+@{
+    ViewBag.Title = "Agency";
+    ViewBag.MainManu = "Agencies";
+    ViewBag.SubManu = "AgencyInfo";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<link href="~/css/master.css?v=1.0.1" rel="stylesheet" />
+
+<div class="mb-5 lg:mb-7.5">
+    <!-- Container -->
+    <div class="container-fluid flex items-center justify-between flex-wrap gap-5">
+        <div class="flex flex-col justify-center items-start flex-wrap gap-1 lg:gap-2">
+            <div class="flex items-center gap-1 text-sm font-normal">
+                <span class="text-gray-700">
+                    Masters
+                </span>
+                <span class="text-gray-400 text-sm">
+                    /
+                </span>
+                <a href="@Url.Action("List","Agency")" class="text-gray-700 hover:text-primary">
+                    Companies
+                </a>
+                <span class="text-gray-400 text-sm">
+                    /
+                </span>
+                <span class="text-gray-900">
+                    Company Info
+                </span>
+            </div>
+            <h1 class="font-medium text-lg text-gray-900 page-header">
+                @Html.Partial("_GoBack") Company Info
+            </h1>
+
+        </div>
+
+    </div>
+    <!-- End of Container -->
+</div>
+@if (Model.agency.agencyid.NumericValue == 0)
+{
+    @Html.Partial("~/Views/Shared/Masters/_MasterNotFound.cshtml", new NotFound()
+{
+    Message = "Agency not found",
+    ReturnURL = Url.Action("List", "Agency"),
+    ReturnButton = "Agencies"
+})
+}
+else
+{
+    <div class="container-fluid w-full flex px-0">
+        <!-- Content -->
+        <main class="flex flex-col grow" id="content" role="content">
+            <!-- Container -->
+            @Html.Partial("_AgencyInfoHeader", Model)
+
+            <div class="container-fluid">
+                <div class="flex items-center flex-wrap md:flex-nowrap lg:items-end justify-between border-b border-b-gray-200 dark:border-b-coal-100 gap-3 lg:gap-6 mb-5 lg:mb-5">
+                    @Html.Partial("_AgencyHeaderMenu", Model)
+
+                    <div class="flex items-center justify-end grow lg:grow-0 lg:pb-4 gap-2.5 mb-3 lg:mb-0">
+                        <a href="@Url.Action("List","Agency")" class="btn btn-xs btn-sm btn-light">
+                            <i class="ki-filled ki-arrow-left">
+                            </i>
+                            Back to Company List
+                        </a>
+                        @*@if (PagePermission.GetPermissions().Agency.edit)
+                            {*@
+                        <button class="dropdown-toggle btn btn-sm btn-primary" onclick="OpenAgencyModal('@Model.agency.uuid')">
+                            <i class="ki-filled ki-notepad-edit">
+                            </i>
+                            Edit Company
+                        </button>
+                        @*}*@
+                    </div>
+                </div>
+            </div>
+
+            <!-- End of Container -->
+            <!-- Container -->
+            <div class="container-fluid">
+                <!-- begin: grid -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-5 lg:gap-5">
+                    <div class="col-span-1">
+                        <div class="grid gap-5 lg:gap-5">
+                            <div class="card shadow-none1 min-w-full">
+                                <div class="card-header p-3">
+                                    <h3 class="card-title">
+                                        Agency Info
+                                    </h3>
+                                </div>
+                                <div class="card-body p-0">
+                                    <div class="card-table scrollable-x-auto pb-3">
+                                        <table class="table align-middle text-sm text-gray-500">
+                                            <tbody>
+
+                                                <tr>
+                                                    @Html.Raw(Common.DisplayInfoTableWithAddEdit("Name", Model.agency.agencyname, "javascript:void(0);", "OpenAgencyModal(\"" + Model.agency.uuid + "\");", false))
+                                                </tr>
+                                                <tr>
+                                                    @Html.Raw(Common.DisplayInfoTableWithAddEdit("Email", Model.agency.email.Replace(";", "<br/>"), "javascript:void(0);", "OpenAgencyModal(\"" + Model.agency.uuid + "\");", false))
+                                                </tr>
+                                                <tr>
+                                                    @Html.Raw(Common.DisplayInfoTableWithAddEdit("Accounts Email", Model.agency.accountsemail.Replace(";", "<br/>"), "javascript:void(0);", "OpenAgencyModal(\"" + Model.agency.uuid + "\");", false))
+                                                </tr>
+                                                @*<tr>
+                                                        <td class="py-3">Email</td>
+                                                        <td class="py-3 text-gray-700 text-sm font-medium">
+                                                            <div class="gap-1.5">
+                                                                <span class="badge badge-lg badge-outline badge-pill text-xs  badge-secondary mb-2 mr-2">
+                                                                    madhan3008@yahoo.com
+                                                                </span>
+                                                                <span class="badge badge-lg badge-outline badge-pill text-xs badge-secondary mb-2 mr-2">
+                                                                    madhan310318@gmail.com
+                                                                </span>
+                                                                <span class="badge badge-lg badge-outline badge-pill text-xs badge-secondary mb-2 mr-2">
+                                                                    testing@gmail.com
+                                                                </span>
+                                                                <span class="badge badge-lg badge-outline badge-pill text-xs badge-secondary mb-2 mr-2">
+                                                                    testing@gmail.com
+                                                                </span>
+                                                            </div>
+                                                        </td>
+                                                        <td class="py-3 text-right">
+                                                            @if (string.IsNullOrEmpty(Model.agency.email))
+                                                            {
+                                                                <a class='btn btn-link btn-sm' href="javascript:void(0);" onclick="OpenAgencyModal('@Model.agency.uuid');">Add</a>
+                                                            }
+                                                            else
+                                                            {
+                                                                <a class="btn btn-sm btn-icon btn-clear btn-primary" href="javascript:void(0);" onclick="OpenAgencyModal('@Model.agency.uuid');"><i class="ki-filled ki-notepad-edit"></i></a>
+                                                            }
+                                                        </td>
+                                                    </tr>*@
+                                                <tr>
+                                                    @Html.Raw(Common.DisplayInfoTableWithAddEdit("Phone", Model.agency.phone, "javascript:void(0);", "OpenAgencyModal(\"" + Model.agency.uuid + "\");", false))
+                                                </tr>
+                                                <tr>
+                                                    @Html.Raw(Common.DisplayInfoTableWithAddEdit("Website", string.IsNullOrEmpty(Model.agency.websites) ? "" : "<a class='text-primary' href='" + Model.agency.websites + "' target=\"_blank\">" + Model.agency.websites + "</a><i class='ki-filled ki-exit-right-corner mx-2'></i>", "javascript:void(0);", "OpenAgencyModal(\"" + Model.agency.uuid + "\");", false))
+                                                </tr>
+                                                @*<tr>
+                                                        @Html.Raw(Common.DisplayInfoTableWithAddEdit("IMO No", Model.agency.imono, "javascript:void(0);", "OpenAgencyModal(\"" + Model.agency.uuid + "\");"))
+                                                    </tr>*@
+                                                <tr>
+                                                    @Html.Raw(Common.DisplayInfoTableWithAddEdit("Address", Model.agency.address.Replace("\n", "<br/>"), "javascript:void(0);", "OpenAgencyModal(\"" + Model.agency.uuid + "\");", false))
+                                                </tr>
+                                                <tr>
+                                                    @Html.Raw(Common.DisplayInfoTableWithAddEdit("Billing Address", Model.agency.billingaddress.Replace("\n", "<br/>"), "javascript:void(0);", "OpenAgencyModal(\"" + Model.agency.uuid + "\");", false))
+                                                </tr>
+
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card shadow-none1 min-w-full" id="section_agency_customattribute">
+                                @Html.Partial("~/Views/Shared/Masters/Agency/_AgencyCustomAtrributes.cshtml", Model)
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="section_agency_bankaccount">
+                        @Html.Partial("~/Views/Shared/Masters/Agency/_AgencyBankAccounts.cshtml", Model)
+                    </div>
+                </div>
+                <!-- end: grid -->
+            </div>
+            <!-- End of Container -->
+
+        </main>
+        <!-- End of Content -->
+    </div>
+}
+
+<div id="modalsection">
+</div>
+@section PageScripts
+{
+    <script src="~/js/Masters/agency.js?v=1.0.3"></script>
+}

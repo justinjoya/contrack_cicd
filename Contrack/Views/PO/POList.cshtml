@@ -1,0 +1,232 @@
+﻿@model Contrack.PurchaseOrderFilterPage
+@using Contrack
+@{
+    ViewBag.Title = "PO List";
+    ViewBag.MainManu = "Purchase";
+    ViewBag.SubManu = "POList";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<link href="~/css/Container/container-list.css?v=2.0.1" rel="stylesheet" />
+
+<div class="breadscrumb-holder">
+    <div class="container-fluid flex items-center justify-between flex-wrap gap-5">
+        <div class="flex flex-col justify-center items-start flex-wrap gap-1.5">
+            <h1 class="page-header">Purchase Orders</h1>
+            <div class="flex items-center gap-1 text-sm font-normal">
+                <span class="text-gray-700">Manage and track all purchase orders from one place.</span>
+            </div>
+        </div>
+        <div class="flex items-center flex-wrap gap-1.5 lg:gap-2">
+            <div class="">
+                <label class="input input-md">
+                    <i class="ki-filled ki-magnifier"></i>
+                    <input data-datatable-search="#TablePurchaseOrderList" placeholder="Search PO No, Vendor..." type="text" id="txtSearchDisplay" />
+                </label>
+            </div>
+
+            @*<button form="frmPOList" class="btn btn-md text-md btn-outline original btn-light" type="submit" name="action" value="Download">
+                <i class="ki-filled ki-exit-down"></i> Download
+            </button>*@
+
+            <button class="btn btn-md text-md btn-outline original btn-light dropdown-toggle" data-drawer-toggle="#drawer_4" type="button">
+                <i class="ki-filled ki-setting-4"></i> Filters
+                @if (Model.GetFilterCount() > 0)
+                {
+                    <span class="badge text-2xs badge-xs batch-new badge-primary">@Model.GetFilterCount()</span>
+                }
+            </button>
+
+            @Html.Partial("_CustomizeColumn", 2)
+
+            <a href="@Url.Action("Create", "PO")" class="btn btn-md btn-primary text-md">
+                <i class="ki-filled ki-plus"></i> Add Direct PO
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid">
+    <div class="grid gap-5">
+
+        <div class="card-summary-flat">
+            <a data-tooltip='#tooltip_PO_0' class="card-stat @(Model.filters.statuslist.Count == 0 ? "active" : "")" href="@Url.Action("POListStatus", "PO", new { Status = 0 })">
+                <span class="header">All POs</span>
+                <span class="stat-count">@Common.FormatNumberInteger(Model.StatusCount.Sum(x => x.Count))</span>
+                @Html.Partial("_ToolTip", new Tooltip() { ID = "tooltip_PO_0", Message = "All POs : " + Model.StatusCount.Sum(x => x.Count) })
+            </a>
+            <a data-tooltip='#tooltip_PO_1' class="card-stat @(Model.filters.statuslist.Contains(POStatus.Draft) ? "active" : "")" href="@Url.Action("POListStatus", "PO", new { Status = POStatus.Draft })">
+                <span class="header">Draft</span>
+                <span class="stat-count">@Common.FormatNumberInteger(Model.StatusCount.Where(x => x.StatusID == POStatus.Draft).Sum(x => x.Count))</span>
+                @Html.Partial("_ToolTip", new Tooltip() { ID = "tooltip_PO_1", Message = "Draft : " + Model.StatusCount.Where(x => x.StatusID == POStatus.Draft).Sum(x => x.Count) })
+            </a>
+
+            <a data-tooltip='#tooltip_PO_2' class="card-stat @(Model.filters.statuslist.Contains(POStatus.Issued) ? "active" : "")" href="@Url.Action("POListStatus", "PO", new { Status = POStatus.Issued })">
+                <span class="header">Issued</span>
+                <span class="stat-count">@Common.FormatNumberInteger(Model.StatusCount.Where(x => x.StatusID == POStatus.Issued).Sum(x => x.Count))</span>
+                @Html.Partial("_ToolTip", new Tooltip() { ID = "tooltip_PO_2", Message = "Issued : " + Model.StatusCount.Where(x => x.StatusID == POStatus.Issued).Sum(x => x.Count) })
+            </a>
+            <a data-tooltip='#tooltip_PO_3' class="card-stat @(Model.filters.statuslist.Contains(POStatus.PartiallyReceived) ? "active" : "")" href="@Url.Action("POListStatus", "PO", new { Status = POStatus.PartiallyReceived })">
+                <span class="header">Partially Received</span>
+                <span class="stat-count">@Common.FormatNumberInteger(Model.StatusCount.Where(x => x.StatusID == POStatus.PartiallyReceived).Sum(x => x.Count))</span>
+                @Html.Partial("_ToolTip", new Tooltip() { ID = "tooltip_PO_3", Message = "Partially Received : " + Model.StatusCount.Where(x => x.StatusID == POStatus.PartiallyReceived).Sum(x => x.Count) })
+            </a>
+
+            <a data-tooltip='#tooltip_PO_4' class="card-stat @(Model.filters.statuslist.Contains(POStatus.Received) ? "active" : "")" href="@Url.Action("POListStatus", "PO", new { Status = POStatus.Received })">
+                <span class="header">Received</span>
+                <span class="stat-count">@Common.FormatNumberInteger(Model.StatusCount.Where(x => x.StatusID == POStatus.Received).Sum(x => x.Count))</span>
+                @Html.Partial("_ToolTip", new Tooltip() { ID = "tooltip_PO_4", Message = "Received : " + Model.StatusCount.Where(x => x.StatusID == POStatus.Received).Sum(x => x.Count) })
+            </a>
+
+            <a data-tooltip='#tooltip_PO_5' class="card-stat @(Model.filters.statuslist.Contains(POStatus.Cancelled) ? "active" : "")" href="@Url.Action("POListStatus", "PO", new { Status = POStatus.Cancelled })">
+                <span class="header">Cancelled</span>
+                <span class="stat-count">@Common.FormatNumberInteger(Model.StatusCount.Where(x => x.StatusID == POStatus.Cancelled).Sum(x => x.Count))</span>
+                @Html.Partial("_ToolTip", new Tooltip() { ID = "tooltip_PO_5", Message = "Cancelled : " + Model.StatusCount.Where(x => x.StatusID == POStatus.Cancelled).Sum(x => x.Count) })
+            </a>
+        </div>
+
+        <div class="card card-grid min-w-full">
+            <div class="card-body carddatatable">
+                <div id="TablePurchaseOrderList" class="custom-dt norightborder1">
+                    <div class="scrollable-x-auto">
+                        <table class="table table-auto table-border align-middle text-gray-700 font-medium text-sm" data-datatable-table="true">
+                            <thead>
+                                <tr>
+                                    <th class="min-w-[170px]" data-datatable-column="vendor_name">
+                                        <span class="sort">
+                                            <span class="sort-label">Vendor Name</span>
+                                            <span class="sort-icon"></span>
+                                        </span>
+                                    </th>
+                                    <th class="min-w-[170px]" data-datatable-column="pocode">
+                                        <span class="sort">
+                                            <span class="sort-label">PO Number</span>
+                                            <span class="sort-icon"></span>
+                                        </span>
+                                    </th>
+                                    <th class="min-w-[170px] text-center" data-datatable-column="no_of_items">
+                                        <span class="sort">
+                                            <span class="sort-label">No Of Items</span>
+                                            <span class="sort-icon"></span>
+                                        </span>
+                                    </th>
+                                    <th class="min-w-[170px]" data-datatable-column="createdat">
+                                        <span class="sort">
+                                            <span class="sort-label">Created Date</span>
+                                            <span class="sort-icon"></span>
+                                        </span>
+                                    </th>
+                                    <th class="min-w-[170px]" data-datatable-column="createdby_fullname">
+                                        <span class="sort">
+                                            <span class="sort-label">Created By</span>
+                                            <span class="sort-icon"></span>
+                                        </span>
+                                    </th>
+                                    <th class="min-w-[150px] text-center">
+                                        Status
+                                    </th>
+                                    <th class="min-w-[150px] text-end" data-datatable-column="total_amount">
+                                        <span class="sort">
+                                            <span class="sort-label">Amount</span>
+                                            <span class="sort-icon"></span>
+                                        </span>
+                                    </th>
+                                </tr>
+                            </thead>
+                        </table>
+                    </div>
+                    <div class="card-footer justify-center md:justify-between flex-col md:flex-row gap-3 text-gray-600 text-2sm font-medium">
+                        <div class="flex items-center gap-2">
+                            Show <select class="select select-sm w-16" data-datatable-size="true" name="perpage"></select> per page
+                        </div>
+                        <div class="flex items-center gap-4">
+                            <span data-datatable-info="true"></span>
+                            <div class="pagination" data-datatable-pagination="true"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="emptydatatable hidden">
+                @Html.Partial("_EmptyTable", new EmptyTable()
+                {
+                    Heading = "No Purchase Orders found",
+                    SubHead = "You don’t have any purchase orders for the selected filter",
+                    Icon = "<img src='/assets/img/container-empty.svg'/>"
+                })
+            </div>
+        </div>
+    </div>
+</div>
+
+@using (Html.BeginForm("POList", "PO", FormMethod.Post, new { id = "frmPOList" }))
+{
+    <div class="drawer drawer-end flex flex-col h-full filter-width" data-drawer="true" id="drawer_4">
+        <div class="flex items-center justify-between p-5 border-b">
+            <h3 class="text-base font-semibold text-gray-900">Filters</h3>
+            <button class="btn btn-xs btn-icon btn-light" data-drawer-dismiss="true" type="button"><i class="ki-outline ki-cross"></i></button>
+        </div>
+        <div class="scrollable-y flex-grow py-5 px-5">
+            <div class="grid lg:grid-cols-2 gap-5">
+                <div class="w-full lg:col-span-2">
+                    <label class="form-label">From</label>
+                    <div class="input-group w-full">
+                        @Html.TextBoxFor(m => m.filters.startdate, new { @class = "datepicker-here input", @placeholder = "dd/mm/yyyy", @readonly = true })
+                    </div>
+                </div>
+                <div class="w-full lg:col-span-2">
+                    <label class="form-label">To</label>
+                    <div class="input-group w-full">
+                        @Html.TextBoxFor(m => m.filters.enddate, new { @class = "datepicker-here input", @placeholder = "dd/mm/yyyy", @readonly = true })
+                    </div>
+                </div>
+                <div class="w-full lg:col-span-2">
+                    <label class="form-label">Agency</label>
+                    <div class="input-group w-full">
+                        @Html.ListBoxFor(m => m.filters.agencyuuids, new SelectList(ViewBag.AgenciesDropdown, "Value", "Text"), new { @class = "form-control select2", @multiple = true, @style = "width:100%" })
+                    </div>
+                </div>
+                <div class="w-full lg:col-span-2">
+                    <label class="form-label">Vendor</label>
+                    <div class="input-group w-full">
+                        @Html.ListBoxFor(m => m.filters.vendoruuids, new SelectList(ViewBag.VendorDropdown, "Value", "Text"), new { @class = "form-control select2", @multiple = true, @style = "width:100%" })
+                    </div>
+                </div>
+                <div class="w-full lg:col-span-2">
+                    <label class="form-label">Status</label>
+                    <div class="input-group w-full">
+                        @Html.ListBoxFor(m => m.filters.statuslist, new SelectList(ViewBag.StatusDropdown, "Value", "Text"), new { @class = "form-control select2", @multiple = true, @style = "width:100%" })
+                    </div>
+                </div>
+                <div class="w-full lg:col-span-2">
+                    <label class="form-label">Created By</label>
+                    <div class="input-group w-full">
+                        @Html.ListBoxFor(m => m.filters.createdby, new SelectList(ViewBag.CreatedByDropdown, "Value", "Text"), new { @class = "form-control select2", @multiple = true, @style = "width:100%" })
+                    </div>
+                </div>
+                <div class="w-full lg:col-span-2">
+                    <label class="form-label">Job ID</label>
+                    <div class="input-group w-full">
+                        @Html.TextBoxFor(m => m.filters.jobid, new { @class = "input w-full", @placeholder = "Enter Job ID" })
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="flex justify-between items-center p-5 border-t mt-auto">
+            <button type="button" class="btn btn-light" data-drawer-dismiss="true">Close</button>
+            <div class="flex gap-2">
+                <button type="submit" name="action" value="Reset" class="btn btn-light">Reset</button>
+                <button type="submit" name="action" value="Filter" class="btn btn-dark">Apply</button>
+            </div>
+        </div>
+    </div>
+}
+
+<div id="modalsection"></div>
+
+@section PageScripts
+{
+    <script src="~/js/PO/polist.js?v=1.0.6"></script>
+    <script src="~/js/Purchase/purchase-order-list.js?v=1.0.5">
+    </script>
+    <script src="~/js/customizecolumn.js?v=1.0.0"></script>
+}

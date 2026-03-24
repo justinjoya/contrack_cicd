@@ -1,0 +1,235 @@
+﻿@model Contrack.ContainerModal
+@using Contrack;
+@{
+    ViewBag.Title = "Container List";
+    ViewBag.MainManu = "Container";
+    ViewBag.SubManu = "";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+var latestMove = Model.trackinglist != null ? Model.trackinglist.OrderByDescending(x => x.recorddatetime.Value).FirstOrDefault() : null;
+}
+<link href="~/css/Container/container-list.css?v=2.0.1" rel="stylesheet" />
+<link href="~/css/Container/tracking.css?v=1.0.0" rel="stylesheet" />
+<link href="~/css/Container/details.css?v=1.0.0" rel="stylesheet" />
+<div class="breadscrumb-holder">
+    <div class="container-fluid flex items-center justify-between flex-wrap gap-5">
+        <div class="flex flex-col justify-center items-start flex-wrap gap-1.5">
+            <h1 class="page-header">Containers</h1>
+            <div class="flex items-center gap-1 text-sm font-normal">
+                <span class="text-gray-700">Manage and track all containers across your fleet from one place.</span>
+            </div>
+        </div>
+
+    </div>
+</div>
+<div class="container-fixed">
+    <div class="details-container">
+        <div class="spec-wrapper">
+            <div class="details-card bdr-tl-0">
+                <div class="container-wrapper">
+                    <div class="container-img">
+                        <img alt="container" src="~/assets/images/container-img.svg" />
+                    </div>
+                    <div class="container-info">
+                        <h2 class="container-id">@Model.container.equipmentno</h2>
+                        <p class="size">
+                            @Model.container.type_name - @Model.container.sizename
+                            <span class="dot"></span>
+                            ISO: @(string.IsNullOrEmpty(Model.container.model_iso_code) ? "N/A" : Model.container.model_iso_code)
+                        </p>
+                        <div class="hr-splitter"></div>
+                        <div class="container-feat">
+                            <img alt="" src="~/assets/images/user-img.svg" /> @(string.IsNullOrEmpty(Model.container.operatorname) ? "N/A" : Model.container.operatorname)
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="details-card">
+                <div class="det-card-title">
+                    <h3>Technical Specs</h3>
+                </div>
+                <div class="stat-row">
+                    <div class="stat-col big">
+                        <div class="stat-card">
+                            <div class="stat-card-icon">
+                                <img alt="" src="~/assets/images/box-weight.svg" />
+                            </div>
+                            <div class="stat-card-content">
+                                <div class="label">Max</div>
+                                <div class="value">NA</div>
+                                <div class="sub">NA</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="stat-col">
+                        <div class="stat-card">
+                            <div class="stat-card-icon">
+                                <img alt="" src="~/assets/images/tare-weight-icon.svg" />
+                            </div>
+                            <div class="stat-card-content">
+                                <div class="value">NA</div>
+                                <div class="sub">NA</div>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-card-icon">
+                                <img alt="" src="~/assets/images/box.svg" />
+                            </div>
+                            <div class="stat-card-content">
+                                <div class="value">NA</div>
+                                <div class="sub">NA</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="stat-col">
+                        <div class="stat-card wide">
+                            <div class="stat-card-icon">
+                                <img alt="" src="~/assets/images/building.svg" />
+                            </div>
+                            <div class="stat-card-content">
+                                <div class="label">NA</div>
+                                <div class="value">NA</div>
+                                <div class="sub">NA</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="stat-col">
+                        <div class="stat-card">
+                            <div class="stat-card-icon">
+                                <img alt="" src="~/assets/images/tare-weight-icon.svg" />
+                            </div>
+                            <div class="stat-card-content">
+                                <div class="value">NA</div>
+                                <div class="sub">NA</div>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-card-icon">
+                                <img alt="" src="~/assets/images/clock.svg" />
+                            </div>
+                            <div class="stat-card-content">
+                                <div class="value">NA</div>
+                                <div class="sub">NA</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="hr-splitter spec-hr"></div>
+                <div class="det-card-title">
+                    <h3>Location Info</h3>
+                </div>
+                <div class="loc-info-wrapper">
+                    @if (latestMove != null)
+                    {
+                    <div class="date-container">
+                        <div class="date">@latestMove.recorddatetime.Value.Day</div>
+                        <div class="month">@latestMove.recorddatetime.Value.ToString("MMM")</div>
+                    </div>
+                    <div class="loc-details">
+                        <p>Current Depot</p>
+                        <h5>@latestMove.locationname</h5>
+                        <h6>@latestMove.location_portcode</h6>
+                    </div>
+                    <div class="loc-status">
+                        <img alt="" src="~/assets/images/box-yellow.svg" />
+                        <span>@(latestMove.isempty ? "Empty" : "Full")</span>
+                    </div>
+                    }
+                    else
+                    {
+                    <div class="loc-details">
+                        <p class="text-gray-500">No location history found for this container.</p>
+                    </div>
+                    }
+                </div>
+
+
+            </div>
+            <div class="details-card">
+                <div class="det-card-title">
+                    <h3>Classfication</h3>
+                </div>
+                <div class="hr-splitter"></div>
+                <div class="empty-card noshadow">
+                    <div class="inner">
+                        <div class="emptyicon">
+                            <i class="ki-filled ki-users text-3xl"></i>
+                        </div>
+                        <h2 class="heading">
+                            No Classification Data
+                        </h2>
+                        <span class="subheading">
+                            Specific tags and cargo categories <br /> have not been assigned yet.
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="cargo-wrapper">
+            <div class="details-card">
+                <div class="det-card-title cargo-title">
+                    <div>
+                        <h3>Recent Activity</h3>
+                        <p>Last 5 Tracking Moves</p>
+                    </div>
+                </div>
+
+                <div class="activity-list">
+                    @if (Model.trackinglist != null && Model.trackinglist.Any())
+                    {
+                    foreach (var move in Model.trackinglist.OrderByDescending(x => x.recorddatetime.Value).Take(5))
+                    {
+                    <div class="activity-item">
+                        <div class="activity-left">
+                            <div class="activity-line"></div>
+                            <div class="activity-icon">
+                                @if (!string.IsNullOrEmpty(move.move_icon))
+                                {
+                                @Html.Raw(move.move_icon)
+                                }
+                                else
+                                {
+                                <i class="ki-filled ki-geolocation"></i>
+                                }
+                            </div>
+                        </div>
+                        <div class="activity-content">
+                            <div class="activity-title">@move.movesname</div>
+                            <div class="activity-date">@move.recorddatetime.Text</div>
+                        </div>
+                    </div>
+                    }
+                    }
+                </div>
+            </div>
+            <div class="details-card">
+                <div class="det-card-title">
+                    <h3>Complaince & Certifications</h3>
+                </div>
+                <div class="empty-card noshadow">
+                    <div class="inner">
+                        <div class="emptyicon">
+                            <i class="ki-filled ki-users text-3xl"></i>
+                        </div>
+                        <h2 class="heading">
+                            No Certifications Found
+                        </h2>
+                        <span class="subheading">
+                            Compliance and safety documents <br /> are currently unavailable for this container.
+                        </span>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<div id="modalsection"></div>
+@section PageScripts {
+<script src="~/js/Tracking/tracking.js"></script>
+<script src="~/js/voyageselect2.js"></script>
+<script src="~/js/Masters/container.js?v=3.0.7"></script>
+<script src="~/js/customizecolumn.js?v=1.0.0"></script>
+}

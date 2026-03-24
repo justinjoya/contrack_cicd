@@ -1,0 +1,83 @@
+﻿@using Contrack;
+@model Contrack.Client
+@{
+    Model.client.BankInfo = Model.client.BankInfo.Where(x => !string.IsNullOrEmpty(x.AliasName)).ToList();
+    <div class="card shadow-none1 min-w-full mb-3">
+        <div class="card-header p-3 flex items-between">
+            <h3 class="card-title">
+                Bank Accounts (@Model.client.BankInfo.Count)
+            </h3>
+            @*@if (PagePermission.GetPermissions().Client.edit)
+            {*@
+                <button type="button" onclick="OpenClientBankAccount('');" class=" btn btn-xs btn-sm btn-outline btn-light">
+                    <i class="ki-filled ki-plus">
+                    </i>
+                    Add Bank Account
+                </button>
+            @*}*@
+        </div>
+        <div class="card-body p-0">
+            <div class="card-table scrollable-x-auto pb-3">
+                <table class="table align-middle text-sm text-gray-500">
+                    <tbody>
+                        @{
+                            if (Model.client.BankInfo.Count > 0)
+                            {
+                                for (int i = 0; i < Model.client.BankInfo.Count; i++)
+                                {
+
+                                    <tr>
+                                        <td class="py-4 text-gray-700 text-md font-bold">
+                                            <div class="flex">
+                                                <i style="margin-top:5px;" class="ki-filled ki-wallet text-1.5xl ps-px text-secondary">
+                                                </i>
+                                                <h3 class="py-3 text-base font-medium leading-none text-gray-900 px-3">
+                                                    @Model.client.BankInfo[i].AliasName
+                                                    <span class="mx-2 py-1 badge badge-outline badge-secondary">
+                                                        @Model.client.BankInfo[i].Currency.ToUpper()
+                                                    </span>
+                                                </h3>
+
+                                            </div>
+                                            <table class="bankaccount-table text-gray-500">
+                                                @{
+                                                    for (int j = 0; j < Model.client.BankInfo[i].BankAttributes.Count; j++)
+                                                    {
+                                                        <tr>
+                                                            @if (!string.IsNullOrEmpty(Model.client.BankInfo[i].BankAttributes[j].KeyValue))
+                                                            {
+                                                                @Html.Raw("<td class='bankkey max-w-[170px]'>" + @Model.client.BankInfo[i].BankAttributes[j].KeyName + ":</td>" + " <td class='text-gray-700 text-sm font-medium'> " + Model.client.BankInfo[i].BankAttributes[j].KeyValue + "</td>")
+                                                            }
+                                                        </tr>
+                                                    }
+                                                }
+
+                                            </table>
+
+                                        </td>
+                                        @*@if (PagePermission.GetPermissions().Client.edit)
+                                        {*@
+                                            <td class="py-4 text-right" style="vertical-align:top;" nowrap>
+                                                <a class="btn btn-sm btn-icon btn-clear btn-primary" href="javascript:void(0);" onclick="OpenClientBankAccount('@Model.client.BankInfo[i].BankAccountUUID');"><i class="ki-filled ki-notepad-edit"></i></a>
+                                                <a class="btn btn-sm btn-icon btn-clear btn-danger" href="javascript:void(0)" onclick="DeleteClientBankAccount('@Model.client.BankInfo[i].BankAccountUUID');"><i class="ki-filled ki-filled ki-trash"></i></a>
+                                            </td>
+                                        @*}*@
+                                    </tr>
+                                }
+                            }
+                            else
+                            {
+                                <tr>
+                                    <td colspan="3" style="padding-top:15px">
+                                        No bank accounts added
+                                    </td>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+}

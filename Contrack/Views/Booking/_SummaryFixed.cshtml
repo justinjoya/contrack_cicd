@@ -1,0 +1,111 @@
+﻿@using Contrack;
+@model ContainerBooking
+<div class="right-summary">
+    <span class="summary-title">Booking Summary:</span>
+    @if (!string.IsNullOrEmpty(Model.booking.bookinguuid))
+    {
+        <div class="summary-number">
+            <span class="number">#@Model.booking.bookingno</span>
+            <span class="creation">
+                <i class="ki-filled ki-time"></i>
+                <span>@Display.DisplayClientDateTimeHumanFriendly(Model.booking.createdat)</span>
+            </span>
+            <span class="creation">
+                <i class="ki-filled ki-user"></i>
+                <span>By @Model.booking.createdusername</span>
+            </span>
+        </div>
+    }
+    @if (Model.booking.customer.client.clientdetailid.NumericValue > 0)
+    {
+        <div class="summary-section">
+            <div class="label">1. Customer</div>
+            <div class="customer-card">
+                <div class="info">
+                    <span class="card-info">@Model.booking.customer.client.clientname</span>
+                    <span class="card-name">@Html.Partial("_FormatWithCount", new FormatDisplay() { Name = "Email", Text = string.IsNullOrEmpty(Model.booking.customer.client.email) ? "No Email" : Model.booking.customer.client.email, Delimiter = ";" })</span>
+                    <span class="card-name">@Html.Partial("_FormatWithCount", new FormatDisplay() { Name = "Phone", Text = string.IsNullOrEmpty(Model.booking.customer.client.phone) ? "No Phone" : Model.booking.customer.client.phone, Delimiter = "," })</span>
+                </div>
+                <span class="tag">
+                    <img src="~/assets/img/Vector2.svg" class="tag-icon" />
+                    @IDReferences.GetCustomerTypeName(Model.booking.customer.customertype.NumericValue)
+                </span>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="summary-row">
+            <span class="label">1. Customer</span>
+            <span class="value">N/A</span>
+        </div>
+    }
+
+    <img class="border-img" src="~/assets/img/Vector 197.svg" />
+
+    @if (Model.booking.location.pol.NumericValue > 0)
+    {
+        <div class="summary-section">
+            <div class="label">2. Location Details</div>
+            <div class="location-card">
+                <div class="ports">
+                    <div class="location">
+                        <span class="subhead">POL</span>
+                        <span class="head">@Model.booking.location.pol_portname, @Model.booking.location.pol_countryname</span>
+                    </div>
+
+
+                </div>
+                <div class="ports">
+
+                    <div class="location">
+                        <span class="subhead">POD</span>
+                        <span class="head">@Model.booking.location.pod_portname, @Model.booking.location.pod_countryname</span>
+                    </div>
+
+                </div>
+                @if (!string.IsNullOrEmpty(Model.booking.location.voyageuuid))
+                {
+                    <div class="voyage">
+                        <span class="head">@Model.voyage.Vesselname</span>
+                        <span class="subhead">ETD: @Display.DisplayDateHumanFriendly(Model.voyage.minDate.Value) - ETA @Display.DisplayDateHumanFriendly(Model.voyage.maxDate.Value)</span>
+                    </div>
+                }
+
+
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="summary-row">
+            <span class="label">2. Location Details</span>
+            <span class="value">N/A</span>
+        </div>
+    }
+
+    <img class="border-img" src="~/assets/img/Vector 197.svg" />
+    @if (Model.booking.details.Count == 0)
+    {
+        <div class="summary-row">
+            <span class="label">3. Cargo Details</span>
+            <span class="value">N/A</span>
+        </div>
+    }
+    else
+    {
+        <div class="summary-section">
+            <div class="label">3. Cargo Details</div>
+            <ul class="containerlist">
+                @foreach (var container in Model.booking.details)
+                {
+                    <li>
+                        <img src="~/assets/img/tick.svg" />
+                        <span> @container.qty x @container.sizename @container.containertypename (@Display.DisplayStringNA(container.commodity))</span>
+                    </li>
+                }
+            </ul>
+        </div>
+    }
+    <img class="border-img" src="~/assets/img/Vector 197.svg" />
+</div>

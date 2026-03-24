@@ -1,0 +1,27 @@
+﻿@model Contrack.CustomBankInfo
+@if (Model != null)
+{
+    <div class="bankinfo rounded-md border border-dashed gap-4 p-2 px-4 border-warning bg-warning-light">
+        <div class="flex">
+            <h3 class="py-3 text-base font-medium leading-none text-gray-900 ">
+                Currency : @Model.Currency.ToUpper()
+            </h3>
+            <input type="hidden" name="PaymentCurrency" value="@Model.Currency" />
+        </div>
+        <table class="bankaccount-table text-gray-600">
+            @{
+                for (int j = 0; j < Model.BankAttributes.Count; j++)
+                {
+                    <tr>
+                        @if (!string.IsNullOrEmpty(Model.BankAttributes[j].KeyValue))
+                        {
+                            @Html.Raw("<td class='bankkey max-w-[170px]'>" + @Model.BankAttributes[j].KeyName + ":</td>" + " <td class='text-gray-700 text-sm font-medium'> " + Model.BankAttributes[j].KeyValue + "</td>")
+                        }
+                    </tr>
+                }
+            }
+
+        </table>
+
+    </div>
+}

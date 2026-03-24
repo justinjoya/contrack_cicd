@@ -1,0 +1,64 @@
+﻿@using Contrack;
+@model ContainerBooking
+
+@if (!Model.booking.details.Any())
+{
+    @Html.Partial("_BookingTab", Model)
+    <div class="notop">
+        @Html.Partial("_EmptyTable", new EmptyTable
+        {
+            Heading = "Add a new Container",
+            SubHead = "Add a container to track your cargo efficiently.",
+            Icon = "<img src='/assets/img/container-empty.svg'/>",
+            Button = "<button type='button' class='btn btn-primary' onclick=\"AddEditBookingContainer('');\">Add Container</button>"
+        })
+    </div>
+}
+else
+{
+    @Html.Partial("_BookingTab", Model)
+
+    <div class="cargo-list notop">
+        @foreach (var item in Model.booking.details)
+        {
+            var bookingdetailuuid = item.bookingdetailuuid;
+            <div class="cargo-item">
+                <div class="content">
+                    <div class="icon">
+                        <img src="~/assets/img/container.svg" />
+                    </div>
+                    <div class="item-info">
+                        <div class="item-desc">
+                            @item.qty x @item.sizename @item.containertypename (@(string.IsNullOrEmpty(item.containermodeluuid)? "ISO : Any" : "ISO : " + item.isocode))
+                        </div>
+                        <div class="item-subdesc">
+                            Commodity : @Display.DisplayStringNA(item.commodity)
+                        </div>
+                    </div>
+                </div>
+                <div class="action">
+                    <a onclick="AddEditBookingContainer('@bookingdetailuuid')" class="btn btn-sm btn-icon btn-clear btn-light" href="javascript:void(0);">
+                        <img src="~/assets/img/edit.svg" />
+                    </a>
+                    <a onclick="DeleteBookingContainer('@bookingdetailuuid')" class="btn btn-sm btn-icon btn-clear btn-light" href="javascript:void(0);">
+                        <img src="~/assets/img/trash.svg" />
+                    </a>
+                </div>
+            </div>
+        }
+    </div>
+    if (Model.booking.details.Any())
+    {
+        <div class="flex justify-end pt-4">
+            <button type="button" class=" btn btn-md text-md btn-primary" onclick="AddEditBookingContainer('');">
+                <i class="ki-filled ki-plus"></i>
+                Add Container
+            </button>
+        </div>
+    }
+    <br>
+    <div>
+        @Html.Partial("_BookingAdditionalServices", Model)
+    </div>
+
+}

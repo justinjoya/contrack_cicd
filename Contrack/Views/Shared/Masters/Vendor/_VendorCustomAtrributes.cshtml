@@ -1,0 +1,51 @@
+﻿@using Contrack;
+@model Contrack.Vendor
+@{
+    Model.vendor.CustomAttributes = Model.vendor.CustomAttributes.Where(x => !string.IsNullOrEmpty(x.KeyName)).ToList();
+    <div class="card-header p-3 flex items-between">
+        <div class="flex flex-col flex-center">
+            <h3 class="card-title">
+                Custom Fields
+            </h3>
+            @*<span class="text-2sm text-gray-600 leading-5">
+                    (Max. 10)
+                </span>*@
+        </div>
+
+        @if (Model.vendor.CustomAttributes.Count < 10)
+        {
+            <button type="button" onclick="OpenVendorCustomAttribute('');" class=" btn btn-xs btn-sm btn-outline btn-light">
+                <i class="ki-filled ki-plus">
+                </i>
+                Add Custom Field
+            </button>
+        }
+    </div>
+    <div class="card-body p-0">
+        <div class="card-table scrollable-x-auto pb-3">
+            <table class="table align-middle text-sm text-gray-500">
+                <tbody>
+                    @{
+                        if (Model.vendor.CustomAttributes.Count > 0)
+                        {
+                            for (int i = 0; i < Model.vendor.CustomAttributes.Count; i++)
+                            {
+                                <tr>
+                                    @Html.Raw(Common.DisplayInfoTableWithAddEditDelete(Model.vendor.CustomAttributes[i].KeyName, Model.vendor.CustomAttributes[i].KeyValue, "javascript:void(0);", "OpenVendorCustomAttribute(\"" + Model.vendor.CustomAttributes[i].UUID + "\");", "DeleteVendorCustomAttribute(\"" + Model.vendor.CustomAttributes[i].UUID + "\");"))
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="3" style="padding-top:15px">
+                                    No custom fields added
+                                </td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+}

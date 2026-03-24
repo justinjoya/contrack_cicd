@@ -1,0 +1,73 @@
+﻿@model List<Contrack.ContainerTypeDTO>
+
+@*<div class="filters-panel">
+        <div class="filter-title">Filters:</div>
+        <div class="flex">
+            <label class="input input-md search-text">
+                <i class="ki-filled ki-magnifier">
+                </i>
+                <input placeholder="Search" type="text" value="">
+            </label>
+        </div>
+
+        <div class="filter-sections flex flex-col">
+            <div class="filter-section">
+                <div class="filter-label">Container Type</div>
+                <div class="controls">
+                    <label class="form-label flex items-center text-nowrap">
+                        <input class="checkbox checkbox-sm" name="Priority" type="checkbox" value="None" />
+                        Dry container <span class="stat">(24)</span>
+                    </label>
+                    <label class="form-label flex items-center text-nowrap">
+                        <input class="checkbox checkbox-sm" name="Priority" type="checkbox" value="None" />
+                        Reefer container <span class="stat">(24)</span>
+                    </label>
+                    <label class="form-label flex items-center  text-nowrap">
+                        <input class="checkbox checkbox-sm" name="Priority" type="checkbox" value="None" />
+                        Open top container <span class="stat">(24)</span>
+                    </label>
+                    <label class="form-label flex items-center  text-nowrap">
+                        <input class="checkbox checkbox-sm" name="Priority" type="checkbox" value="None" />
+                        High Cube <span class="stat">(24)</span>
+                    </label>
+                    <label class="form-label flex items-center  text-nowrap">
+                        <input class="checkbox checkbox-sm" name="Priority" type="checkbox" value="None" />
+                        Tank Containers <span class="stat">(24)</span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="filter-section">
+                <div class="filter-label">Container Size</div>
+                <div class="controls">
+                    <label class="form-label flex items-center text-nowrap">
+                        <input class="checkbox checkbox-sm" name="Priority" type="checkbox" value="None" />
+                        10ft <span class="stat">(24)</span>
+                    </label>
+                    <label class="form-label flex items-center text-nowrap">
+                        <input class="checkbox checkbox-sm" name="Priority" type="checkbox" value="None" />
+                        20ft<span class="stat">(24)</span>
+                    </label>
+                    <label class="form-label flex items-center  text-nowrap">
+                        <input class="checkbox checkbox-sm" name="Priority" type="checkbox" value="None" />
+                        40ft <span class="stat">(24)</span>
+                    </label>
+                    <label class="form-label flex items-center  text-nowrap">
+                        <input class="checkbox checkbox-sm" name="Priority" type="checkbox" value="None" />
+                        10ft HC <span class="stat">(24)</span>
+                    </label>
+
+                </div>
+            </div>
+        </div>
+    </div>*@
+
+<div class="cont-right-body">
+    @if (Model != null)
+    {
+        foreach (var m in Model.OrderBy(x => x.containertypeid.NumericValue))
+        {
+            @Html.Partial("_TypeGroup", m)
+        }
+    }
+</div>

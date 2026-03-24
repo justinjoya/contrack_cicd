@@ -1,0 +1,128 @@
+﻿@using Contrack;
+@model Contrack.TermsandConditions
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var agencyList = ViewBag.AgenciesDropdown as List<System.Web.UI.WebControls.ListItem>;
+    var radioOptions = new Dictionary<string, string>
+    {
+        { "RFQ", "RFQ T&C" },
+        { "Quotation", "Quotation T&C" },
+        { "PO", "PO T&C" },
+        { "POInvoice", "PO Invoicing Instructions" },
+        { "ContainerQuotation", "Booking Container Quotation" },
+    };
+}
+<style>
+    .ck-editor__editable {
+        min-height: 300px; /* or height: 300px; for fixed height */
+    }
+</style>
+@using (Html.BeginForm("SaveTermsandConditions", "TermsandConditions", FormMethod.Post, new { @id = "frmTermsAndConditions" }))
+{
+    @Html.HiddenFor(m => m.termsandConditions.TermId.EncryptedValue)
+    @Html.HiddenFor(m => m.termsandConditions.TermUuid)
+
+    <div class="mb-5 lg:mb-7.5">
+        <!-- Page Heading -->
+        <div class="container-fluid flex items-center justify-between flex-wrap gap-5">
+            <div class="flex flex-col justify-center items-start flex-wrap gap-1 lg:gap-2">
+                <h1 class="font-medium text-lg text-gray-900">
+                    @Html.Partial("_GoBack")
+                    @*@if (Model.termsandConditions.TermId.NumericValue == 0)*@
+                    @if (@Common.Decrypt(Model.termsandConditions.TermId.EncryptedValue) > 0)
+                    {
+                        @Html.Raw("Edit Terms and Conditions")
+                    }
+                    else
+                    {
+                        @Html.Raw("Add Terms and Conditions")
+                    }
+                </h1>
+            </div>
+        </div>
+    </div>
+
+    <div class="container-fluid w-full flex bottom-buffer">
+        <div class="flex flex-col grow" id="content" role="content">
+            <div class="flex flex-col items-stretch grow gap-5 lg:gap-5">
+                <div class="card pb-0">
+                    <div class="card-body px-5 flex flex-col gap-6">
+
+                        <!-- Created For (HubId: 1 = Hub, 0 = Agency) -->
+                        <div class="w-full flex flex-col gap-2.5">
+                            <label class="form-label items-center gap-1 max-w-56">
+                                Created For <span class="text-danger ps-1">*</span>
+                            </label>
+                            <div class="flex gap-6">
+                                <label class="flex items-center gap-2" onclick="ShowHideEntity('1');">
+                                    <input datarequired="yes" datarequired-message="Please select Created for" data-append-parent="yes" id="radio1" class="radio" name="termsandConditions.TypeEncrypted" type="radio" value="@Common.Encrypt(1)" @(Common.Decrypt(Model.termsandConditions.agency.agencyid.EncryptedValue) == 0 ? "checked" : "")>
+                                    <span class="form-label flex items-center gap-1 max-w-56">Hub</span>
+                                </label>
+                                <label class="flex items-center gap-2" onclick="ShowHideEntity('2');">
+                                    <input datarequired="yes" datarequired-message="Please select Created for" data-append-parent="yes" id="radio2" class="radio" name="termsandConditions.TypeEncrypted" type="radio" value="@Common.Encrypt(2)" @(Common.Decrypt(Model.termsandConditions.agency.agencyid.EncryptedValue) > 0 ? "checked" : "")>
+                                    <span class="form-label flex items-center gap-1 max-w-56">Agency</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="entity" id="Entiry_2" style="@(Common.Decrypt(Model.termsandConditions.agency.agencyid.EncryptedValue) > 0 ? "" : "display:none;")">
+                            <div class="flex flex-col max-w-96">
+
+                                @Html.DropDownListFor(m => m.termsandConditions.agency.agencyid.EncryptedValue, new SelectList(ViewBag.AgencyDropdown, "Value", "Text", ""),
+                                new
+                                {
+                                    @id = "ddlAgencies",
+                                    @placeholder = "Select agencies",
+                                    @class = "select2",
+                                    @datarequired = "yes",
+                                    @datarequired_message = "Please select the Agency",
+                                    @data_append_parent = "yes"
+                                })
+                            </div>
+                        </div>
+
+                        <div class="w-full flex flex-col gap-2.5">
+                            <label class="form-label items-center gap-1 max-w-56">
+                                Type <span class="text-danger ps-1">*</span>
+                            </label>
+                            <div>
+                                <div class="flex gap-6">
+                                    @foreach (var option in radioOptions)
+                                    {
+                                        <label class="flex items-center gap-2">
+                                            @Html.RadioButtonFor(m => m.termsandConditions.Type, option.Key, new
+                                            {
+                                                @class = "radio",
+                                                @datarequired = "yes",
+                                                @data_append_parent = "yes"
+                                            })
+                                            <span class="form-label flex items-center gap-1 max-w-56">@option.Value</span>
+                                        </label>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="w-full flex flex-col gap-2.5">
+                            <label class="form-label items-center gap-1 max-w-56">
+                                Terms and Conditions <span class="text-danger ps-1">*</span>
+                            </label>
+                            @Html.TextAreaFor(m => m.termsandConditions.TermsText, new { @id = "editor1", @class = "textarea ckeditor-classic", @rows = "18", @cols = "150", @datarequired = "yes", @datarequired_message = "Please Enter Terms & Conditions", @data_append_parent = "yes" })
+                        </div>
+
+                        <div class="w-full justify-end pt-0 flex gap-3">
+                            <button type="submit" class="btn btn-primary px-5">Save Terms and Conditions</button>
+                            <a href="@Url.Action("List")" class="btn btn-secondary">Cancel</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+@section PageScripts
+{
+    <script src="~/assets/libs/ckeditor/ckeditor5-build-classic/build/ckeditor.js"></script>
+    <script src="~/js/Masters/terms-and-conditions.js?v=1.0.1"></script>
+    <script src="~/js/PO/po.js?v=1.0.1"></script>
+}

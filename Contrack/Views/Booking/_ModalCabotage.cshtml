@@ -1,0 +1,84 @@
+﻿@using Contrack;
+@model BookedContainer
+<div class="modal hidden" data-modal="true" data-modal-backdrop-static="true" data-modal-autofocus="true" id="ModalCabotage">
+    <div class="modal-content modal-center max-w-[60%]">
+        <div class="modal-header">
+            <h3 class="modal-title flex gap-2 items-center">
+                Download Cabotage
+            </h3>
+            <button class="btn btn-xs btn-icon btn-light" data-modal-dismiss="true">
+                <i class="ki-outline ki-cross">
+                </i>
+            </button>
+        </div>
+        <div class="modal-body">
+            <form id="formCabotage">
+                <div class="flex justify-between">
+                    <div>
+                    </div>
+                    <div class="">
+                        <label class="input input-md">
+                            <i class="ki-filled ki-magnifier"></i>
+                            <input class="searchcontainer" placeholder="Search Container" type="text" />
+                        </label>
+                    </div>
+                </div>
+                <table class="table table-border custom-dt">
+                    <tbody>
+                        @{
+                            var group = Model.containers.GroupBy(x => new { x.ContainerSizeID, x.ContainerTypeID }).ToList();
+                            foreach (var item in group)
+                            {
+                                string heading = "";
+                                var matcheditem = Model.booking.details.FirstOrDefault(x => x.sizeid.NumericValue == item.Key.ContainerSizeID && x.containertypeid.NumericValue == item.Key.ContainerTypeID);
+                                if (matcheditem != null)
+                                {
+                                    heading = matcheditem.qty + " x " + matcheditem.sizename + " " + matcheditem.containertypename + " <span class='dot'>•</span> " + (matcheditem.empty_full == "E" ? "Empty" : "Full") + " <span class='dot'>•</span> " + Display.DisplayStringNA(matcheditem.commodity);
+                                }
+                                <tr>
+                                    <th>
+                                        <label class="flex items-center gap-2">
+                                            <input class="checkbox checkbox-sm " type="checkbox" />
+                                            <span class="switch-label flex gap-2">
+                                                @Html.Raw(heading)
+                                            </span>
+                                        </label>
+
+                                    </th>
+                                </tr>
+                                <tr>
+                                    <td class="grid lg:grid-cols-4 xl:grid-cols-5 gap-3 pb-7">
+                                        @foreach (var container in item.ToList())
+                                        {
+                                            <label class="flex items-center gap-2">
+                                                <input class="checkbox checkbox-sm " type="checkbox" value="@container.ContainerUuid" />
+                                                <input name="ContainerUUID" type="hidden" value="@container.ContainerUuid" />
+                                                <span class="switch-label">
+                                                    @container.ContainerNo
+                                                </span>
+                                            </label>
+
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+            </form>
+        </div>
+        <div class="modal-footer justify-end">
+            <div class="flex gap-4">
+                <button class="btn btn-light" data-modal-dismiss="true">
+                    Close
+                </button>
+
+                <button class="btn btn-primary" type="button">
+
+                    Download Cabotage
+                </button>
+
+            </div>
+        </div>
+    </div>
+</div>

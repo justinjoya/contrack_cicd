@@ -1,0 +1,111 @@
+﻿@model Contrack.PricingHeaderDTO
+<div class="modal" data-modal="true" data-modal-backdrop-static="true" data-modal-autofocus="true" id="ModalPricingHeader">
+    <div class="modal-content modal-center-y max-w-[600px] max-h-[95%]">
+        <div class="modal-header">
+            <h3 class="modal-title">
+                @if (Model.IsClone == 0)
+                {
+                    if (Model.PricingID.NumericValue == 0)
+                    {
+                        @Html.Raw("Add Template")
+                    }
+                    else
+                    {
+                        @Html.Raw("Edit Template")
+                    }
+                }
+                else
+                {
+                    @Html.Raw("Clone Template")
+                }
+            </h3>
+            <button class="btn btn-xs btn-icon btn-light" data-modal-dismiss="true">
+                <i class="ki-outline ki-cross"></i>
+            </button>
+        </div>
+        <div class="modal-body scrollable-y h-[300px] max-h-[95%]">
+
+            <form id="formPricingTemplate">
+                @Html.HiddenFor(m => m.PricingID.EncryptedValue)
+                @Html.HiddenFor(m => m.IsClone)
+
+                <div class="grid lg:grid-cols-1 items-stretch gap-5">
+                    <div class="relative pl-10">
+                        <div class="route-line"></div>
+                        <div class="dot-marker"></div>
+                        <div class="flex flex-col items-center1 flex-wrap lg:flex-nowrap gap-1.5">
+                            <label class="form-label max-w-321 text-right">
+                                POL (Port of Loading) <span class="text-danger ps-2">*</span>
+                            </label>
+                            <div class="flex flex-col w-full">
+                                @Html.DropDownListFor(m => m.POL.PortID.EncryptedValue, new SelectList(ViewBag.POLDropdown, "Value", "Text", ""), "-Select-", new
+                           {
+                               @class = "form-control select2 ddlPort",
+                               @id = "ddlPOL",
+                               @datarequired = "yes",
+                               @datarequired_message = "Please select Port",
+                               @dataportid = Model.POL.PortID.EncryptedValue,
+                               @dataportname = Model.POL.PortName,
+                               @dataportcode = Model.POL.PortCode,
+                               @datacountryname = Model.POL.CountryName,
+                               @dataflag = Contrack.Common.FlagFolder + Model.POL.Flag,
+                           })
+                            </div>
+                        </div>
+                    </div>
+                    <div class="relative pl-10">
+                        <div class="dot-marker"></div>
+                        <div class="flex flex-col items-center1 flex-wrap lg:flex-nowrap gap-1.5">
+                            <label class="form-label max-w-321 text-right">
+                                POD (Port Of Departure) <span class="text-danger ps-2">*</span>
+                            </label>
+                            <div class="flex flex-col w-full">
+                                @Html.DropDownListFor(m => m.POD.PortID.EncryptedValue, new SelectList(ViewBag.PODDropdown, "Value", "Text", ""), "-Select-", new
+                           {
+                               @class = "form-control select2 ddlPort",
+                               @id = "ddlPOD",
+                               @datarequired = "yes",
+                               @datarequired_message = "Please select Port",
+                               @dataportid = Model.POD.PortID.EncryptedValue,
+                               @dataportname = Model.POD.PortName,
+                               @dataportcode = Model.POD.PortCode,
+                               @datacountryname = Model.POD.CountryName,
+                               @dataflag = Contrack.Common.FlagFolder + Model.POD.Flag,
+                           })
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flex flex-col items-baseline flex-wrap lg:flex-nowrap gap-1.5">
+                        <label class="form-label max-w-321 text-right">
+                            Currency <span class="text-danger ps-2">*</span>
+                        </label>
+                        <div class="flex flex-col w-full">
+                            @Html.DropDownListFor(m => m.Currency, new SelectList(ViewBag.CurrencyDropdown, "Value", "Text", ""), new { @class = "form-control select2", @datarequired = "yes", @datarequired_message = "Please select Currency" })
+                        </div>
+                    </div>
+                    <div class="flex flex-col items-baseline flex-wrap lg:flex-nowrap gap-1.5">
+                        <label class="form-label max-w-321 text-right">
+                            Description <span class="text-danger ps-2">*</span>
+                        </label>
+                        <div class="flex flex-col w-full">
+                            @Html.TextAreaFor(m => m.Description, new { @class = "textarea", @rows = "4", @placeholder = "Enter Template Description", @datarequired = "yes", @datarequired_message = "Please enter Location Name" })
+                        </div>
+                    </div>
+
+
+                </div>
+            </form>
+            <!-- FORM END -->
+        </div>
+
+        <div class="modal-footer justify-between">
+            <span class="text-xs text-gray-600 italic">
+                <span class="text-danger">*</span> Required fields for template creation
+            </span>
+            <div class="flex gap-4">
+                <button class="btn btn-light" data-modal-dismiss="true">Close</button>
+                <button class="btn btn-primary" onclick="SavePricingTemplate();">Save Template</button>
+            </div>
+        </div>
+    </div>
+</div>

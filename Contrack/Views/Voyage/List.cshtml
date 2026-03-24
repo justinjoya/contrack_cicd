@@ -1,0 +1,339 @@
+﻿@model Contrack.VoyageFilter
+
+@using Contrack;
+@{
+    ViewBag.Title = "Container List";
+    ViewBag.MainManu = "Container";
+    ViewBag.SubManu = "";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<link href="~/css/Booking/booking.css?v=1.0.2" rel="stylesheet" />
+<link href="~/css/Container/containerBooking.css?v=2.0.1" rel="stylesheet" />
+<link href="~/css/Voyage/voyage.css?v=2.0.1" rel="stylesheet" />
+<style>
+    .vesseldrop {
+        position: relative;
+    }
+
+        .vesseldrop .select2-container {
+            border-radius: 4px 0 0 4px;
+            border-right: 0;
+        }
+
+        .vesseldrop .btn-icon {
+            border-radius: 0 4px 4px 0;
+            border-left: 0;
+            border-bottom: 0;
+           /* border-top: 0;*/
+            position: absolute;
+            right: 0;
+            background: #fcfcfc;
+        }
+
+        .vesseldrop .select2-container--default .select2-selection--single .select2-selection__arrow {
+            display: none;
+        }
+</style>
+<div class="breadscrumb-holder">
+    <div class="container-fluid flex items-center justify-between flex-wrap gap-5">
+        <div class="flex flex-col justify-center items-start flex-wrap gap-1 lg:gap-2">
+
+            <h1 class="page-header">Voyages</h1>
+            <div class="flex items-center gap-1 text-sm font-normal">
+                <span class="text-gray-700">Manage all voyages.</span>
+            </div>
+        </div>
+
+        <div class="flex items-center flex-wrap gap-1.5 lg:gap-2">
+            @*<div class="">
+                    <label class="input input-md">
+                        <i class="ki-filled ki-magnifier"></i>
+                        <input data-datatable-search="#TableVessels" placeholder="Search Voyage, Vessel, Port..." type="text" id="txtSearchDisplay" />
+                    </label>
+                </div>*@
+            @using (Html.BeginForm("List", "Voyage", FormMethod.Post, new { @id = "frmvoyageList" }))
+            {
+                <div class="flex items-center gap-2">
+                    <div class="flex gap-3">
+                        <div class="flex vesseldrop">
+                            @Html.DropDownListFor(m => m.filters.vesselassignmentencrypted, new SelectList(ViewBag.VesselDropdown, "Value", "Text", Model.filters.vesselassignmentencrypted), "All Vessels", new { @id = "ddlVesselfilterID", @class = "select select-sm h-[34px]", @style = "width:350px;", @onchange = "this.form.submit();" })
+                            @if (string.IsNullOrEmpty(Model.filters.vesselassignmentencrypted))
+                            {
+                                <button type="button" class="btn btn-icon btn-outline original btn-icon-md btn-light">
+                                    <i class="ki-filled ki-down"></i>
+                                </button>
+                            }
+                            else
+                            {
+                                <button type="submit" name="action" value="Reset" class="btn btn-icon btn-outline original btn-icon-md btn-light">
+                                    <i class="ki-filled ki-cross"></i>
+                                </button>
+                            }
+
+                        </div>
+                    </div>
+                </div>
+            }
+
+            <button onclick="ExpandCollapse();" class="btn btn-md text-md btn-outline original btn-light dropdown-toggle">
+                <i class="ki-filled ki-arrow-two-diagonals"></i>
+                Expand / Collapse
+            </button>
+            <button class="btn btn-md text-md btn-outline original btn-light dropdown-toggle" data-drawer-toggle="#drawer_4">
+                <i class="ki-filled ki-setting-4">
+                </i>
+                Filters
+                @{
+                    int count = Model.GetFilterCount();
+                    if (count > 0)
+                    {
+                        <span class="badge text-2xs badge-xs batch-new badge-primary">
+                            @count
+                        </span>
+                    }
+                }
+            </button>
+            <button class="dropdown-toggle btn btn-md text-md btn-primary " onclick="OpenVoyageModal('','')">
+                <i class="ki-filled ki-plus"></i>
+                Add Voyage
+            </button>
+
+        </div>
+
+
+    </div>
+</div>
+@{
+    var ActiveTab = PageSessionManager.GetAttribute<int>(PageKeys.Voyage, "ActiveTab", 0);
+}
+<div class="container-fluid">
+    <div class="grid">
+        <div class="card-summary-flat">
+            <a data-tooltip='#tooltip_C_0' class="card-stat @(ActiveTab == 0 ? "active" : "")" href="@Url.Action("ListStatus", "Voyage", new { status = 0 })">
+                <span class="header">All Voyages</span>
+                <span class="stat-count">@Common.FormatNumberInteger(Model.StatusCount.Sum(x => x.status_count))</span>
+                @Html.Partial("_ToolTip", new Tooltip() { ID = "tooltip_C_0", Message = "All Voyages : " + Model.StatusCount.Sum(x => x.status_count) })
+            </a>
+            <a data-tooltip='#tooltip_C_1' class="card-stat @(ActiveTab == 1 ? "active" : "")" href="@Url.Action("ListStatus", "Voyage", new { status = 1 })">
+                <span class="header">Live</span>
+                <span class="stat-count">@Common.FormatNumberInteger(Model.StatusCount.Where(x => x.status_code == 1).Sum(x => x.status_count))</span>
+                @Html.Partial("_ToolTip", new Tooltip() { ID = "tooltip_C_1", Message = "Live : " + Model.StatusCount.Where(x => x.status_code == 1).Sum(x => x.status_count) })
+            </a>
+            <a data-tooltip='#tooltip_C_2' class="card-stat @(ActiveTab == 2 ? "active" : "")" href="@Url.Action("ListStatus", "Voyage", new { status = 2 })">
+                <span class="header">Past</span>
+                <span class="stat-count">@Common.FormatNumberInteger(Model.StatusCount.Where(x => x.status_code == 2).Sum(x => x.status_count))</span>
+                @Html.Partial("_ToolTip", new Tooltip() { ID = "tooltip_C_2", Message = "Past : " + Model.StatusCount.Where(x => x.status_code == 2).Sum(x => x.status_count) })
+            </a>
+            <a data-tooltip='#tooltip_C_3' class="card-stat @(ActiveTab == 3 ? "active" : "")" href="@Url.Action("ListStatus", "Voyage", new { status = 3 })">
+                <span class="header">Upcoming</span>
+                <span class="stat-count">@Common.FormatNumberInteger(Model.StatusCount.Where(x => x.status_code == 3).Sum(x => x.status_count))</span>
+                @Html.Partial("_ToolTip", new Tooltip() { ID = "tooltip_C_3", Message = "Upcoming : " + Model.StatusCount.Where(x => x.status_code == 3).Sum(x => x.status_count) })
+            </a>
+        </div>
+        <div class="card card-grid min-w-full">
+            @*<div class="card-header flex-wrap gap-2 ">
+                    <h3 class="card-title font-medium text-md">
+                        Voyage List
+                    </h3>
+                    <div class="flex flex-wrap gap-2 lg:gap-2">
+                        <button onclick="ExpandCollapse();" class="btn btn-sm btn-outline original btn-light dropdown-toggle">
+                            <i class="ki-filled ki-arrow-two-diagonals"></i>
+
+                            Expand / Collapse
+                        </button>
+                        <button class="btn btn-sm btn-outline original btn-light dropdown-toggle">
+                            <i class="ki-filled ki-setting-4">
+                            </i>
+                            Filters
+                        </button>
+                        <div class="flex">
+                            <label class="input input-sm">
+                                <i class="ki-filled ki-magnifier"></i>
+                                <input data-datatable-search="#TableVessels" placeholder="Search" type="text" value="" />
+                            </label>
+                        </div>
+                    </div>
+                </div>*@
+            <div class="card-body">
+                <div id="TableVessels" class="custom-dt voyage-dt">
+                    <div class="scrollable-x-auto">
+                        <table class="voyagemain table table-auto table-border align-middle text-gray-700 font-medium text-sm"
+                               data-datatable-table="true">
+                            <thead>
+                                <tr>
+                                    <th class="w-[50px]" data-datatable-column="expand"></th>
+
+                                    <th class="voyagewidth" data-datatable-column="voyagenumber">
+                                        <span class="sort">
+                                            <span class="sort-label">Voyage Number</span>
+                                            <span class="sort-icon"></span>
+                                        </span>
+                                    </th>
+                                    <th class="portwidth" data-datatable-column="originport">
+                                        <span class="sort">
+                                            <span class="sort-label">Origin Port</span>
+                                            <span class="sort-icon"></span>
+                                        </span>
+                                    </th>
+                                    <th class="w-[150px]" data-datatable-column="date">
+                                        <span class="sort">
+                                            <span class="sort-label">date</span>
+                                            <span class="sort-icon"></span>
+                                        </span>
+                                    </th>
+                                    <th class="text-center" nowrap>
+                                        Action
+                                    </th>
+                                </tr>
+                            </thead>
+                        </table>
+                    </div>
+
+                    <div class="card-footer justify-center md:justify-between flex-col md:flex-row gap-3 text-gray-600 text-2sm font-medium">
+                        <div class="flex items-center gap-2">
+                            Show
+                            <select class="select select-sm w-16" data-datatable-size="true" name="perpage"></select>
+                            per page
+                        </div>
+                        <div class="flex items-center gap-4">
+                            <span data-datatable-info="true"></span>
+                            <div class="pagination" data-datatable-pagination="true"></div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+@using (Html.BeginForm("List", "Voyage", FormMethod.Post, new { @id = "frmvoyageList" }))
+
+{
+    <div class="drawer drawer-end flex flex-col gap-4 filter-width" data-drawer="true" id="drawer_4">
+        <div class="flex items-center justify-between p-5 border-b">
+            <h3 class="text-base font-semibold text-gray-900">
+                Filters
+            </h3>
+            <button type="button" class="btn btn-xs btn-icon btn-light" data-drawer-dismiss="true">
+                <i class="ki-outline ki-cross">
+                </i>
+            </button>
+        </div>
+        @*<input type="hidden" id="Status" name="filters.status" value="@Model.filters.status" />*@
+        @Html.HiddenFor(m => m.filters.vesselassignmentencrypted)
+
+        <div class="scrollable-y py-0 px-5">
+            <div class=" grid lg:grid-cols-2 gap-5">
+
+                <div class="w-full">
+                    <div class="w-full">
+
+                        <div class="flex flex-col items-baseline flex-wrap lg:flex-nowrap gap-2.5">
+                            <label class="form-label flex items-center gap-1 max-w-56">
+                                From
+                            </label>
+                            <div class="input-group w-full">
+                                @Html.TextBoxFor(m => m.filters.startdate, new { @data_clear = "btnClearFromDate", @data_trigger = "btnTarget_From", @class = "datepicker-here input", @placeholder = "dd/mm/yyyy", @datarequired = "no", @datarequired_message = "", @id = "txt_Filter_Datefrom", @data_provider = "flatpickr1", @readonly = true })
+                                <button type="button" id="btnTarget_From" class="btn btn-icon btn-outline btn-icon-lg btn-light">
+                                    <i class="ki-filled ki-calendar-2"></i>
+                                </button>
+                                <button type="button" id="btnClearFromDate" class="btn btn-danger1 btn-icon btn-outline btn-icon-lg btn-light">
+                                    <i class="ki-filled ki-cross"></i>
+                                </button>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+                <div class="w-full">
+                    <div class="flex flex-col items-baseline flex-wrap lg:flex-nowrap gap-2.5">
+                        <label class="form-label flex items-center gap-1 max-w-56">
+                            To
+                        </label>
+                        <div class="input-group w-full">
+                            @Html.TextBoxFor(m => m.filters.enddate, new { @data_clear = "btnClearToDate", @data_trigger = "btnTarget_enddate", @class = "datepicker-here input", @placeholder = "dd/mm/yyyy", @datarequired = "no", @datarequired_message = "", @id = "txt_Filter_enddate", @data_provider = "flatpickr1", @readonly = true })
+                            <button type="button" id="btnTarget_enddate" class="btn btn-icon btn-outline btn-icon-lg btn-light">
+                                <i class="ki-filled ki-calendar-2"></i>
+                            </button>
+                            <button type="button" id="btnClearToDate" class="btn btn-danger1 btn-icon btn-outline btn-icon-lg btn-light">
+                                <i class="ki-filled ki-cross"></i>
+                            </button>
+                        </div>
+
+                    </div>
+                </div>
+                <div class="w-full grid-2">
+                    <div class="flex flex-col items-baseline flex-wrap lg:flex-nowrap gap-2.5">
+                        <label class="form-label flex items-center gap-1 max-w-56">
+                            Voyage Number
+                        </label>
+                        <div class="input-group w-full">
+                            @Html.TextBoxFor(m => m.filters.voyagenumber, new { @id = "txtnumber", @placeholder = "Enter Voyage Number", @class = "form-control input", @datarequired = "no" })
+                        </div>
+                    </div>
+                </div>
+                <div class="w-full lg:col-span-2">
+                    <div class="flex flex-col items-baseline flex-wrap lg:flex-nowrap gap-2.5">
+                        <label class="form-label flex items-center gap-1 max-w-56">Orgin Port</label>
+                        <div class="input-group w-full">
+                            @Html.DropDownListFor(m => m.filters.origin_encry, new SelectList(ViewBag.PortDropdown, "Value", "Text"), new { @class = "form-control select2", @style = "width:100%;" })
+                        </div>
+                    </div>
+                </div>
+                <div class="w-full lg:col-span-2">
+                    <div class="flex flex-col items-baseline flex-wrap lg:flex-nowrap gap-2.5">
+                        <label class="form-label flex items-center gap-1 max-w-56">Destination Port</label>
+                        <div class="input-group w-full">
+                            @Html.DropDownListFor(m => m.filters.dest_encry, new SelectList(ViewBag.PortDropdown, "Value", "Text"), new { @class = "form-control select2", @style = "width:100%;" })
+                        </div>
+                    </div>
+                </div>
+                <div class="w-full lg:col-span-2">
+                    <div class="flex flex-col items-baseline flex-wrap lg:flex-nowrap gap-2.5">
+                        <label class="form-label flex items-center gap-1 max-w-56">Status</label>
+                        <div class="input-group w-full">
+                            @Html.DropDownListFor(m => m.filters.status, new SelectList(ViewBag.StatusDropdown, "Value", "Text"), "- All Statuses -", new { @id = "ddlStatus", @class = "form-control select2", @style = "width:100%;" })
+                        </div>
+                    </div>
+                </div>
+                <div class="w-full grid-2">
+                    <label class="switch">
+                        @Html.CheckBoxFor(m => m.filters.islive)
+                        <span class="switch-label">
+                            Is Live
+                        </span>
+                    </label>
+                </div>
+
+
+            </div>
+        </div>
+        <div class="flex justify-between">
+            <div class="flex justify-end gap-4 border-t p-5">
+                <button type="button" class="btn btn-light" data-drawer-dismiss="true">
+                    Close
+                </button>
+            </div>
+            <div class="flex justify-end gap-4 border-t p-5">
+                <button type="submit" name="action" value="Reset" class="btn btn-light" data-drawer-dismiss="true">
+                    Reset Filter
+                </button>
+                <button type="submit" name="action" value="filter" class="btn btn-dark">
+                    Apply Filter
+                </button>
+            </div>
+        </div>
+
+    </div>
+}
+
+<div id="modalsection"></div>
+
+@section PageScripts {
+    <script src="~/js/voyageselect2.js"></script>
+    <script src="~/js/voyage.js?v=1.0.9"></script>
+    <script src="~/js/voyagedetails.js?v=1.0.8"></script>
+    <script src="~/js/port.js"></script>
+    <script src="~/js/site.js"></script>
+}

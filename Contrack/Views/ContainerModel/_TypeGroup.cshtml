@@ -1,0 +1,80 @@
+﻿@model Contrack.ContainerTypeDTO
+
+<div class="cont-model-group">
+    <div class="type-header flex items-center">
+        <div class="icon">
+            <img src="~/assets/icons/containernew.svg" alt="Container Icon" />
+        </div>
+
+        <div class="heading-stack flex flex-col">
+            <div class="flex items-center heading-col">
+
+                <span class="type-label">@Model.typename</span>
+
+
+            </div>
+            <span class="sub-label">
+                <span class="flex gap-3 items-center">
+                    <span>
+                        @Model.sizes.Count Sizes
+                    </span>
+                    <span class="dot">•</span>
+                    <span>
+                        @Model.sizes.Sum(x => x.models.Count) Models
+                    </span>
+                </span>
+            </span>
+        </div>
+
+        <div class="ml-2 type-menu">
+            <div class="menu" data-menu="true">
+                <div class="menu-item menu-item-dropdown"
+                     data-menu-item-offset="0, 10px"
+                     data-menu-item-placement="bottom-end"
+                     data-menu-item-toggle="dropdown"
+                     data-menu-item-trigger="click">
+
+                    <button class="menu-toggle btn btn-xs btn-icon btn-light btn-clear1">
+                        <i class="ki-filled ki-dots-vertical"></i>
+                    </button>
+
+                    <div class="menu-dropdown menu-default w-full max-w-[220px]" data-menu-dismiss="true">
+                        <div class="menu-item">
+                            <a onclick="OpenContainerTypeModal('@Model.containertypeid.EncryptedValue')" class="menu-link">
+                                <span class="menu-icon"><i class="ki-filled ki-pencil"></i></span>
+                                <span class="menu-title">Edit Container Type</span>
+                            </a>
+                        </div>
+                        <div class="menu-item">
+                            <a onclick="OpenContainerModelModal('', '@Model.containertypeid.EncryptedValue', '')" class="menu-link">
+                                <span class="menu-icon"><i class="ki-filled ki-plus"></i></span>
+                                <span class="menu-title">Add Model</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container-size-groups">
+        @if (Model.sizes != null && Model.sizes.Count > 0)
+        {
+            foreach (var size in Model.sizes.OrderBy(x => x.sizeorderby))
+            {
+                @Html.Partial("_SizeGroup", size)
+            }
+        }
+        else
+        {
+            <div class="cont-model-grid">
+                <button type="button" class="model-card empty" onclick="OpenContainerModelModal('', '@Model.containertypeid.EncryptedValue', '')">
+                    <i class="ki-filled ki-plus"></i>
+
+                    <span class="text-lg font-medium text-mono hover:text-primary mb-px">Add Container Model</span>
+                </button>
+            </div>
+        }
+    </div>
+
+</div>

@@ -1,0 +1,29 @@
+﻿@model Contrack.ContainerSizeDTO
+<div class="container-size-group">
+    <div class="cont-size-section-header flex items-center justify-between">
+        <div class="cont-size-section flex items-center">
+            <span class="text-model-heading">@Model.sizename</span>
+            <span class="size-details size-data">@Model.length ft x @Model.height ft x @Model.width ft</span>
+        </div>
+        @*<button class="btn btn-sm btn-dark btn-outline"
+                onclick="OpenContainerModelModal('','@Model.models.FirstOrDefault().typeid.EncryptedValue','@Model.sizeid.EncryptedValue')">
+            <i class="ki-filled ki-plus"></i>
+            Add Model
+        </button>*@
+
+    </div>
+
+    <div class="cont-model-grid">
+        @if (Model.models != null && Model.models.Count > 0)
+        {
+            foreach (var model in Model.models)
+            {
+                @Html.Partial("_Model", model)
+            }
+        }
+        <button type="button" class="model-card empty" onclick="OpenContainerModelModal('', '@Model.models.FirstOrDefault().typeid.EncryptedValue', '@Model.sizeid.EncryptedValue')">
+            <i class="ki-filled ki-plus"></i>
+            <span class="text-lg font-medium text-mono mb-px">Add Container Model</span>
+        </button>
+    </div>
+</div>

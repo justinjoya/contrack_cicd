@@ -1,0 +1,215 @@
+﻿@using Contrack
+@model BookedContainer
+
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Booking Summary</title>
+    <link rel="preconnect" href="//fonts.googleapis.com" />
+    <link rel="preconnect" href="//fonts.gstatic.com" crossorigin />
+    <link href="//fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;1,100;1,200;1,300;1,400;1,500;1,600;1,700&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet" />
+    <link href="~/assets/vendors/keenicons/styles.bundle.css" rel="stylesheet" />
+    <link rel="stylesheet" href="~/css/Download/DownloadQuote.css" />
+</head>
+@{
+    IAgencyRepository repo = new AgencyRepository();
+    AgencyService agency = new AgencyService(repo);
+    var agencyinfo = agency.GetAgencyByDetailID(Model.booking.customer.agencydetailid.NumericValue);
+}
+
+<body>
+    <div class="qtn-page">
+        <div class="qtn-header">
+            <div class="qtn-header__left">
+                <div class="qtn-logo">
+                    <img alt="" src="~/assets/img/quotation/cpg-logo.svg" />
+                </div>
+                <div>
+                    <h1>Cargo Shipment Confirmation</h1>
+                    <p>REF: @Model.booking.bookingno</p>
+                </div>
+            </div>
+
+            <div class="qtn-header__right">
+                <span class="qtn-issue-label">ISSUE DATE</span>
+                <div class="qtn-issue-box">
+                    <div class="qtn-issue-day">
+                        @Model.booking.createdat.ToString("dd")
+                    </div>
+                    <div class="qtn-issue-month">
+                        @Model.booking.createdat.ToString("MMM, yyyy")
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="qtn-meta-wrapper">
+            <div class="qtn-meta">
+                <div class="meta-label">
+                    <span>Carrier:</span> @agencyinfo.agencyname
+                </div>
+                <div class="meta-value">
+                    @Html.Raw(agencyinfo.address.Replace("\n", "<br/>"))
+                </div>
+            </div>
+            <div class="qtn-meta"></div>
+        </div>
+
+        <ul class="qtn-meta-info">
+            <li>
+                This is the Cargo Shipment Confirmation under the Terms and Conditions for Carriage and Ancillary Services of Civitas Partners S.A. dated April 1, 2025 (“General Terms & Conditions of Carriage”) which shall together with the General Terms & Condition of Carriage and relevant terms for Booking Summary form the Contract between the Carrier for the carriage of the Goods referred to hereinbelow and evidence of Shipment. By delivering the Goods for Shipment, the Shipper acknowledges receipt of the General Terms & Conditions of Carriage and confirms that these General Terms and Conditions of Carriage apply to the carriage of Goods hereunder. Capitalized terms used hereunder and not defined herein shall have the meaning assigned to them in the General Terms & Conditions of Carriage. This Cargo Shipment Confirmation shall prevail over terms contained in any previous communication or exchanges between the Carrier and the Shipper and their respective representatives, agents and/or brokers. This Cargo Shipment Confirmation is not a negotiable instrument. Carriage of Goods is subject to and governed by the General Terms & Conditions of Carriage, including but not limited clause 5. thereof, the Hague Rules, approved at the International Convention held on 25th August 1924, the 1888 Commercial Code and, to a certain extent, by Decree-Law No 3/2022 of 25 May 2022 which approved the Legal Regime of Commercial Contracts, which is applicable to the carriage of goods by sea. It is the obligation of the Shipper to check the information contained herein and to notify the Carrier in case of any discrepancies. It is further the obligation of the Shipper to provide to the Carrier clear information and identification of the Consignee and its representative for delivery of the Goods.
+            </li>
+        </ul>
+
+        <div class="qtn-cards">
+            <div class="qtn-card">
+                <div class="qtn-card-img">
+                    <img alt="" src="~/assets/img/quotation/box.svg" />
+                </div>
+                <div class="qtn-card-content">
+                    <h4>SHIPPER</h4>
+                    <p class="title">@Model.booking.location.shippername</p>
+                    <p>@Html.Raw(Model.booking.location.shipperaddress.Replace("\n", "<br/>"))</p>
+                    <p>
+                        <i class="ki-filled ki-user"></i>
+                        @Display.DisplayString(string.IsNullOrEmpty(Model.booking.location.shipperpic_name) ? Model.booking.location.shipperpiccustom : Model.booking.location.shipperpic_name)
+                    </p>
+                    <p>
+                        <i class="ki-filled ki-sms"></i>
+                        @Display.DisplayString(Model.booking.location.shipperemail)
+                    </p>
+                    <p>
+                        <i class="ki-filled ki-phone"></i>
+                        @Display.DisplayString(Model.booking.location.shipperphone)
+                    </p>
+                </div>
+            </div>
+
+            <div class="qtn-card">
+                <div class="qtn-card-img">
+                    <img alt="" src="~/assets/img/quotation/box.svg" />
+                </div>
+                <div class="qtn-card-content">
+                    <h4>CONSIGNEE</h4>
+                    <p class="title">@Model.booking.location.consigneename</p>
+                    <p>@Html.Raw(Model.booking.location.consigneeaddress.Replace("\n", "<br/>"))</p>
+                    <p><i class="ki-filled ki-user"></i>@Display.DisplayString(string.IsNullOrEmpty(Model.booking.location.consigneepic_name) ? Model.booking.location.consigneepiccustom : Model.booking.location.consigneepic_name)</p>
+                    <p><i class="ki-filled ki-sms"></i>@Display.DisplayString(Model.booking.location.consigneeemail)</p>
+                    <p>  <i class="ki-filled ki-phone"></i> @Display.DisplayString(Model.booking.location.consigneephone)</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="qtn-route-wrapper">
+            <div class="qtn-route">
+                <div class="qtn-route-left">
+                    <div class="qtn-route-left-icon">
+                        <img alt="" src="~/assets/img/quotation/ship-icon.svg" />
+                    </div>
+                    <div class="qtn-route-left-content">
+                        <div class="qtn-route__label">VESSEL</div>
+                        <div class="qtn-route__value">@Model.voyage.Vesselname</div>
+                        <div class="qtn-route__sub">@Model.voyage.VoyageNumber</div>
+                    </div>
+                </div>
+
+                <div class="qtn-route-center">
+                    <div>
+                        <div class="qtn-route__label">POL</div>
+                        <div class="qtn-route__value">@Model.booking.location.pol_portname</div>
+                        <div class="qtn-route__sub">
+                            @Model.voyage.minDate.Text
+                        </div>
+                    </div>
+                    <div class="qtn-route__arrow">
+                        <img alt="" src="~/assets/img/quotation/right-chevron.svg" />
+                    </div>
+                    <div>
+                        <div class="qtn-route__label">POD</div>
+                        <div class="qtn-route__value">@Model.booking.location.pod_portname</div>
+                        <div class="qtn-route__sub sub-green">
+                            @Model.voyage.maxDate.Text
+                        </div>
+                    </div>
+                </div>
+
+                <div class="qtn-route-right">
+                    <div class="qtn-route__label">ESTD. TRANSIT</div>
+                    <div class="qtn-route__value qtn-green">@Model.voyage.NoOfDays Days</div>
+                    <div class="qtn-route__service">Direct Service</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="qtn-section-title">GOODS SHIPPED</div>
+        <div class="qtn-table-wrapper">
+            <table class="qtn-table">
+                <thead>
+                    <tr>
+                        <th style="width: 50px; text-align: right;">S. NO</th>
+                        <th>CONTAINER NO</th>
+                        <th>STAMP</th>
+                        <th style="text-align:right;">WEIGHT (KGS)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @{
+                        int count = 0;
+                        var group = Model.containers.GroupBy(x => new { x.ContainerSizeID, x.ContainerTypeID }).ToList();
+                        foreach (var item in group)
+                        {
+                            string heading = "";
+                            var matcheditem = Model.booking.details.FirstOrDefault(x => x.sizeid.NumericValue == item.Key.ContainerSizeID && x.containertypeid.NumericValue == item.Key.ContainerTypeID);
+                            if (matcheditem != null)
+                            {
+                                heading = matcheditem.qty + " x " + matcheditem.sizename + " " + matcheditem.containertypename + " <span class='dot'>•</span> " + (matcheditem.empty_full == "E" ? "Empty" : "Full") + " <span class='dot'>•</span> " + Display.DisplayStringNA(matcheditem.commodity);
+                            }
+                            <tr>
+                                <td class="type" colspan="4">@Html.Raw(heading)</td>
+
+                            </tr>
+                            foreach (var container in item.ToList())
+                            {
+                                count++;
+                                <tr>
+                                    <td class="desc" style="text-align:right;">@count</td>
+                                    <td class="desc">@container.ContainerNo</td>
+                                    <td class="qty">@container.Stamp</td>
+                                    <td class="qty" style="text-align:right;">@container.Weight</td>
+                                </tr>
+                            }
+                        }
+                    }
+
+                </tbody>
+            </table>
+        </div>
+
+
+
+        <div class="qtn-amount-container">
+
+            <div class="amount-container-rcard">
+                <h3>FREIGHT:</h3>
+                <p>
+                    As per Booking Summary and accompanying PDA
+                </p>
+                <h3>DEMURRAGE RATE:</h3>
+                <p>
+                    As per Booking Summary and accompanying PDA
+                </p>
+                <p>
+                    Any Freight or other amounts due to the Carrier, including for demurrage must be paid to the Carrier prior to collections of Goods. Any deposits, if applicable, shall be refunded to Shipper only upon return in good condition of any rented Unite (Container).
+                    <br />
+                    This Cargo Shipment Confirmation is issued in electronic format only which shall be interpreted as one original of Cargo Shipment Confirmation.
+                    <br />
+                    IN WITNESS of the Contract herein this Cargo Shipment Confirmation have been issued.
+
+                </p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,2 @@
+﻿@model Contrack.DropdownModal
+@Html.DropDownList(Model.Name, new SelectList(@ViewBag.BankAccountDropdown, "Value", "Text", "") { }, new { @id = "ddlPaymentBank", @placeholder = "Select Bank Account", @class = "form-control select2", @datarequired = "yes", @datarequired_message = "Please select Bank Account", @data_append_parent = "yes", @style = "width:100%;", @onchange = "GetAgencyBankInfo(this);" })

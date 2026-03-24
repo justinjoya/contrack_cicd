@@ -1,0 +1,65 @@
+﻿@using Contrack
+@model int
+@{
+    var repo = new CustomizeColumRepository();
+    var service = new CustomizeColumnService(repo);
+    var allMenus = service.GetMenus(Model);
+}
+<div id="dropdown" class="dropdown" data-dropdown="true" data-dropdown-trigger="click">
+    <button class="relative btn btn-md btn-light original dropdown-toggle">
+        @if (allMenus.Count != allMenus.Count(x => x.customizecolumn.is_default || x.customizecolumn.MappedToUser))
+        {
+            <span class="absolute left-5 badge badge-dot badge-warning size-2" style="right:-2px;top:-2px;">
+            </span>
+        }
+        <i class="ki-filled ki-element-2"></i>
+    </button>
+    <div class="dropdown-content absolute left-5 mt-2 w-72 max-h-80 overflow-y-auto bg-white border rounded shadow-lg z-50" id="table_columns">
+        <div class="menu menu-default flex flex-col w-full p-2 gap-1">
+            <div class="flex p-2">
+                <label class="input input-sm w-full">
+                    <i class="ki-filled ki-magnifier"></i>
+                    <input type="text" id="dropdown_search" placeholder="Search" class="w-full" />
+                </label>
+            </div>
+            <div class="flex items-center justify-end p-2">
+                <div class="menu-title font-normal text-gray-500">Select All</div>
+                <label class="switch switch-sm justify-start gap-1">
+                    <input type="checkbox" id="toggle-select" class="select-all-switch" />
+                </label>
+            </div>
+            @for (int i = 0; i < allMenus.Count; i++)
+            {
+                var menu = allMenus[i];
+                bool is_default = menu.customizecolumn.is_default;
+                bool isMapped = menu.customizecolumn.MappedToUser;
+                <div class="menu-item px-20 py-20 gap-2">
+                    <div class="flex items-center justify-end p-2">
+                        <div class="menu-title font-normal">@menu.customizecolumn.column_name</div>
+                        <div>
+                            <label class="switch switch-sm">
+                                <input type="checkbox"
+                                       class="field-switch"
+                                       data-menuid="@menu.customizecolumn.menuid"
+                                       data-column-name="@menu.customizecolumn.column_name"
+                                       data-index="@menu.customizecolumn.display_order"
+                                       @(is_default ? "checked disabled" : (isMapped ? "checked" : "")) />
+                                <input type="hidden" class="menuid" value="@menu.customizecolumn.menuid" />
+                                <input type="hidden" class="index" value="@menu.customizecolumn.display_order" />
+
+                                <input type="hidden" class="column-name" value="@menu.customizecolumn.column_name" />
+
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            }
+            <div class="sticky bottom-0 flex justify-end gap-2 border-t bg-white p-2 mt-2 pt-4">
+                <button type="button" class="btn btn-xs btn-light customize-cancel-btn">Cancel</button>
+                <button type="button" class="btn btn-xs btn-primary customize-save-btn">Save</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+

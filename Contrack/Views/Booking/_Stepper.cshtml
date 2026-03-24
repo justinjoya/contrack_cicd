@@ -1,0 +1,34 @@
+﻿@model int
+<div class="breadscrumb-3">
+    <div class="holder">
+        <span class="stepper @(Model==1? "current":(Model>1? "completed":""))">
+            <i class="ki-filled ki-user-edit"></i>
+            <i class="ki-solid ki-check-circle finish"></i>
+            1. Customer
+            <span class="innerline"></span>
+        </span>
+        <span class="line @(Model>1?"completed":"")"></span>
+        <span class="stepper @(Model==2? "current":(Model>2? "completed":""))">
+            <i class="ki-filled ki-geolocation"></i>
+            <i class="ki-solid ki-check-circle finish"></i>
+            2. Location
+            <span class="innerline"></span>
+        </span>
+        <span class="line @(Model>2?"completed":"")"></span>
+        <span class="stepper @(Model==3? "current":(Model>3? "completed":""))">
+            <i class="ki-filled ki-cube-2"></i>
+            <i class="ki-solid ki-check-circle finish"></i>
+            3. Container
+            <span class="innerline"></span>
+        </span>
+        <span class="line @(Model>3?"completed":"")"></span>
+        <span class="stepper @(Model==4? "current":(Model>4? "completed":""))">
+            <i class="ki-filled ki-eye"></i>
+            <i class="ki-solid ki-check-circle finish"></i>
+            4. Preview
+            <span class="innerline"></span>
+        </span>
+    </div>
+    <div class="bottomline">
+    </div>
+</div>

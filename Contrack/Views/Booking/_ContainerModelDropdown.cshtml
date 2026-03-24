@@ -1,0 +1,25 @@
+﻿@model Contrack.ContainerBookingDetailDTO
+
+<div class="w-full">
+    <div class="flex flex-col items-baseline flex-wrap lg:flex-nowrap gap-2.5">
+        <label class="form-label flex items-center gap-1 max-w-56">
+           Container Model
+        </label>
+        @Html.DropDownListFor(
+            m => m.containermodeluuid,
+            new SelectList(
+                ViewBag.ContainerModelDropdown,
+                "Value",
+                "Text",
+                Model.containermodeluuid
+            ),
+            "All",
+            new
+            {
+                @id = "ddlcontainermodel",
+                @class = "form-control select2",
+                @style = "width:100%;"
+            }
+        )
+    </div>
+</div>

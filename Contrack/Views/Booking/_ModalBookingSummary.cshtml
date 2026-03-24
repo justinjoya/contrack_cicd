@@ -1,0 +1,152 @@
+﻿@using Contrack
+@model BookingSummaryDTO
+<style>
+    .ck-editor__editable {
+        min-height: 300px;
+    }
+</style>
+<div class="modal" data-modal="true" data-modal-backdrop-static="true" data-modal-autofocus="true" id="ModalBookingSummary">
+    <div class="modal-content modal-center-y max-w-[800px] max-h-[95%]">
+        <div class="modal-header">
+            <h3 class="modal-title">
+                Booking Summary
+            </h3>
+            <button class="btn btn-xs btn-icon btn-light" data-modal-dismiss="true">
+                <i class="ki-outline ki-cross"></i>
+            </button>
+        </div>
+
+        <div class="modal-body scrollable-y">
+            <form id="formBookingSummary">
+                @Html.HiddenFor(m => m.summaryid.EncryptedValue)
+                @Html.HiddenFor(m => m.summaryuuid)
+                @Html.HiddenFor(m => m.bookinguuid)
+
+                <div class="flex items-center gap-3 mt-8">
+                    <label class="switch">
+                        @Html.CheckBoxFor(m => m.intramodal_transport,
+                            new { @id = "intramodal_transport", @datarequired = "no", @datarequired_message = "Please select Intramodal Transport option" })
+                    </label>
+                    <label class="form-label mb-0">
+                        Intramodal Transport
+                    </label>
+                </div>
+                <br />
+                @*<div class="flex flex-col gap-2.5 mt-8">
+                        <label class="form-label">
+                            Intramodal Transport
+                            <span class="text-danger ps-2">*</span>
+                        </label>
+                        <label class="switch">
+                            <span class="switch-label">
+                                Enable specialized transfer services for this booking.
+                            </span>
+                            @Html.CheckBoxFor(m => m.intramodal_transport,
+                                new { @id = "intramodal_transport", @datarequired = "no", @datarequired_message = "Please select Intramodal Transport option" })
+                        </label>
+                    </div>*@
+
+                <div class="grid lg:grid-cols-2 gap-6">
+                    <div class="flex flex-col gap-2.5">
+                        <div class="flex justify-between items-center w-full">
+                            <label class="form-label">
+                                Stuffing / Unstuffing Units
+                                <span class="text-danger ps-2">*</span>
+                            </label>
+                            <label class="switch">
+                                <span class="switch-label">N/A</span>
+                                <input type="checkbox" onchange="toggleNA(this,'stuffing_unstuffing_units')" />
+                            </label>
+                        </div>
+
+                        <div id="wrap_stuffing_unstuffing_units">
+                            @Html.TextAreaFor(m => m.stuffing_unstuffing_units,
+                            new { @rows = "2", @class = "textarea w-full", @id = "stuffing_unstuffing_units", @datarequired = "yes", @datarequired_message = "Please enter Stuffing / Unstuffing Units" })
+                        </div>
+                    </div>
+
+                    <div class="flex flex-col gap-2.5">
+                        <div class="flex justify-between items-center w-full">
+                            <label class="form-label">
+                                Pickup & Return Empty Units
+                                <span class="text-danger ps-2">*</span>
+                            </label>
+                            <label class="switch">
+                                <span class="switch-label">N/A</span>
+                                <input type="checkbox" onchange="toggleNA(this,'pickupandreturn_empty_rentalunits')" />
+                            </label>
+                        </div>
+
+                        <div id="wrap_pickupandreturn_empty_rentalunits">
+                            @Html.TextAreaFor(m => m.pickupandreturn_empty_rentalunits,
+                            new { @rows = "2", @class = "textarea w-full", @id = "pickupandreturn_empty_rentalunits", @datarequired = "yes", @datarequired_message = "Please enter Pickup & Return Empty Units" })
+                        </div>
+                    </div>
+
+                    <div class="flex flex-col gap-2.5">
+                        <div class="flex justify-between items-center w-full">
+                            <label class="form-label">
+                                Dropoff
+                                <span class="text-danger ps-2">*</span>
+                            </label>
+                            <label class="switch">
+                                <span class="switch-label">N/A</span>
+                                <input type="checkbox" onchange="toggleNA(this,'dropoff')" />
+                            </label>
+                        </div>
+                        <div id="wrap_dropoff">
+                            @Html.TextAreaFor(m => m.dropoff,
+                            new { @rows = "2", @class = "textarea w-full", @id = "dropoff", @datarequired = "yes", @datarequired_message = "Please enter Dropoff details" })
+                        </div>
+                    </div>
+
+                    <div class="flex flex-col gap-2.5">
+                        <label class="form-label">
+                            Currency
+                            <span class="text-danger ps-2">*</span>
+                        </label>
+                        <div class="w-full">
+                            @Html.DropDownListFor(
+                                         m => m.currency,
+                                         new SelectList(ViewBag.CurrencyDropdown, "Value", "Text",
+                                             Model.currency),
+                                         new
+                                         {
+                                             @class = "form-control select2",
+                                             @id = "ddlCurrency",
+                                             @datarequired = "yes",
+                                             @datarequired_message = "Please choose Currency",
+                                             @data_append_parent = "yes",
+                                             @style = "width:100%;"
+                                         })
+                        </div>
+                    </div>
+                </div>
+                <br />
+
+                <div class="flex flex-col gap-2.5 mt-8">
+                    <label class="form-label">
+                        Additional Terms & Conditions
+                        <span class="text-danger ps-2">*</span>
+                    </label>
+                    @Html.TextAreaFor(m => m.additionalterms,
+                    new { @id = "editor1", @class = "textarea ckeditor-classic w-full", @rows = "6", @datarequired = "yes", @datarequired_message = "Please enter Additional Terms & Conditions" })
+                </div>
+            </form>
+        </div>
+
+        <div class="modal-footer justify-between">
+            <span class="text-xs text-gray-600 italic">
+                <span class="text-danger">*</span> Required fields for booking summary
+            </span>
+            <div class="flex gap-4">
+                <button class="btn btn-light" data-modal-dismiss="true">
+                    Close
+                </button>
+                <button class="btn btn-primary" onclick="SaveBookingSummary();">
+                    Save Summary
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

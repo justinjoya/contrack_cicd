@@ -1,0 +1,176 @@
+﻿@using Contrack;
+<!DOCTYPE html>
+<html class="h-full" data-theme="true" data-theme-mode="light" dir="ltr" lang="en">
+<head>
+    <title>
+        Contrack
+    </title>
+    <meta charset="utf-8" />
+    <meta content="follow, index" name="robots" />
+    <meta content="width=device-width, initial-scale=1, shrink-to-fit=no" name="viewport" />
+    <meta content="~/assets/media/app/og-image.png" property="og:image" />
+    <link href="~/assets/media/app/apple-touch-icon.png" rel="apple-touch-icon" sizes="180x180" />
+    <link href="~/assets/media/app/favicon-32x32.png" rel="icon" sizes="32x32" type="image/png" />
+    <link href="~/assets/media/app/favicon-16x16.png" rel="icon" sizes="16x16" type="image/png" />
+    <link href="~/assets/media/app/favicon.ico" rel="shortcut icon" />
+    <link href="//fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link href="//fonts.googleapis.com/css2?family=Google+Sans+Code:ital,wght@0,300..800;1,300..800&family=Space+Grotesk:wght@300..700&display=swap" rel="stylesheet">
+    <link href="//fonts.googleapis.com/css?family=Material+Icons|Material+Icons+Outlined|Material+Icons+Two+Tone|Material+Icons+Round|Material+Icons+Sharp|Material+Symbols+Outlined" rel="stylesheet">
+    <link href="~/assets/vendors/apexcharts/apexcharts.css" rel="stylesheet" />
+    <link href="~/assets/vendors/keenicons/styles.bundle.css" rel="stylesheet" />
+    <link href="~/assets/libs/sweetalert2/sweetalert2.min.css" rel="stylesheet" type="text/css" />
+    <link href="~/assets/css/toastify.min.css" rel="stylesheet" type="text/css">
+    <link href="~/assets/css/styles.css" rel="stylesheet" />
+    <link href="~/assets/css/select2.min.css" rel="stylesheet" type="text/css" />
+    <link href="~/assets/flatpickr/flatpickr.min.css" rel="stylesheet" type="text/css" />
+    <link href="~/css/commonstyles.css?v=1.0.3" rel="stylesheet" />
+    <link href="~/css/site1.css?v=1.0.9" rel="stylesheet" />
+    <link href="~/css/site-contract.css?v=1.0.7" rel="stylesheet" />
+</head>
+<body class="antialiased flex h-full text-base text-gray-700 [--tw-content-scrollbar-color:#e8e8e8] [--tw-header-height:60px] [--tw-sidebar-width:90px]">
+
+    <div class="flex flex-col grow">
+
+        <header class="flex">
+            <div class="flex container-fluid" style="padding-right:0;">
+                <div class="flex items-center justify-between w-full">
+                    <div class="menu-holder flex items-center">
+                        <img src="/assets/img/cpg-white.png" class="logo">
+                        @Html.Partial("_TopMenu")
+                    </div>
+
+                    <div class="profile-holder">
+                        <div class="menu items-stretch flex-col lg:flex-row grow lg:grow-0" data-menu="true">
+
+                            <div class="menu-item justify-center menu-item-dropdown" style="padding:0;" data-menu-item-offset="0,0|lg:20px, 0" data-menu-item-offset-rtl="0,0|lg:0, 0" data-menu-item-overflow="true" data-menu-item-placement="bottom-end" data-menu-item-placement-rtl="bottom-end" data-menu-item-toggle="dropdown" data-menu-item-trigger="click|lg:hover">
+                                @*<div class="profile-name">
+                                    <div class="avatar">@Common.GetShortcode(Common.LoginName)</div>
+                                    <div class="name">@Common.LoginName</div>
+                                    <img src="~/assets/icons/arrowdown.svg" />
+                                </div>*@
+                                <div class="menu" data-menu="true">
+                                    <div class="menu-item" data-menu-item-offset="10px, 0" data-menu-item-placement="bottom-end" data-menu-item-toggle="dropdown" data-menu-item-trigger="click">
+                                        <div class="menu-link p-0 grow cursor-pointer border-0">
+                                            <div class="profile-name flex items-center gap-2">
+                                                <div class="avatar bg-white text-[#008060] rounded-full w-9 h-9 flex items-center justify-center font-bold text-sm">
+                                                    @Common.GetShortcode(Common.LoginName)
+                                                </div>
+                                                <div class="name text-white font-medium text-sm">
+                                                    @Common.LoginName
+                                                </div>
+                                                <img src="~/assets/icons/arrowdown.svg" />
+                                            </div>
+                                        </div>
+                                        <div class="menu-dropdown menu-default light:border-gray-300 w-screen max-w-[250px]">
+                                            <div class="flex items-center justify-between px-5 py-1.5 gap-1.5">
+                                                <div class="flex items-center gap-2">
+                                                    <div class="flex items-center justify-center size-9 rounded-full border-2 border-success bg-gray-100 text-[#008060] font-bold text-xs">
+                                                        @Common.GetShortcode(Common.LoginName)
+                                                    </div>
+                                                    <div class="flex flex-col gap-1.5">
+                                                        <span class="text-sm text-gray-800 font-semibold leading-none">
+                                                            @Common.LoginName
+                                                        </span>
+                                                        <a class="text-xs text-gray-600 hover:text-primary font-medium leading-none" href="#">
+                                                            Admin
+                                                        </a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="menu-separator"></div>
+                                            @*<div class="flex flex-col">
+                                                <div class="menu-item">
+                                                    <a class="menu-link" href="@Url.Action("MyProfile","Profile")">
+                                                        <span class="menu-icon">
+                                                            <i class="ki-filled ki-profile-circle"></i>
+                                                        </span>
+                                                        <span class="menu-title">My Profile</span>
+                                                    </a>
+                                                </div>
+                                            </div>
+                                            <div class="menu-separator"></div>*@
+                                            <div class="flex flex-col">
+                                                @*<div class="menu-item mb-0.5">
+                                                    <div class="menu-link">
+                                                        <span class="menu-icon">
+                                                            <i class="ki-filled ki-moon"></i>
+                                                        </span>
+                                                        <span class="menu-title">Dark Mode</span>
+                                                        <label class="switch switch-sm">
+                                                            <input data-theme-state="dark" data-theme-toggle="true" name="check" type="checkbox" value="1" />
+                                                        </label>
+                                                    </div>
+                                                </div>*@
+                                                <div class="menu-item px-4 py-1.5">
+                                                    <a class="btn btn-sm btn-light justify-center" href="@Url.Action("Logout", "Account")">
+                                                        Log out
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                @*<div class="menu-dropdown floater menu-default py-2.5 w-full max-w-[220px]">
+            <div class="menu-item @(ViewBag.SubMenu=="PIntent"?"active":"")">
+                <a class="menu-link" href="@Url.Action("List","Agency")" tabindex="0">
+                    <span class="menu-icon">
+                        <i class="ki-filled ki-purchase"></i>
+                    </span>
+                    <span >
+                        Companies
+                    </span>
+                </a>
+            </div>
+            <div class="menu-item @(ViewBag.SubMenu=="POList"?"active":"")">
+                <a class="menu-link" href="@Url.Action("List","Client")" tabindex="0">
+                    <span class="menu-icon">
+                        <i class="ki-filled ki-book"></i>
+
+                    </span>
+                    <span class="menu-title grow-0">
+                        Clients
+                    </span>
+                </a>
+            </div>
+        </div>*@
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <main class="mainbody grow">
+            @RenderBody()
+        </main>
+
+    </div>
+
+    <script>
+        var domain = '@Request.Url.GetComponents(UriComponents.SchemeAndServer, UriFormat.Unescaped)'
+        var viewpage = '@ViewBag.SubManu'
+        var flagpath = '@Common.FlagFolder'
+    </script>
+    <!-- End of Page -->
+    <!-- Scripts -->
+    <!-- latest jquery-->
+    <script src="~/assets/js/jquery-3.5.1.min.js"></script>
+    <script src="~/assets/js/core.bundle.js">
+    </script>
+    <script src="~/assets/vendors/apexcharts/apexcharts.min.js">
+    </script>
+    <script src="~/assets/libs/sweetalert2/sweetalert2.min.js"></script>
+    <script src="~/assets/js/toastify-js.js" type="text/javascript"></script>
+    <script src="~/assets/js/blockui.js"></script>
+    <script src="~/assets/js/select2.min.js"></script>
+    <script src="~/assets/js/cleave.min.js"></script>
+    <script src="~/assets/flatpickr/flatpickr.min.js"></script>
+
+    <script src="~/js/formvalidator.js?v=1.0.5"></script>
+    <script src="~/js/site.js?v=1.0.24"></script>
+    <!-- End of Scripts -->
+    @RenderSection("PageScripts", false)
+</body>
+</html>

@@ -1,0 +1,322 @@
+﻿@using Contrack
+@using System.Globalization
+@model ContainerBooking
+
+
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Booking Summary</title>
+
+    <link rel="preconnect" href="//fonts.googleapis.com" />
+    <link rel="preconnect" href="//fonts.gstatic.com" crossorigin />
+    <link href="//fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;1,100;1,200;1,300;1,400;1,500;1,600;1,700&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet" />
+    <link href="~/assets/vendors/keenicons/styles.bundle.css" rel="stylesheet" />
+    <link rel="stylesheet" href="~/css/Download/DownloadQuote.css" />
+</head>
+@{
+    IAgencyRepository repo = new AgencyRepository();
+    AgencyService agency = new AgencyService(repo);
+    var agencyinfo = agency.GetAgencyByDetailID(Model.booking.customer.agencydetailid.NumericValue);
+
+    IPricingRepository _PricingRepository = new PricingRepository();
+    var pricinglist = _PricingRepository.GetPricingByBookingUUID(Model.booking.bookinguuid, Model.bookingSummary.currency, Model.booking.customer.client.clientdetailid.EncryptedValue);
+
+    List<PricingDetailDTO> otherpricelist = new List<PricingDetailDTO>();
+}
+<body>
+    <div class="qtn-page">
+        <div class="qtn-header">
+            <div class="qtn-header__left">
+                <div class="qtn-logo">
+                    <img alt="" src="~/assets/img/quotation/cpg-logo.svg" />
+                </div>
+                <div>
+                    <h1>Booking Summary</h1>
+                    <p>REF: @Model.booking.bookingno</p>
+                </div>
+            </div>
+
+            <div class="qtn-header__right">
+                <span class="qtn-issue-label">ISSUE DATE</span>
+                <div class="qtn-issue-box">
+                    <div class="qtn-issue-day">
+                        @Model.booking.createdat.ToString("dd")
+                    </div>
+                    <div class="qtn-issue-month">
+                        @Model.booking.createdat.ToString("MMM, yyyy", CultureInfo.InvariantCulture)
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="qtn-meta-wrapper">
+            <div class="qtn-meta">
+                <div class="meta-label">
+                    <span>Carrier:</span> @agencyinfo.agencyname
+                </div>
+                <div class="meta-value">
+                    @Html.Raw(agencyinfo.address.Replace("\n", "<br/>"))
+                </div>
+            </div>
+            <div class="qtn-meta"></div>
+        </div>
+
+        <ul class="qtn-meta-info">
+            <li>
+                This is booking summary under the terms and conditions of @agencyinfo.agencyname (“Carrier”) Bill of Lending and the relevant Master
+                Service Agreement. The merchant warrnts that all information provided
+                is accurate and that the cargo is fit for transport under the
+                requested conditions. The Carrier’s liability is strictly governed by
+                the terms and conditions of the bill of Lending, which include
+                limitations on liabiity for loss of or damage to the goods. No Servant
+                or agent of the carrier has power to waive or vary any of the terms
+                hereof unless such waiver or variation is in writing and is specially
+                authorized or ratified in writing by the carrier.
+            </li>
+        </ul>
+
+        <div class="qtn-cards">
+            <div class="qtn-card">
+                <div class="qtn-card-img">
+                    <img alt="" src="~/assets/img/quotation/box.svg" />
+                </div>
+                <div class="qtn-card-content">
+                    <h4>SHIPPER</h4>
+                    <p class="title">@Model.booking.location.shippername</p>
+                    <p>@Html.Raw(Model.booking.location.shipperaddress.Replace("\n", "<br/>"))</p>
+                    <p>
+                        <i class="ki-filled ki-user"></i>
+                        @Display.DisplayString(string.IsNullOrEmpty(Model.booking.location.shipperpic_name) ? Model.booking.location.shipperpiccustom : Model.booking.location.shipperpic_name)
+                    </p>
+                    <p>
+                        <i class="ki-filled ki-sms"></i>
+                        @Display.DisplayString(Model.booking.location.shipperemail)
+                    </p>
+                    <p>
+                        <i class="ki-filled ki-phone"></i>
+                        @Display.DisplayString(Model.booking.location.shipperphone)
+                    </p>
+                </div>
+            </div>
+
+            <div class="qtn-card">
+                <div class="qtn-card-img">
+                    <img alt="" src="~/assets/img/quotation/box.svg" />
+                </div>
+                <div class="qtn-card-content">
+                    <h4>CONSIGNEE</h4>
+                    <p class="title">@Model.booking.location.consigneename</p>
+                    <p>@Html.Raw(Model.booking.location.consigneeaddress.Replace("\n", "<br/>"))</p>
+                    <p><i class="ki-filled ki-user"></i>@Display.DisplayString(string.IsNullOrEmpty(Model.booking.location.consigneepic_name) ? Model.booking.location.consigneepiccustom : Model.booking.location.consigneepic_name)</p>
+                    <p><i class="ki-filled ki-sms"></i>@Display.DisplayString(Model.booking.location.consigneeemail)</p>
+                    <p>  <i class="ki-filled ki-phone"></i> @Display.DisplayString(Model.booking.location.consigneephone)</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="qtn-route-wrapper">
+            <div class="qtn-route">
+                <div class="qtn-route-left">
+                    <div class="qtn-route-left-icon">
+                        <img alt="" src="~/assets/img/quotation/ship-icon.svg" />
+                    </div>
+                    <div class="qtn-route-left-content">
+                        <div class="qtn-route__label">VESSEL</div>
+                        <div class="qtn-route__value">@Model.voyage.Vesselname</div>
+                        <div class="qtn-route__sub">@Model.voyage.VoyageNumber</div>
+                    </div>
+                </div>
+
+                <div class="qtn-route-center">
+                    <div>
+                        <div class="qtn-route__label">POL</div>
+                        <div class="qtn-route__value">@Model.booking.location.pol_portname</div>
+                        <div class="qtn-route__sub">@Model.voyage.minDate.Text</div>
+                    </div>
+                    <div class="qtn-route__arrow">
+                        <img alt="" src="~/assets/img/quotation/right-chevron.svg" />
+                    </div>
+                    <div>
+                        <div class="qtn-route__label">POD</div>
+                        <div class="qtn-route__value">@Model.booking.location.pod_portname</div>
+                        <div class="qtn-route__sub sub-green">@Model.voyage.maxDate.Text</div>
+                    </div>
+                </div>
+
+                @*<div class="qtn-route-right">
+                        <div class="qtn-route__label">ESTD. TRANSIT</div>
+                        <div class="qtn-route__value qtn-green">7 Days</div>
+                        <div class="qtn-route__service">Direct Service</div>
+                    </div>*@
+
+
+                <div class="qtn-route-right">
+                    <div class="qtn-route__label">ESTD. TRANSIT</div>
+                    <div class="qtn-route__value qtn-green">
+                        @Model.voyage.NoOfDays Days
+                    </div>
+                    <div class="qtn-route__service">Direct Service</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="qtn-section-title">RENTAL OF UNITS & CARGO</div>
+        <div class="qtn-table-wrapper">
+            <table class="qtn-table">
+                <thead>
+                    <tr>
+                        <th>UNIT TYPE</th>
+                        <th>QTY</th>
+                        <th>DESCRIPTION</th>
+                        <th>FREIGHT CHARGES</th>
+                        @*<th>POL FREE TIME</th>
+                            <th>POD FREE TIME</th>*@
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.booking.details)
+                    {
+                        var pricelist = pricinglist.Details
+                                    .Where(x => x.ContainerSizeID.NumericValue == item.sizeid.NumericValue &&
+                                     x.ContainerTypeID.NumericValue == item.containertypeid.NumericValue && x.FullEmpty == item.empty_full).ToList();
+                        var price = pricelist.Where(x => x.IsFrightCharges).FirstOrDefault()?.Amount ?? 0;
+
+                        otherpricelist.AddRange(pricelist.Where(x => !x.IsFrightCharges).ToList());
+                        <tr>
+                            <td class="type">
+                                @item.sizename @item.containertypename
+                            </td>
+                            <td class="qty">
+                                @(item.qty != 0 ? item.qty + " Units" : "N/A")
+                            </td>
+                            <td class="desc">
+                                @Display.DisplayStringNA(item.commodity)
+                            </td>
+                            <td class="type">
+                                @Display.DisplayCurrency(price)
+                            </td>
+                            @*<td>@(item != null ? "10 Days" : "N/A")</td>
+                                <td>@(item != null ? "7 Days" : "N/A")</td>*@
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        <div class="qtn-section-title" style="padding-top:20px;">service specifications</div>
+        <div class="qtn-table-wrapper">
+            <table class="qtn-table">
+                <thead>
+                    <tr>
+                        <th>intra model</th>
+                        <th>other ancillary</th>
+                        <th>stuffino</th>
+
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="type">
+                            @(Model.bookingSummary.intramodal_transport != null ? (Model.bookingSummary.intramodal_transport ? "Yes" : "No") : "N/A")
+                        </td>
+                        <td class="qty">N/A</td>
+                        <td class="desc">
+                            @Display.DisplayStringNA(Model.bookingSummary.stuffing_unstuffing_units)
+                        </td>
+
+                    </tr>
+                    <tr>
+
+                        <th>pick up & return</th>
+                        <th>drop off</th>
+                        <th>cut off si/vgm</th>
+                    </tr>
+                    <tr>
+
+                        <td class="desc">
+                            @Display.DisplayStringNA(Model.bookingSummary.pickupandreturn_empty_rentalunits)
+                        </td>
+                        <td class="desc">
+                            @Display.DisplayStringNA(Model.bookingSummary.dropoff)
+                        </td>
+                        <td class="desc">
+                            @{
+                                string cutofftime = "";
+                                var voyage = Model.voyage.VoyageDetails.FirstOrDefault();
+                                if (voyage != null)
+                                {
+                                    cutofftime = voyage.CutoffDeadline.Text;
+                                }
+                            }
+
+                            @Display.DisplayStringNA(cutofftime)
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        @if (otherpricelist.Count > 0)
+        {
+            <div class="qtn-section-title" style="padding-top:20px;">OTHER CHARGES</div>
+            <div class="qtn-table-wrapper">
+                <table class="qtn-table">
+                    <thead>
+                        <tr>
+                            <th>DESCRIPTION</th>
+                            <th>REMARKS</th>
+                            <th style="width:25%;">AMOUNT</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in otherpricelist)
+                        {
+                            <tr>
+                                <td class="desc">
+                                    @item.LineItemDesc
+                                </td>
+                                <td class="desc">
+                                    @item.Comments
+                                </td>
+                                <td class="type">
+                                    @Display.DisplayCurrency(item.Amount)
+                                </td>
+                                @*<td>@(item != null ? "10 Days" : "N/A")</td>
+                                    <td>@(item != null ? "7 Days" : "N/A")</td>*@
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+
+        <div class="qtn-amount-container">
+            <div class="amount-container-lcard">
+                <h3>Terms & Conditions</h3>
+                <div style="font-size: 8px !important;">
+                    @Html.Raw(Model.bookingSummary.additionalterms)
+                </div>
+            </div>
+
+            @*<div class="amount-container-rcard">
+                    @{
+                        var grouplist = otherpricelist.GroupBy(x => new { typeid = x.ContainerTypeID.NumericValue, sizeid = x.ContainerSizeID.NumericValue }).ToList();
+                        foreach (var item in grouplist)
+                        {
+                            <h3>@(string.IsNullOrEmpty(item.First().TypeSizeCombined) ?"Common": item.First().TypeSizeCombined):</h3>
+                            <p>Freight, handling POL & transport and POL, Handling at POD</p>
+                        }
+                    }
+
+                    <h3>DESCRIPTION:</h3>
+                    <p>
+                        Freight payable as per invoices at discharge of goods from the
+                        vessel at POD prior to delivery to the consignee.
+                    </p>
+                </div>*@
+        </div>
+    </div>
+</body>
+</html>

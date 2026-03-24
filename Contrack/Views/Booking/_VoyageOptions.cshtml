@@ -1,0 +1,57 @@
+﻿@using Contrack;
+@model List<VoyageDTO>
+
+@{
+    var modelList = Model ?? new List<VoyageDTO>();
+    var selectedVoyageUuid = modelList.Where(v => !string.IsNullOrEmpty(v.selectedvoyageuuid)).Select(v => v.selectedvoyageuuid).FirstOrDefault();
+    var orderedVoyages = string.IsNullOrEmpty(selectedVoyageUuid) ? modelList : modelList.OrderByDescending(v => v.VoyageUuid == selectedVoyageUuid).ToList();
+}
+
+@if (Model != null && Model.Any())
+{
+    <div class="voyage-grid">
+        @for (int i = 0; i < Model.Count; i++)
+        {
+            var voyage = orderedVoyages[i];
+            var firstLeg = voyage.VoyageDetails.FirstOrDefault();
+            var lastLeg = voyage.VoyageDetails.LastOrDefault();
+            var isChecked = voyage.VoyageUuid == selectedVoyageUuid;
+
+            <div class="voyage-card">
+                <input type="radio" id="voyage_@i" name="SelectedVoyage" class="voyage-radio" value="@voyage.VoyageUuid" @(isChecked ? "checked" : "") />
+                <label for="voyage_@i">
+                    <span class="inner">
+                        <span class="flex">
+                            <span class="circle">
+                                <i class="ki-filled ki-check"></i>
+                            </span>
+                            <span class="voyage-info">
+                                <span class="title">@voyage.Vesselname</span>
+                                <span class="date">
+                                    @Display.DisplayDateHumanFriendly(voyage.minDate.Value)
+                                    –
+                                    @Display.DisplayDateHumanFriendly(voyage.maxDate.Value)
+                                </span>
+                            </span>
+                        </span>
+                        <span class="flex flex-col items-end pr-1">
+                            <span class="days">
+                                @voyage.NoOfDays Days
+                            </span>
+                        </span>
+                    </span>
+                </label>
+            </div>
+        }
+    </div>
+}
+else
+{
+    @Html.Partial("_EmptyTable", new EmptyTable
+ {
+     Heading = "No Voyages found",
+     SubHead = "There are currently no scheduled voyages available for the selected route.",
+     Icon = "<img style=\"width:40px;\" src=\"/assets/img/routing.svg\">",
+     Button = ""
+ })
+}

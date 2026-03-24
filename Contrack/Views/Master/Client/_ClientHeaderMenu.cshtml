@@ -1,0 +1,44 @@
+﻿@model Contrack.ClientDTO
+<div class="grid">
+    <div class="scrollable-x-auto">
+        <div class="menu gap-3" data-menu="true">
+            <div class="menu-item border-b-2 border-b-transparent menu-item-active:border-b-primary menu-item-here:border-b-primary @(ViewBag.SubManu=="ClientInfo"?"here":"")">
+                <a class="menu-link gap-1.5 pb-2 lg:pb-4 px-2" href="@Url.Action("Client","Client",new { refid=Model.client.clientuuid})">
+                    <span class="menu-title text-nowrap font-medium text-sm text-gray-700 menu-item-active:text-primary menu-item-active:font-medium menu-item-here:text-primary menu-item-here:font-medium menu-item-show:text-primary menu-link-hover:text-primary">
+                        Client Info
+                    </span>
+                </a>
+            </div>
+            <div class="menu-item border-b-2 border-b-transparent menu-item-active:border-b-primary menu-item-here:border-b-primary @(ViewBag.SubManu=="ClientMod"?"here":"")">
+                <a class="menu-link gap-1.5 pb-2 lg:pb-4 px-2" href="@Url.Action("ClientLogs","Client",new { refid=Model.client.clientuuid})">
+                    <span class="menu-title text-nowrap font-medium text-sm text-gray-700 menu-item-active:text-primary menu-item-active:font-semibold menu-item-here:text-primary menu-item-here:font-semibold menu-item-show:text-primary menu-link-hover:text-primary">
+                        Client Modifications
+                    </span>
+                </a>
+            </div>
+            @*<div class="menu-item border-b-2 border-b-transparent menu-item-active:border-b-primary menu-item-here:border-b-primary">
+                    <a class="menu-link gap-1.5 pb-2 lg:pb-4 px-2" href="#">
+                        <span class="menu-title text-nowrap font-medium text-sm text-gray-700 menu-item-active:text-primary menu-item-active:font-semibold menu-item-here:text-primary menu-item-here:font-semibold menu-item-show:text-primary menu-link-hover:text-primary">
+                            Contacts
+                        </span>
+                    </a>
+                </div>*@
+            <div class="menu-item border-b-2 border-b-transparent menu-item-active:border-b-primary menu-item-here:border-b-primary">
+                <a class="menu-link gap-1.5 pb-2 lg:pb-4 px-2" href="#">
+                    <span class="menu-title text-nowrap font-medium text-sm text-gray-700 menu-item-active:text-primary menu-item-active:font-semibold menu-item-here:text-primary menu-item-here:font-semibold menu-item-show:text-primary menu-link-hover:text-primary">
+                        Active Jobs
+                    </span>
+                </a>
+            </div>
+
+            <div class="menu-item border-b-2 border-b-transparent menu-item-active:border-b-primary menu-item-here:border-b-primary">
+                <a class="menu-link gap-1.5 pb-2 lg:pb-4 px-2" href="#">
+                    <span class="menu-title text-nowrap font-medium text-sm text-gray-700 menu-item-active:text-primary menu-item-active:font-semibold menu-item-here:text-primary menu-item-here:font-semibold menu-item-show:text-primary menu-link-hover:text-primary">
+                        Report 1
+                    </span>
+                </a>
+            </div>
+
+        </div>
+    </div>
+</div>

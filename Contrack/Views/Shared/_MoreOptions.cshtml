@@ -1,0 +1,38 @@
+﻿<div class="container-fluid">
+    <div class="flex items-center flex-wrap md:flex-nowrap lg:items-end justify-between border-b border-b-gray-200 dark:border-b-coal-100 gap-3 lg:gap-6 mb-5 lg:mb-5">
+        <div class="grid">
+            <div class="scrollable-x-auto">
+                <div class="menu gap-3" data-menu="true">
+                    <div class="menu-item border-b-2 border-b-transparent menu-item-active:border-b-primary menu-item-here:border-b-primary @(ViewBag.SubManu=="Terms"?"here":"")">
+                        <a class="menu-link gap-1.5 pb-2 lg:pb-4 px-2" href="@Url.Action("TermsAndConditions","Master")">
+                            <span class="menu-title text-nowrap font-medium text-sm text-gray-700 menu-item-active:text-primary menu-item-active:font-medium menu-item-here:text-primary menu-item-here:font-medium menu-item-show:text-primary menu-link-hover:text-primary">
+                                Terms and Conditions
+                            </span>
+                        </a>
+                    </div>
+                    <div class="menu-item border-b-2 border-b-transparent menu-item-active:border-b-primary menu-item-here:border-b-primary @(ViewBag.SubManu=="SmtpConfigurations"?"here":"")">
+                        <a class="menu-link gap-1.5 pb-2 lg:pb-4 px-2" href="@Url.Action("SmtpConfig","Master")">
+                            <span class="menu-title text-nowrap font-medium text-sm text-gray-700 menu-item-active:text-primary menu-item-active:font-semibold menu-item-here:text-primary menu-item-here:font-semibold menu-item-show:text-primary menu-link-hover:text-primary">
+                                SMTP Configurations
+                            </span>
+                        </a>
+                    </div>
+                    <div class="menu-item border-b-2 border-b-transparent menu-item-active:border-b-primary menu-item-here:border-b-primary @(ViewBag.SubManu=="JobTypes"?"here":"")">
+                        <a class="menu-link gap-1.5 pb-2 lg:pb-4 px-2" href="@Url.Action("List","JobType")">
+                            <span class="menu-title text-nowrap font-medium text-sm text-gray-700 menu-item-active:text-primary menu-item-active:font-semibold menu-item-here:text-primary menu-item-here:font-semibold menu-item-show:text-primary menu-link-hover:text-primary">
+                                Job Types
+                            </span>
+                        </a>
+                    </div>
+                    <div class="menu-item border-b-2 border-b-transparent menu-item-active:border-b-primary menu-item-here:border-b-primary @(ViewBag.SubManu=="UOM"?"here":"")">
+                        <a class="menu-link gap-1.5 pb-2 lg:pb-4 px-2" href="@Url.Action("List","UoM")">
+                            <span class="menu-title text-nowrap font-medium text-sm text-gray-700 menu-item-active:text-primary menu-item-active:font-semibold menu-item-here:text-primary menu-item-here:font-semibold menu-item-show:text-primary menu-link-hover:text-primary">
+                                UOMs
+                            </span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

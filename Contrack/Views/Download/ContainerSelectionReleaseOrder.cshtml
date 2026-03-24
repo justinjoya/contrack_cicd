@@ -1,0 +1,144 @@
+﻿@using Contrack
+@model ContainerBooking
+
+@{
+    Layout = null;
+    var details = Model.booking.details;
+    var agency = Model.booking.customer.client.agency;
+    var client = Model.booking.customer.client;
+}
+
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Release Order</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;1,100;1,200;1,300;1,400;1,500;1,600;1,700&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap"
+          rel="stylesheet" />
+    <link rel="stylesheet" href="~/css/Download/DownloadQuote.css" />
+</head>
+
+<body>
+    <div class="qtn-page">
+        <div class="qtn-header">
+            <div class="qtn-header__left">
+                <div class="qtn-logo">
+                    <img alt="" src="~/assets/img/quotation/cpg-logo.svg" />
+                </div>
+                <div>
+                    <h1>Release Order</h1>
+                    <p>S.NO: @Model.booking.bookingno</p>
+                </div>
+            </div>
+            <div class="qtn-header__right-wrapper">
+                <div class="qtn-header__right">
+                    <span class="qtn-issue-label">DATE & TIME IN</span>
+                    <div class="qtn-issue-box">
+                        <div class="qtn-issue-day">
+                            @DateTime.Now.Day
+                        </div>
+                        <div class="qtn-issue-month">
+                            @DateTime.Now.ToString("MMM, yyyy").ToUpper()
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="qtn-meta-wrapper">
+            <div class="qtn-meta"></div>
+        </div>
+        <div class="qtn-cards">
+            <div class="qtn-card">
+                <div class="qtn-card-img">
+                    <img alt="" src="~/assets/img/quotation/box.svg" />
+                </div>
+                <div class="qtn-card-content">
+                    <h4>BY</h4>
+                    <p class="title">@agency.agencyname</p>
+                    <p>
+                        @Html.Raw((agency.address).Replace("\n", "<br/>"))
+                    </p>
+                    <p>@agency.email</p>
+                </div>
+            </div>
+            <div class="qtn-card">
+                <div class="qtn-card-img">
+                    <img alt="" src="~/assets/img/quotation/box.svg" />
+                </div>
+                <div class="qtn-card-content">
+                    <h4>CUSTOMER</h4>
+                    <p class="title">@client.clientname</p>
+                    <p>
+                        @Html.Raw((client.address).Replace("\n", "<br/>"))
+                    </p>
+                    <p>@client.email</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="qtn-route-wrapper">
+            <div class="qtn-route">
+                <div class="qtn-route-left">
+                    <div class="qtn-route-left-icon">
+                        <img alt="" src="~/assets/img/quotation/ship-icon.svg" />
+                    </div>
+                    <div class="qtn-route-left-content">
+                        <div class="qtn-route__label">empty collection</div>
+                        <div class="qtn-route__value">CPG PHOEBE</div>
+                        <div class="qtn-route__sub">CPGMPM - 25-0078/1</div>
+                    </div>
+                </div>
+                <div class="qtn-route-right">
+                    <div class="qtn-route__label">Qty</div>
+                    <div class="qtn-route__value">
+                        @(details != null ? details.Count : 0)
+                    </div>
+                    <div class="qtn-route__service">
+                        I/A Number : 12737723
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="qtn-section-title">DETAILS</div>
+        <div class="qtn-table-wrapper">
+            <table class="qtn-table">
+                <thead>
+                    <tr>
+                        <th>CONTAINER</th>
+                        <th>CONTAINER NO</th>
+                        <th>SEAL NO</th>
+                        <th>DERLIVERY FROM</th>
+                        <th>DELIVERY TO</th>
+                        <th>COMMENTS</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    @if (details != null && details.Count > 0)
+                    {
+                        foreach (var item in details)
+                        {
+                            <tr>
+                                <td class="type">
+                                    @item.sizename @item.containertypename
+                                </td>
+                                <td class="qty">
+                                    @(string.IsNullOrEmpty(item.isocode) ? "N/A" : item.isocode)
+                                </td>
+                                <td class="desc">-</td>
+                                <td>DPW</td>
+                                <td>AZNZ00</td>
+                                <td>N/A</td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+</html>

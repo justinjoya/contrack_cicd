@@ -1,0 +1,209 @@
+﻿@using Contrack;
+@model Contrack.ClientDTO
+@{
+    ViewBag.Title = "Client";
+    ViewBag.MainManu = "Clients";
+    ViewBag.SubManu = "ClientInfo";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="mb-5 lg:mb-7.5">
+    <!-- Container -->
+    <div class="container-fluid flex items-center justify-between flex-wrap gap-5">
+        <div class="flex flex-col justify-center items-start flex-wrap gap-1 lg:gap-2">
+            <h1 class="font-medium text-lg text-gray-900">
+                @Html.Partial("_GoBack") Client Info
+            </h1>
+            <div class="flex items-center gap-1 text-sm font-normal">
+                <span class="text-gray-700">
+                    Masters
+                </span>
+                <span class="text-gray-400 text-sm">
+                    /
+                </span>
+                <a href="@Url.Action("List","Client")" class="text-gray-700 hover:text-primary">
+                    Clients
+                </a>
+                <span class="text-gray-400 text-sm">
+                    /
+                </span>
+                <span class="text-gray-900">
+                    Client Info
+                </span>
+            </div>
+        </div>
+    </div>
+    <!-- End of Container -->
+</div>
+@if (Model.clientid.NumericValue == 0)
+{
+    @Html.Partial("~/Views/Shared/Masters/_MasterNotFound.cshtml", new NotFound()
+{
+    Message = "Client not found",
+    ReturnURL = Url.Action("Clients", "Master"),
+    ReturnButton = "Clients"
+})
+}
+else
+{
+    <div class="container-fluid w-full flex px-0">
+        <!-- Content -->
+        <main class="flex flex-col grow" id="content" role="content">
+            <!-- Container -->
+            @Html.Partial("Client/_ClientInfoHeader", Model)
+
+            <div class="container-fluid">
+                <div class="flex items-center flex-wrap md:flex-nowrap lg:items-end justify-between border-b border-b-gray-200 dark:border-b-coal-100 gap-3 lg:gap-6 mb-5 lg:mb-5">
+                    @Html.Partial("Client/_ClientHeaderMenu", Model)
+
+                    <div class="flex items-center justify-end grow lg:grow-0 lg:pb-4 gap-2.5 mb-3 lg:mb-0">
+                        <a href="@Url.Action("Clients","Master")" class="btn btn-xs btn-sm btn-light">
+                            <i class="ki-filled ki-arrow-left">
+                            </i>
+                            Back to Clients List
+                        </a>
+                        @*@if (PagePermission.GetPermissions().Client.edit)
+                            {
+                                <button class="dropdown-toggle btn btn-sm btn-primary" onclick="OpenClientModal('@Model.clientuuid');">
+                                    <i class="ki-filled ki-notepad-edit">
+                                    </i>
+                                    Edit Client
+                                </button>
+                            }*@
+
+                        <button class="dropdown-toggle btn btn-sm btn-primary" onclick="OpenClientModal('@Model.clientuuid');">
+                            <i class="ki-filled ki-notepad-edit">
+                            </i>
+                            Edit Client
+                        </button>
+
+                    </div>
+                </div>
+            </div>
+
+            <!-- End of Container -->
+            <!-- Container -->
+            <div class="container-fluid">
+                <!-- begin: grid -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-5 lg:gap-5">
+                    <div class="col-span-1">
+                        <div class="grid gap-5 lg:gap-5">
+                            <div class="card shadow-none1 min-w-full">
+                                <div class="card-header p-3">
+                                    <h3 class="card-title">
+                                        Client Info
+                                    </h3>
+                                </div>
+                                <div class="card-body p-0">
+                                    <div class="card-table scrollable-x-auto pb-3">
+                                        <table class="table align-middle text-sm text-gray-500">
+                                            <tbody>
+
+                                                <tr>
+                                                    @Html.Raw(Common.DisplayInfoTableWithAddEdit("Name", Model.clientname, "javascript:void(0);", "OpenClientModal(\"" + Model.clientuuid + "\");"@*,!PagePermission.GetPermissions().Client.edit*@))
+                                                </tr>
+                                                <tr>
+                                                    @Html.Raw(Common.DisplayInfoTableWithAddEdit("IMO No", Model.imono.Replace(";", "<br/>"), "javascript:void(0);", "OpenClientModal(\"" + Model.clientuuid + "\");"@*,!PagePermission.GetPermissions().Client.edit*@))
+                                                </tr>
+                                                <tr>
+                                                    <td class="py-3">Created For</td>
+                                                    <td class="py-3 text-gray-700 text-sm font-medium">
+
+                                                        @if (Model.agency.agencyid.NumericValue > 0)
+                                                        {
+                                                            <div class="flex items-center gap-4">
+                                                                <div class="leading-none w-5 shrink-0">
+                                                                    <i class="ki-filled ki-users text-warning text-2xl"></i>
+                                                                </div>
+                                                                <div class="flex flex-col gap-0.5">
+
+                                                                    <span class="leading-none font-medium text-sm text-gray-900">Agency</span>
+                                                                    <span class="text-2sm text-gray-700 font-normal">@Model.agency.agencyname</span>
+                                                                </div>
+                                                            </div>
+                                                        }
+                                                        else
+                                                        {
+                                                            <div class="flex items-center gap-4">
+                                                                <div class="leading-none w-5 shrink-0">
+                                                                    <i class="ki-filled ki-people text-primary text-2xl"></i>
+                                                                </div>
+                                                                <div class="flex flex-col gap-0.5">
+
+                                                                    <span class="leading-none font-medium text-sm text-gray-900">Hub</span>
+                                                                    <span class="text-2sm text-gray-700 font-normal">@Model.agency.agencyname</span>
+                                                                </div>
+                                                            </div>
+
+                                                        }
+
+
+                                                    </td>
+                                                    @*@if (PagePermission.GetPermissions().Client.edit)
+                                                        {
+                                                            <td class="py-3 text-right">
+                                                                <a class="btn btn-sm btn-icon btn-clear btn-primary" href="javascript:void(0);" onclick="OpenClientModal('@Model.clientuuid');"><i class="ki-filled ki-notepad-edit"></i></a>
+                                                            </td>
+                                                        }*@
+                                                    <td class="py-3 text-right">
+                                                        <a class="btn btn-sm btn-icon btn-clear btn-primary" href="javascript:void(0);" onclick="OpenClientModal('@Model.clientuuid');"><i class="ki-filled ki-notepad-edit"></i></a>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    @Html.Raw(Common.DisplayInfoTableWithAddEdit("Email", Model.email.Replace(";", "<br/>"), "javascript:void(0);", "OpenClientModal(\"" + Model.clientuuid + "\");"@*, !PagePermission.GetPermissions().Client.edit*@))
+                                                </tr>
+                                                <tr>
+                                                    @Html.Raw(Common.DisplayInfoTableWithAddEdit("Accounts Email", Model.accountsemail.Replace(";", "<br/>"), "javascript:void(0);", "OpenClientModal(\"" + Model.clientuuid + "\");"@*, !PagePermission.GetPermissions().Client.edit*@))
+                                                </tr>
+
+                                                <tr>
+                                                    @Html.Raw(Common.DisplayInfoTableWithAddEdit("Phone", Model.phone, "javascript:void(0);", "OpenClientModal(\"" + Model.clientuuid + "\");"@*, !PagePermission.GetPermissions().Client.edit*@))
+                                                </tr>
+
+                                                <tr>
+                                                    @Html.Raw(Common.DisplayInfoTableWithAddEdit("Preferred Currency", Model.preferredcurrency.Replace("\n", "<br/>"), "javascript:void(0);", "OpenClientModal(\"" + Model.clientuuid + "\");"@*, !PagePermission.GetPermissions().Client.edit*@))
+                                                </tr>
+                                                <tr>
+                                                    @Html.Raw(Common.DisplayInfoTableWithAddEdit("Payment Terms", Model.paymentterms.ToString() + " Days", "javascript:void(0);", "OpenClientModal(\"" + Model.clientuuid + "\");"@*, !PagePermission.GetPermissions().Client.edit*@))
+                                                </tr>
+                                                <tr>
+                                                    @Html.Raw(Common.DisplayInfoTableWithAddEdit("Standing Instructions", Model.standardinstructions.Replace("\n", "<br/>"), "javascript:void(0);", "OpenClientModal(\"" + Model.clientuuid + "\");"@*, !PagePermission.GetPermissions().Client.edit*@))
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card shadow-none1 min-w-full" id="section_client_customattribute">
+                                @Html.Partial("~/Views/Shared/Masters/Client/_ClientCustomAtrributes.cshtml", Model)
+                            </div>
+                            <div id="section_client_bankaccount">
+                                @Html.Partial("~/Views/Shared/Masters/Client/_ClientBankAccounts.cshtml", Model)
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flex flex-col gap-5">
+                        <div id="section_client_contacts">
+                            @Html.Partial("Client/_ClientContacts", Model)
+                        </div>
+                        <div id="section_client_Address">
+                            @Html.Partial("Client/_ClientAddress", Model)
+                        </div>
+                    </div>
+                </div>
+                <!-- end: grid -->
+            </div>
+            <!-- End of Container -->
+
+        </main>
+        <!-- End of Content -->
+    </div>
+}
+
+<div id="modalsection">
+</div>
+@section PageScripts
+{
+    <script src="~/js/Masters/clients.js?v=1.0.1"></script>
+    <script src="~/js/Masters/clientcontact.js?v=1.0.1"></script>
+}

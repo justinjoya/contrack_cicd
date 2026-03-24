@@ -1,0 +1,131 @@
+﻿@using Contrack
+@using System.Web.UI.WebControls
+@model Contrack.PurchaseOrder
+
+<div class="card-header">
+    <h3 class="card-title">PO Line Items </h3>
+
+    <div class="flex items-center gap-3">
+        <label class="switch switch-sm">
+            <span class="switch-label">TAX Applicable?</span>
+            <input name="check" type="checkbox" onchange="TogglePOTaxInfo(this);">
+        </label>
+        <div class="flex gap-2">
+            <label class="input input-sm items-center">
+                @Html.TextBox("GlobalTax", "0.00", new { @id = "txtGlobalPOTax", @disabled = true, @placeholder = "0.00", @class = "focus-input text-end", @style = "width:50px;" })
+                %
+            </label>
+        </div>
+
+        <div class="h-6 border-l border-gray-300"></div>
+
+        <button type="button" class="btn btn-xs btn-sm btn-outline btn-primary" onclick="OpenPOLineItemModal('@Model.pouuid', '')">
+            <i class="ki-filled ki-plus"></i> Add Line Item
+        </button>
+    </div>
+</div>
+
+<div class="card-table1 scrollable-x-auto">
+    @if (Model.Details.Any())
+    {
+        List<PIJobType> list = Contrack.SessionManager.PIJobTypes ?? new List<PIJobType>();
+
+        <table class="table table-border" id="po_detail_table">
+            <thead>
+                <tr>
+                    <th class="w-[30px] text-center">S.No</th>
+                    <th class="text-start !text-gray-700">Item Name</th>
+                    <th class="w-[150px] text-end !text-gray-700">Qty</th>
+                    <th class="w-[150px] text-center !text-gray-700">UOM</th>
+                    <th class="w-[150px] text-end !text-gray-700">Unit Price</th>
+                    <th class="w-[150px] text-end !text-gray-700">Tax (%)</th>
+                    <th class="w-[200px] text-end !text-gray-700">Total Price</th>
+                    <th class="w-[100px] text-center">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                @for (int i = 0; i < Model.Details.Count; i++)
+                {
+                    string jobtypename = list
+                    .Where(x => x.JobTypeID == Model.Details[i].jobtype)
+                    .FirstOrDefault()?.JobName ?? "";
+                    <tr>
+                        <td class="text-center">
+                            @(i + 1)
+                            @Html.HiddenFor(m => m.Details[i].podetailid)
+                            @Html.HiddenFor(m => m.Details[i].podetailuuid)
+                            @Html.HiddenFor(m => m.Details[i].itemname)
+                            @Html.HiddenFor(m => m.Details[i].article_impacode)
+                            @Html.HiddenFor(m => m.Details[i].partno)
+                            @Html.HiddenFor(m => m.Details[i].make)
+                            @Html.HiddenFor(m => m.Details[i].model)
+                            @Html.HiddenFor(m => m.Details[i].jobtypedetailuuid)
+                            @Html.HiddenFor(m => m.Details[i].jobtype)
+                            @Html.HiddenFor(m => m.Details[i].remarks)
+                            @Html.HiddenFor(m => m.Details[i].Type)
+                        </td>
+                        <td>
+                            <div class="text-sm font-medium text-gray-900 mb-px">
+                                @Html.Raw(Model.Details[i].itemname.Replace("\n", "<br/>"))
+                            </div>
+                            @if (!string.IsNullOrEmpty(Model.Details[i].article_impacode))
+                            {
+                                <div class="text-2sm text-gray-600">Article/IMPA Code : <span class="text-gray-600 px-1">@Model.Details[i].article_impacode</span></div>
+                            }
+                            @if (!string.IsNullOrEmpty(Model.Details[i].partno))
+                            {
+                                <div class="text-2sm text-gray-600">Part No : <span class="text-gray-600 px-1">@Model.Details[i].partno</span></div>
+                            }
+                            @if (!string.IsNullOrEmpty(Model.Details[i].make))
+                            {
+                                <div class="text-2sm text-gray-600">Make : <span class="text-gray-600 px-1">@Model.Details[i].make</span></div>
+                            }
+                            @if (!string.IsNullOrEmpty(Model.Details[i].model))
+                            {
+                                <div class="text-2sm text-gray-600">Model : <span class="text-gray-600 px-1">@Model.Details[i].model</span></div>
+                            }
+                            @if (!string.IsNullOrEmpty(jobtypename) && string.IsNullOrEmpty(Model.Details[i].jobtypedetailuuid))
+                            {
+                                <div class="text-2sm text-gray-600">Job Type : <span class="text-gray-600 px-1">@jobtypename</span></div>
+                            }
+                            @if (!string.IsNullOrEmpty(Model.Details[i].remarks))
+                            {
+                                <div class="text-2sm text-gray-600">Remarks : <span class="text-gray-600 px-1">@Html.Raw(Model.Details[i].remarks.Replace("\n", "<br/>"))</span></div>
+                            }
+                        </td>
+                        <td class="text-center">
+                            @Html.TextBoxFor(m => m.Details[i].quantity, new { @class = "input text-end po-calc-inline po-qty-input", @datatype = "decimal", @placeholder = "0.00" })
+                        </td>
+                        <td class="text-center">
+                            @Html.DropDownListFor(m => m.Details[i].uom, new SelectList(Common.AlterUOM(ViewBag.UOMDropdown, Model.Details[i].uom), "Value", "Text", Model.Details[i].uom) { }, new { @id = "ddlUOM", @datarequired = "yes", @data_append_parent = "yes", @placeholder = "Select", @class = "form-control select po-uom-select", @style = "width:100%;" })
+                        </td>
+                        <td class="text-end">
+                            @Html.TextBoxFor(m => m.Details[i].vendorprice, new { @class = "input focus-input text-end po-calc-inline po-unit-price-input", @datatype = "decimal", @placeholder = "0.00" })
+                        </td>
+                        <td class="text-end">
+                            @Html.TextBoxFor(m => m.Details[i].tax, new { @class = "input focus-input text-end po-calc-inline po-tax-input", @datatype = "decimal", @placeholder = "0.00" })
+                        </td>
+                        <td class="text-end font-semibold text-gray-900 po-total-price">
+                            @{
+                                var subtotal = Model.Details[i].vendorprice * Model.Details[i].quantity;
+                                var taxtotal = Model.Details[i].vendorprice * Model.Details[i].quantity * Model.Details[i].tax / 100;
+                            }
+                            <span class="flex flex-col">
+                                <span class="text-md font-medium ellipsis-full text-gray-900 total-price-val">@Display.DisplayCurrency(subtotal + taxtotal)</span>
+                                <span class="text-2sm font-normal ellipsis-full text-gray-700 tax-price-val">(Incl. Tax : @Display.DisplayCurrency(taxtotal))</span>
+                            </span>
+                        </td>
+                        <td class="text-center nowrap">
+                            <a class="btn btn-sm btn-icon btn-clear btn-light" href="javascript:void(0);" onclick="OpenPOLineItemModal('@Model.Details[i].podetailuuid',this)"><i class="ki-filled ki-notepad-edit"></i></a> <span class="text-gray-300">|</span>
+                            <a onclick="DeletePOLineItem('@Model.Details[i].podetailuuid')" class="btn btn-sm btn-icon btn-clear btn-danger " href="javascript:void(0);"><i class="ki-filled ki-trash"></i></a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        @Html.Partial("_EmptyTable", new EmptyTable { Heading = "No line items have been added to this PO yet." })
+    }
+</div>

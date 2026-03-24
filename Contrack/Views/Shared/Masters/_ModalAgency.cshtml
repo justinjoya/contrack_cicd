@@ -1,0 +1,221 @@
+﻿@model Contrack.Agency
+<div class="modal" data-modal="true" data-modal-backdrop-static="true" data-modal-autofocus="true" id="ModalAddAgency">
+    <div class="modal-content modal-center-y max-w-[600px] max-h-[95%]">
+        <div class="modal-header">
+            <h3 class="modal-title">
+                @if (Model.agency.agencyid.NumericValue == 0)
+                {
+                    @Html.Raw("Add Company")
+                }
+                else
+                {
+                    @Html.Raw("Edit Company")
+                }
+            </h3>
+            <button class="btn btn-xs btn-icon btn-light" data-modal-dismiss="true">
+                <i class="ki-outline ki-cross">
+                </i>
+            </button>
+        </div>
+        <div class="modal-body scrollable-y h-[300px] max-h-[95%]">
+            <div class="model-req flex items-center grow rounded-xl border border-dashed gap-4 p-2 mb-5 border-primary bg-primary-light">
+                <i class="ki-outline ki-information-1 text-3xl text-primary">
+                </i>
+                <div class="flex flex-col gap-0.5">
+                    <p class="text">
+                        Fields marked with <span class="text-danger"> * </span> are mandatory.
+                    </p>
+                </div>
+            </div>
+            <form id="formAgency">
+                <div>
+                    @*<div class="card shadow-none mb-3">
+                        <div class="card-header p-3">
+                            <h3 class="card-title">
+                                Agency Info
+                            </h3>
+                        </div>
+                        <div class="card-body p-3">*@
+                    <div class="grid lg:grid-cols-1 items-stretch gap-5">
+                        <div class="flex flex-col1 items-baseline flex-wrap lg:flex-nowrap gap-1.5">
+                            <label class="form-label max-w-32 text-right">
+                                Company Name <span class="text-danger ps-2">*</span>
+                            </label>
+                            @Html.HiddenFor(m => m.agency.agencyid.EncryptedValue)
+                            @Html.HiddenFor(m => m.agency.uuid)
+                            @Html.HiddenFor(m => m.agency.email, new { id = "hdn_Agency_Email" })
+                            @Html.HiddenFor(m => m.agency.accountsemail, new { id = "hdn_Account_Agency_Email" })
+                            <div class="flex flex-col w-full">
+                                @Html.TextBoxFor(m => m.agency.agencyname, new { @class = "input", @placeholder = "Enter Company Name", @datarequired = "yes", @datarequired_message = "Please enter Company Name" })
+                            </div>
+                        </div>
+
+                        <div class="flex flex-col1 items-baseline flex-wrap lg:flex-nowrap gap-1.5">
+                            <label class="form-label max-w-32">
+                                Email
+                            </label>
+                            <div class="flex flex-col w-full">
+                                <div class="input-group">
+                                    @Html.TextBoxFor(m => m.emailtemp, new { @id = "txt_emailtemp", @class = "input", @placeholder = "Enter Email", @datarequired = "no", @datarequired_message = "Please enter Email" })
+                                    <button onclick="AddAgencyEMail();" type="button" class="btn btn-light">
+                                        Add Email
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="emaillist_agency" style="@(string.IsNullOrEmpty(Model.agency.email)?"display:none;":"")" class="flex flex-col1 items-baseline flex-wrap lg:flex-nowrap gap-1.5">
+                            <label class="form-label max-w-32">
+
+                            </label>
+                            <div class="flex flex-col w-full">
+                                <div class="card min-w-full">
+                                    <div class="card-table scrollable-x-auto pb-0">
+                                        <table class="table align-middle text-sm text-gray-500">
+                                            <tbody id="tbody_Agency_Email">
+                                                @if (!string.IsNullOrEmpty(Model.agency.email))
+                                                {
+                                                    foreach (var email in Model.agency.email.Split(';').ToList())
+                                                    {
+                                                        <tr>
+
+                                                            <td class="emailtext py-2 text-gray-800 font-normaltext-sm">
+                                                                @email
+                                                            </td>
+                                                            <td class="py-2 text-center" style="padding-right:0;">
+                                                                <a class="btn btn-sm btn-icon btn-clear btn-danger" href="javascript:void(0);" onclick="RemoveAgencyEMail(this);">
+                                                                    <i class="ki-filled ki-trash">
+                                                                    </i>
+                                                                </a>
+                                                            </td>
+                                                        </tr>
+                                                    }
+                                                }
+
+
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="flex flex-col1 items-baseline flex-wrap lg:flex-nowrap gap-1.5">
+                            <label class="form-label max-w-32">
+                                Accounts Email
+                            </label>
+                            <div class="flex flex-col w-full">
+                                <div class="input-group">
+                                    @Html.TextBoxFor(m => m.accountsemailtemp, new { @id = "txt_accountsemailtemp", @class = "input", @placeholder = "Enter Email", @datarequired = "no", @datarequired_message = "Please enter Email" })
+                                    <button onclick="AddAccountsAgencyEMail();" type="button" class="btn btn-light">
+                                        Add Email
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="accounts_emaillist_agency" style="@(string.IsNullOrEmpty(Model.agency.accountsemail)?"display:none;":"")" class="flex flex-col1 items-baseline flex-wrap lg:flex-nowrap gap-1.5">
+                            <label class="form-label max-w-32">
+
+                            </label>
+                            <div class="flex flex-col w-full">
+                                <div class="card min-w-full">
+                                    <div class="card-table scrollable-x-auto pb-0">
+                                        <table class="table align-middle text-sm text-gray-500">
+                                            <tbody id="tbody_acc_Agency_Email">
+                                                @if (!string.IsNullOrEmpty(Model.agency.accountsemail))
+                                                {
+                                                    foreach (var email in Model.agency.accountsemail.Split(';').ToList())
+                                                    {
+                                                        <tr>
+
+                                                            <td class="emailtext py-2 text-gray-800 font-normaltext-sm">
+                                                                @email
+                                                            </td>
+                                                            <td class="py-2 text-center" style="padding-right:0;">
+                                                                <a class="btn btn-sm btn-icon btn-clear btn-danger" href="javascript:void(0);" onclick="RemoveAccountAgencyEMail(this);">
+                                                                    <i class="ki-filled ki-trash">
+                                                                    </i>
+                                                                </a>
+                                                            </td>
+                                                        </tr>
+                                                    }
+                                                }
+
+
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="flex flex-col1 items-baseline flex-wrap lg:flex-nowrap gap-1.5">
+                            <label class="form-label max-w-32">
+                                Phone @*<span class="text-danger ps-2">*</span>*@
+                            </label>
+                            <div class="flex flex-col w-full">
+                                @Html.TextBoxFor(m => m.agency.phone, new { @class = "input", @placeholder = "Enter Phone", @datarequired = "no", @datarequired_message = "Please enter Phone" })
+                            </div>
+                        </div>
+                        @*<div></div>*@
+                        <div class="flex flex-col1 items-baseline flex-wrap lg:flex-nowrap gap-1.5">
+                            <label class="form-label max-w-32">
+                                Address @*<span class="text-danger ps-2">*</span>*@
+                            </label>
+                            <div class="flex flex-col w-full">
+                                @Html.TextAreaFor(m => m.agency.address, new { @class = "textarea", @rows = "4", @placeholder = "Enter Address", @datarequired = "no", @datarequired_message = "Please enter Phone" })
+                            </div>
+                        </div>
+                        <div class="flex flex-col1 items-baseline flex-wrap lg:flex-nowrap gap-1.5">
+                            <label class="form-label max-w-32">
+                                Billing Address @*<span class="text-danger ps-2">*</span>*@
+                            </label>
+                            <div class="flex flex-col w-full">
+                                @Html.TextAreaFor(m => m.agency.billingaddress, new { @class = "textarea", @rows = "4", @placeholder = "Enter Billing Address", @datarequired = "no", @datarequired_message = "Please enter Phone" })
+                            </div>
+                        </div>
+                        <div class="flex flex-col1 items-baseline flex-wrap lg:flex-nowrap gap-1.5">
+                            <label class="form-label max-w-32">
+                                Website
+                            </label>
+                            <div class="flex flex-col w-full">
+                                @Html.TextBoxFor(m => m.agency.websites, new { @class = "input", @placeholder = "Enter Website", @datarequired = "no", @datarequired_message = "Please enter Phone" })
+                            </div>
+                        </div>
+                        <div class="flex flex-col1 items-baseline flex-wrap lg:flex-nowrap gap-1.5">
+                            <label class="form-label max-w-32">
+                                Countries
+                            </label>
+                            <div class="flex flex-col w-full">
+                                @*@Html.DropDownListFor(m => m.countryList, new SelectList(@ViewBag.CountryDropdown, "Value", "Text", "") { }, new { @class = "select2", @placeholder = "Enter Phone", @datarequired = "no", @datarequired_message = "Please enter Phone" })*@
+                                @Html.ListBoxFor(m => m.agency.countryList, new SelectList(@ViewBag.CountryDropdown, "Value", "Text", "") { }, new { @id = "ddlCountryAgency", @placeholder = "Select agencies", @class = "form-control select2", @multiple = true, @onchange = "FilterPorts(this);" })
+                            </div>
+                        </div>
+                        <div class="flex flex-col1 items-baseline flex-wrap lg:flex-nowrap gap-1.5">
+                            <label class="form-label max-w-32">
+                                Ports
+                            </label>
+                            <div class="flex flex-col w-full">
+                                @Html.ListBoxFor(m => m.agency.portList, new SelectList(@ViewBag.PortDropdown, "Value", "Text", "") { }, new { @id = "ddlPortAgency", @placeholder = "Select agencies", @class = "form-control select2", @multiple = true })
+                                @*@Html.DropDownListFor(m => m.portList, new SelectList(@ViewBag.PortDropdown, "Value", "Text", "") { }, new { @class = "select2", @placeholder = "Enter Phone", @datarequired = "no", @datarequired_message = "Please enter Phone" })*@
+                            </div>
+                        </div>
+                        <div></div>
+                    </div>
+                </div>
+
+
+                @*  </div>
+
+                    </div>*@
+            </form>
+        </div>
+        <div class="modal-footer justify-end">
+            <div class="flex gap-4">
+                <button class="btn btn-light" data-modal-dismiss="true">
+                    Close
+                </button>
+                <button class="btn btn-primary" onclick="SaveAgency();">
+                    Save Company
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

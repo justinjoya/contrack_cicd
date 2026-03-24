@@ -1,0 +1,147 @@
+﻿
+@using Contrack;
+@{
+    ViewBag.Title = "SMTP Configurations";
+    ViewBag.MainManu = "More";
+    ViewBag.SubManu = "SmtpConfigurations";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@Html.Partial("_MoreOptions")
+<div class="mb-5 lg:mb-7.5">
+    <!-- Container -->
+    <div class="container-fluid flex items-center justify-between flex-wrap gap-5">
+        <div class="flex flex-col justify-center items-start flex-wrap gap-1 lg:gap-2">
+            <h1 class="font-medium text-lg text-gray-900">
+                SMTP Configurations
+            </h1>
+            <div class="flex items-center gap-1 text-sm font-normal">
+                <span class="text-gray-700">
+                    Home
+                </span>
+                <span class="text-gray-400 text-sm">
+                    /
+                </span>
+                <span class="text-gray-700">
+                    Masters
+                </span>
+                <span class="text-gray-400 text-sm">
+                    /
+                </span>
+                <span class="text-gray-900">
+                    SMTP Configurations
+                </span>
+            </div>
+        </div>
+        @if (PagePermission.GetPermissions().SMTP.add)
+        {
+            <div class="flex items-center flex-wrap gap-1.5 lg:gap-3.5">
+                <button class="btn btn-sm btn-primary" onclick="OpenSmtpConfigModal('');">
+                    <i class="ki-filled ki-plus"></i>
+                    Add SMTP Configuration
+                </button>
+            </div>
+        }
+    </div>
+    <!-- End of Container -->
+</div>
+
+<!-- Container -->
+<div class="container-fluid">
+    <!-- begin: grid -->
+    <div class="grid">
+        <div class="card card-grid min-w-full">
+            <div class="card-header flex-wrap gap-2">
+                <h3 class="card-title font-medium text-sm">SMTP Configurations</h3>
+                <div class="flex flex-wrap gap-2 lg:gap-5">
+                    <div class="flex">
+                        <label class="input input-sm">
+                            <i class="ki-filled ki-magnifier">
+                            </i>
+                            <input data-datatable-search="#TableSmtpConfigurations" placeholder="Search" type="text" value="">
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body">
+                <div id="TableSmtpConfigurations">
+                    <div class="scrollable-x-auto">
+                        <table class="table table-auto table-border align-middle text-gray-700 font-medium text-sm" data-datatable-table="true">
+                            <thead>
+                                <tr>
+                                    <th class="min-w-[150px]" data-datatable-column="smtp_host">
+                                        <span class="sort">
+                                            <span class="sort-label">
+                                                SMTP Host
+                                            </span>
+                                            <span class="sort-icon">
+                                            </span>
+                                        </span>
+                                    </th>
+                                    <th class="min-w-[150px]" data-datatable-column="smtp_username">
+                                        <span class="sort">
+                                            <span class="sort-label">
+                                                SMTP User Name
+                                            </span>
+                                            <span class="sort-icon">
+                                            </span>
+                                        </span>
+                                    </th>
+                                    <th class="min-w-[100px]" data-datatable-column="smtp_port">
+                                        <span class="sort">
+                                            <span class="sort-label">
+                                                SMTP Port
+                                            </span>
+                                            <span class="sort-icon">
+                                            </span>
+                                        </span>
+                                    </th>
+                                    <th class="min-w-[150px]" data-datatable-column="created_for">
+                                        <span class="sort">
+                                            <span class="sort-label">
+                                                Created For
+                                            </span>
+                                            <span class="sort-icon">
+                                            </span>
+                                        </span>
+                                    </th>
+                                    <th class="min-w-[100px] text-center" data-datatable-column="created_at">
+                                        <span class="sort">
+                                            <span class="sort-label">
+                                                Created At
+                                            </span>
+                                            <span class="sort-icon">
+                                            </span>
+                                        </span>
+                                    </th>
+                                    <th class="w-[150px] text-center" nowrap>
+                                        Action
+                                    </th>
+                                </tr>
+                            </thead>
+                        </table>
+                    </div>
+                    <div class="card-footer justify-center md:justify-between flex-col md:flex-row gap-3 text-gray-600 text-2sm font-medium">
+                        <div class="flex items-center gap-2">
+                            Show
+                            <select class="select select-sm w-16" data-datatable-size="true" name="perpage">
+                            </select>
+                            per page
+                        </div>
+                        <div class="flex items-center gap-4">
+                            <span data-datatable-info="true">
+                            </span>
+                            <div class="pagination" data-datatable-pagination="true">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="modalsection"></div>
+@section PageScripts
+{
+    <script src="~/js/Masters/smtp-config.js?v=1.0.2"></script>
+}

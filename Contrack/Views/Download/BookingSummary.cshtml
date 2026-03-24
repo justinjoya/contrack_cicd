@@ -1,0 +1,436 @@
+﻿@using Contrack
+@using System.Globalization
+@model ContainerBooking
+
+@{
+    var booking = Model.booking;
+    var summary = Model.bookingSummary;
+    var voyage = Model.voyage;
+    var vesselName = voyage.Vesselname;
+    var voyageNo = voyage.VoyageNumber;
+    var etd = voyage.minDate.Text;
+    var eta = voyage.maxDate.Text;
+    var cutoff = voyage.VoyageDetails.FirstOrDefault().CutoffDeadline.Text;
+    var totalUnits = booking.details.Sum(x => x.qty);
+    var firstContainer = booking.details.FirstOrDefault();
+}
+
+
+@{
+    IAgencyRepository repo = new AgencyRepository();
+    AgencyService agency = new AgencyService(repo);
+    var agencyinfo = agency.GetAgencyByDetailID(Model.booking.customer.agencydetailid.NumericValue);
+    IPricingRepository _PricingRepository = new PricingRepository();
+    var pricinglist = _PricingRepository.GetPricingByBookingUUID(Model.booking.bookinguuid, Model.bookingSummary.currency, Model.booking.customer.client.clientdetailid.EncryptedValue);
+    List<PricingDetailDTO> otherpricelist = new List<PricingDetailDTO>();
+
+    decimal totalFreightAmount = 0;
+
+    //foreach (var container in booking.details)
+    //{
+    //    var pricelist = pricinglist.Details.Where(x =>
+    //            x.ContainerSizeID.NumericValue == container.sizeid.NumericValue &&
+    //            x.ContainerTypeID.NumericValue == container.containertypeid.NumericValue &&
+    //            x.FullEmpty == container.empty_full)
+    //        .ToList();
+
+    //    var freightItem = pricelist.FirstOrDefault(x => x.IsFrightCharges);
+
+    //    if (freightItem != null)
+    //    {
+    //        totalFreightAmount += freightItem.Amount;
+    //    }
+
+    //    // NON Freight items
+    //    otherpricelist.AddRange(pricelist.Where(x => !x.IsFrightCharges));
+    //}
+
+    foreach (var item in Model.booking.details)
+    {
+        var pricelist = pricinglist.Details
+                    .Where(x => x.ContainerSizeID.NumericValue == item.sizeid.NumericValue &&
+                     x.ContainerTypeID.NumericValue == item.containertypeid.NumericValue && x.FullEmpty == item.empty_full).ToList();
+        var price = pricelist.Where(x => x.IsFrightCharges).FirstOrDefault()?.Amount ?? 0;
+
+        var freightItem = pricelist.FirstOrDefault(x => x.IsFrightCharges);
+
+        if (freightItem != null)
+        {
+            totalFreightAmount += freightItem.Amount;
+        }
+
+        otherpricelist.AddRange(pricelist.Where(x => !x.IsFrightCharges).ToList());
+    }
+
+    // Remove duplicate other charges (important)
+    //otherpricelist = otherpricelist
+    //    .GroupBy(x => new { x.LineItemDesc, x.Amount, x.Comments })
+    //    .Select(g => g.First())
+    //    .ToList();
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CPG Booking Summary</title>
+
+    <link href="https://fonts.googleapis.com" rel="preconnect" />
+    <link crossorigin href="https://fonts.gstatic.com" rel="preconnect" />
+    <link href="https://fonts.googleapis.com/css2?family=Courier+Prime:wght@400;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
+
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#1a2b4b",
+                        "background-light": "#f3f4f6",
+                        "background-dark": "#0f172a",
+                    },
+                    fontFamily: {
+                        display: ["Courier New", "sans-serif"],
+                        mono: ["Courier New", "Courier", "monospace"],
+                    },
+
+                }
+            }
+        };
+    </script>
+
+    <style>
+
+
+        body {
+            margin: 0;
+            background: #fff !important;
+        }
+
+        .page {
+            page-break-after: always;
+        }
+
+        .no-break {
+            page-break-inside: avoid;
+            break-inside: avoid;
+        }
+
+        .allow-break {
+            page-break-inside: auto;
+            break-inside: auto;
+        }
+
+        table {
+            border-collapse: collapse;
+        }
+
+        td {
+            border: 1px solid #76767a;
+        }
+
+
+        .page {
+            width: 210mm;
+            min-height: 297mm;
+            padding: 15mm;
+            /*margin: 20px auto;*/
+            background: white;
+            /*   box-shadow: 0 0 10px rgba(0,0,0,0.1);*/
+        }
+
+        .document-table {
+            width: 100%;
+            border-collapse: collapse;
+            table-layout: fixed;
+            font-size: 0.8rem;
+        }
+
+            .document-table td {
+                border: 1px solid #76767a;
+                vertical-align: top;
+                padding: 8px;
+                min-height: 80px;
+            }
+
+            .document-table.noborder > thead > tr > td, .document-table.noborder > tbody > tr > td {
+                border: 0;
+            }
+
+        .grid-item-header {
+            font-weight: bold;
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            margin-bottom: 4px;
+        }
+
+        .legal-text {
+            font-size: 0.65rem;
+            line-height: 1.4;
+            text-align: justify;
+        }
+
+        .summary-text {
+            font-size: 0.8rem !important;
+            line-height: 1.2;
+        }
+
+        .logo-img {
+            height: 70px !important;
+            width: 70px !important;
+        }
+
+        thead {
+            display: table-header-group;
+        }
+    </style>
+</head>
+
+<body class="bg-background-light font-mono text-black p-5">
+    <table class="document-table noborder page" border="0">
+        <thead>
+            <tr>
+                <td>
+                    <div class="page-header-space">
+                        <div class="">
+                            <div>
+                                <img class="logo-img" alt="" src="~/assets/img/quotation/cpg-logo.svg" />
+                            </div>
+
+                        </div>
+                    </div>
+                </td>
+            </tr>
+        </thead>
+
+        <tbody>
+
+            <tr>
+                <td>
+
+                    <div class="">
+
+
+                        <h1 class="text-center text-2xl font-medium">BOOKING SUMMARY</h1>
+
+                        <div class="qtn-meta-info text-[10px] leading-4 text-justify list-disc  mt-2">
+                            <p class="summary-text">
+                                This is Booking Summary under the Terms and Conditions for @agencyinfo.agencyname. dated March 07, 2025 (<span class="font-semibold">"General Terms & Conditions of Carriage"</span>) which shall together with the General Terms & Condition of Carriage and relevant Cargo Shipment Confirmation form the Contract between the Carrier and Shipper for the carriage of the Goods referred to hereinbelow and Ancillary Services.
+                            </p>
+                            <br />
+                            <p class="summary-text">
+                                Capitalized terms used hereunder and not defined herein shall have the meaning assigned to them in the General Terms & Conditions of Carriage.
+                            </p>
+                            <br />
+                            <p class="summary-text">
+                                It is the obligation of the Shipper to check the information contained herein and to notify the Carrier in case of any discrepancies. It is further the obligation of the Shipper to provide to the Carrier clear information and identification of the Consignee and its representative for delivery of the Goods, provide declaration of the Goods for shipment and its VGM. Booking Summary is valid for 72 hours from its sending by the Carrier to the Shipper. The Shipper shall confirm terms of this Booking Summary either by sending back to the Carrier this Booking Summary countersigned by the Shipper or by sending confirmation by electronic means (reply in email acceptable). In addition, the Carrier may but is not obliged to consider the following as acceptance of this Booking Summary by the Shipper: (i) picking up the rented Unit or accepting it for stuffing; or (ii) delivering the Goods for Shipment to the Carrier. The Confirmation of this Booking Summary is made by the Shipper on its own behalf and on behalf of any Consignee or any other party with interest in the Goods.
+                            </p>
+                        </div>
+
+                        <div class="flex justify-between  text-xs mt-2 mb-4">
+                            <div>
+                                CARRIER'S REF.:
+                                <span class="ml-4 text-sm font-normal">@booking.bookingno</span>
+                            </div>
+                            <div>
+                                DATE:
+                                <span class="ml-4 text-sm font-normal">@booking.createdat.ToString("dd MMMM yyyy")</span>
+                            </div>
+                        </div>
+
+                        <table class="document-table">
+
+                            <tr class="no-break">
+                                <td>
+                                    <div class="grid-item-header">1. FROM CARRIER:</div>
+                                    @booking.customer.client.clientname
+                                </td>
+                                <td>
+                                    <div class="grid-item-header">2. TO SHIPPER:</div>
+                                    @booking.location.shippername
+                                    @Html.Raw(booking.location.shipperaddress?.Replace("\n", "<br/>"))
+                                    @booking.location.shipperemail
+                                </td>
+                            </tr>
+
+                            <tr class="no-break">
+                                <td>
+                                    <div class="grid-item-header">3. CONSIGNEE:</div>
+                                    @booking.location.consigneename
+                                    @Html.Raw(booking.location.consigneeaddress?.Replace("\n", "<br/>"))
+                                    @booking.location.consigneeemail
+                                </td>
+                                <td>
+                                    <div class="grid-item-header">4. VESSEL:</div>
+                                    @vesselName Voyage @voyageNo
+                                </td>
+                            </tr>
+
+                            <tr class="no-break">
+                                <td>
+                                    <div class="grid-item-header">5. POL (port of loading)</div>
+                                    @booking.location.pol_portname
+                                </td>
+                                <td>
+                                    <div class="grid-item-header">6. POD (port of discharge)</div>
+                                    @booking.location.pod_portname
+                                </td>
+                            </tr>
+
+                            <tr class="no-break">
+                                <td>
+                                    <div class="grid-item-header">7. ETD</div>
+                                    @etd
+                                </td>
+                                <td>
+                                    <div class="grid-item-header">8. ETA</div>
+                                    @eta
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td>
+                                    <div class="grid-item-header">9. RENTAL OF UNIT(s)</div>
+                                    @(totalUnits > 0 ? "YES" : "NO") <br />
+                                    Number of Units: @totalUnits <br />
+                                    Type: @(firstContainer != null ? firstContainer.sizename + " " + firstContainer.containertypename : "N/A")
+                                </td>
+                                <td>
+                                    <div class="grid-item-header">10. INTRA-MODAL TRANSPORT</div>
+                                    @(summary.intramodal_transport == true ? "YES" : "NO")
+                                </td>
+                            </tr>
+
+                            <tr class="no-break">
+                                <td>
+                                    <div class="grid-item-header">11. OTHER ANCILLARY SERVICE</div>
+                                    @Display.DisplayStringNA("")
+                                </td>
+                                <td>
+                                    <div class="grid-item-header">12. STUFFING/UNSTUFFING OF UNITS</div>
+                                    @Display.DisplayStringNA(summary.stuffing_unstuffing_units)
+                                </td>
+                            </tr>
+
+                            <tr class="no-break">
+                                <td>
+                                    <div class="grid-item-header">13. PICK UP & RETURN OF EMPTY RENTAL UNIT(S)</div>
+                                    @Display.DisplayStringNA(summary.pickupandreturn_empty_rentalunits)
+                                </td>
+                                <td>
+                                    <div class="grid-item-header">14. Drop Off</div>
+                                    @Display.DisplayStringNA(summary.dropoff)
+                                </td>
+                            </tr>
+
+                            <tr class="no-break">
+                                <td>
+                                    <div class="grid-item-header">15. CUT OFF DATE & TIME SI / VGM</div>
+                                    @cutoff
+                                </td>
+                                <td>
+                                    <div class="grid-item-header">16. GOODS FOR SHIPMENT</div>
+                                    @string.Join(", ", booking.details.Select(x => x.commodity))
+                                </td>
+                            </tr>
+
+                            <tr class="no-break">
+                                <td>
+                                    <div class="grid-item-header">17. FREE TIME POL</div>
+                                    @Display.DisplayStringNA("")
+                                </td>
+                                <td>
+                                    <div class="grid-item-header">18. FREE TIME POD</div>
+                                    @Display.DisplayStringNA("")
+                                </td>
+                            </tr>
+
+                            <tr class="no-break">
+                                <td>
+                                    <div class="grid-item-header">19. Freight</div>
+                                    @if (totalFreightAmount > 0)
+                                    {
+                                        <span>
+                                            Total Freight:
+                                            <strong>@Display.DisplayCurrency(totalFreightAmount)</strong>
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span>
+                                            N/A
+                                        </span>
+                                    }
+                                </td>
+
+                                @*<td>
+                                        <div class="grid-item-header">20. OTHER FEES</div>
+                                        @if (otherpricelist.Any())
+                                        {
+                                            foreach (var item in otherpricelist)
+                                            {
+                                                <div>
+                                                    @item.LineItemDesc:
+                                                    <strong>@Display.DisplayCurrency(item.Amount)</strong>
+                                                </div>
+                                            }
+                                        }
+                                        else
+                                        {
+                                            <span>
+                                                N/A
+                                            </span>
+                                        }
+                                    </td>*@
+
+                                <td>
+                                    <div class="grid-item-header">20. OTHER FEES</div>
+                                    @if (otherpricelist != null && otherpricelist.Count > 0)
+                                    {
+                                        foreach (var item in otherpricelist)
+                                        {
+                                            <div style="margin-bottom:12px;">
+                                                <div style="font-weight:600;">
+                                                    @item.LineItemDesc :
+                                                </div>
+
+                                                @if (!string.IsNullOrWhiteSpace(item.Comments))
+                                                {
+                                                    <div style="white-space:pre-line;">
+                                                        @item.Comments
+                                                    </div>
+                                                }
+                                                <div style="font-weight:600; margin-top:4px;">
+                                                    @Display.DisplayCurrency(item.Amount)
+                                                </div>
+                                            </div>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <span>N/A</span>
+                                    }
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td colspan="2">
+                                    <div class="grid-item-header">21. ADDITIONAL TERMS</div>
+                                    <div class="legal-text mt-2">
+                                        @Html.Raw(summary.additionalterms)
+                                    </div>
+                                </td>
+                            </tr>
+
+
+                        </table>
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+</body>
+</html>

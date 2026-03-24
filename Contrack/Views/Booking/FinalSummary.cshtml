@@ -1,0 +1,82 @@
+﻿@using Contrack;
+@model ContainerBooking
+@{
+    ViewBag.Title = "Container List";
+    ViewBag.MainManu = "Booking";
+    ViewBag.SubManu = "Booking";
+    ViewBag.TabName = "Summary";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<link href="~/css/Booking/booking.css?v=1.0.2" rel="stylesheet" />
+<link href="~/css/Container/containerBooking.css?v=2.0.1" rel="stylesheet" />
+@{
+    ContainerBookingDetailDTO firstcontainer = Model.booking.details.FirstOrDefault();
+}
+@Html.Partial("_BookingHeader", Model.booking.bookinguuid)
+<div class="container-fluid nobottom">
+    <div class="booking-section  flex flex-col">
+        <div class="booking-info">
+            @*@Html.Partial("_Stepper", 4)*@
+            <div class="booking-max-width">
+                <div class="booking-content">
+                    <div class="page-header-holder hide">
+                        <span class="head">4. Preview</span>
+                        <span class="subhead">Follow the steps below to complete your booking.</span>
+                    </div>
+                    <div class="left-section">
+                        @Html.Partial("_PreviewStep", Model)
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Persistent Booking Summary on the side -->
+        <div class="booking-summary">
+            <div class="summary-content" id="summarycard">
+                @Html.Partial("_SummaryFixed", Model)
+            </div>
+            <div class="summary-footer">
+                <div class="flex flex-col justify-center gap-3">
+                    @*<div class="warning-box">
+                            <img src="~/assets/img/info-circle.svg" class="warn-icon" />
+                            <p class="warn-text">
+                                This customer has <strong>5 unpaid invoices</strong> with Low
+                                <strong>conversion Rate of 20%</strong>
+                            </p>
+                        </div>*@
+                    @*<button type="button" class="btn btn-gray actionbutton">
+                            Back to Container
+                        </button>*@
+                    <a href="@Url.Action("ContainerSelection", "Booking", new { refid = Model.booking.bookinguuid })"
+                       class="btn btn-gray actionbutton">
+                        Back to Container
+                    </a>
+                    @*@if (firstcontainer != null)
+                        {
+                            <a href="@Url.Action("CreateQuotation", "Booking", new { bookinguuid = Model.booking.bookinguuid})" class="btn btn-primary actionbutton">
+                                Next : Create Quote
+                            </a>
+                        }*@
+
+                    @if (firstcontainer != null)
+                    {
+                        <button type="button" class="btn btn-primary actionbutton" onclick="SaveBookingSummary()">
+                            Next : Create Quote
+                        </button>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section PageScripts
+{
+    <script src="https://cdn.ckeditor.com/ckeditor5/39.0.1/classic/ckeditor.js"></script>
+    <script src="~/js/customer.js">
+    </script>
+    <script src="~/js/ContainerBooking/Booking.js">
+    </script>
+}
+
+
+

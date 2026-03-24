@@ -1,0 +1,181 @@
+﻿@using Contrack
+@model  Contrack.TrackingDetails
+
+@{
+    ViewBag.Title = "Track Container";
+    ViewBag.MainManu = "Container";
+    ViewBag.SubManu = "";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+
+}
+@{
+    var moves = Model?.Trackingdetails;
+    var container = moves?.FirstOrDefault();
+
+    var eta = moves?
+        .LastOrDefault(x => x.MoveTypeId?.NumericValue == 0);
+}
+<link href="~/css/Tracking/tracking.css?v=1.0.0" rel="stylesheet" />
+
+<div class="container-fixed nobottom">
+    <div class="flex flex-col justify-center items-start flex-wrap gap-1.5">
+        <h1 class="page-header">Container Tracking</h1>
+        <div class="flex items-center gap-1 text-sm font-normal">
+            <span class="text-gray-700">Track container movement and status in real time across locations.</span>
+        </div>
+    </div>
+
+    <div class="container">
+        @if (Model?.Trackingdetails != null && Model.Trackingdetails.Any())
+        {
+            <div class="card lCard">
+                <!--================== Container Details ==================-->
+                <div class="card-header">
+                    <div class="card-icon">
+                        <img alt="Container" src="~/assets/images/container.svg" />
+                    </div>
+
+                    <div class="card-title">
+                        <h2>@container.ContainerEquipmentno</h2>
+                        <p>@container.ContainerTypeName - @container.ContainerSizeName Container</p>
+                    </div>
+                    <div class="right-wrapper">
+                        <div class="time-wrapper">
+                            @if (eta != null)
+                            {
+                                <h5>ETA</h5>
+                                <div class="status-wrapper">
+                                    <p>
+                                        @eta.NextDateTime
+                                    </p>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+
+                <div class="inner-wrapper">
+                    @{
+                        int lastportid = 0;
+                        bool cardopen = false;
+                        int lastgroupportid = Model.Trackingdetails.FindLast(x => x.TrackingId.NumericValue != 0).CurrentPortId.NumericValue;
+                        var firstoflastgroupuuid = Model.Trackingdetails.OrderByDescending(x => x.RecordDateTime)
+                                                        .Where(x => x.CurrentPortId.NumericValue != lastgroupportid && x.TrackingId.NumericValue != 0)
+                                                        .FirstOrDefault()?.TrackingUuid;
+                        var uuid = "";
+                        if (string.IsNullOrEmpty(firstoflastgroupuuid))
+                        {
+                            uuid = Model.Trackingdetails[0].TrackingUuid;
+                        }
+                        else
+                        {
+                            int nextindex = Model.Trackingdetails.FindIndex(x => x.TrackingUuid == firstoflastgroupuuid);
+                            uuid = Model.Trackingdetails[nextindex + 1].TrackingUuid;
+                        }
+
+                        foreach (var item in Model.Trackingdetails)
+                        {
+                            if (lastportid == 0 || item.TrackingId.NumericValue == 0 || lastportid != item.CurrentPortId.NumericValue)
+                            {
+                                if (!cardopen)
+                                {
+                                    @Html.Raw("<div class=\"inner-card timeline-wrapper " + (item.TrackingId.NumericValue == 0 ? "upcoming" : "") + " " + (uuid == item.TrackingUuid ? "active" : "") + " \">")
+                                }
+                                else
+                                {
+                                    @Html.Raw("</div><div class=\"inner-card timeline-wrapper " + (item.TrackingId.NumericValue == 0 ? "upcoming" : "") + " " + (uuid == item.TrackingUuid ? "active" : "") + "\">")
+                                }
+                                cardopen = true;
+                            }
+                            lastportid = item.CurrentPortId.NumericValue;
+                            if (lastportid > 0)
+                            {
+                                <div class="card-content dot">
+                                    <div class="inner-icon">
+                                        <img alt="" src="~/assets/dbicons/@item.CurrentMovesIcon" />
+                                    </div>
+                                    <div class="inner-title">
+                                        <h3>@item.CurrentMovesName <span>@(item.TrackingId.NumericValue == 0?"E":"A")</span></h3>
+                                        <p>@item.RecordDateTime</p>
+                                    </div>
+                                    <div class="location-container">
+                                        <div class="location-wrapper">
+                                            <h5>@item.CurrentPortName, @item.CurrentCountryName</h5>
+                                            <p>@item.CurrentPortCode</p>
+                                        </div>
+                                        <div class="inner-icon">
+                                            <img alt="countryflag" src="~/assets/Flags/@item.CurrentCountryFlag" />
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="card-content dot">
+                                    <div class="inner-icon">
+                                        <img alt="" src="/assets/images/box.svg" />
+                                    </div>
+                                    <div class="inner-title">
+                                        <h3>@item.CurrentMovesName</h3>
+                                        <p>@item.RecordDateTime</p>
+                                    </div>
+                                    <div class="location-container">
+                                        <div class="location-wrapper">
+                                            <h5>@item.CurrentPortName</h5>
+                                            <p>@item.CurrentPortCode</p>
+                                        </div>
+                                        <div class="inner-icon">
+                                            <i class="ki-filled text-xl ki-ship"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        }
+                        @Html.Raw("</div>")
+                    }
+                </div>
+            </div>
+            <div class="card rCard">
+                <div class="confirm-wrapper">
+                    <div class="icon">
+                        <img alt="" src="~/assets/images/confirm-icon.svg" />
+                    </div>
+                    <div class="confirm-details">
+                        <h6>ID: #@Model.booking.booking.bookingno</h6>
+                        <h4>Booking Confirmed...</h4>
+                        <p>at @Model.booking.booking.customer.bookingdate</p>
+                    </div>
+                </div>
+                <div class="customer-details">
+                    <div class="details-wrapper">
+                        <h3>Customer:</h3>
+                        <div class="detail-container">
+                            <label>Name</label>
+                            <p>@Model.booking.booking.customer.client.clientname</p>
+                        </div>
+                        <div class="detail-container">
+                            <label>Email</label>
+                            <p>@Model.booking.booking.customer.client.email</p>
+                        </div>
+                        <div class="detail-container">
+                            <label>Phone</label>
+                            <p>@Model.booking.booking.customer.client.phone</p>
+                        </div>
+                    </div>
+                    <div class="details-wrapper">
+                        <h3>Location:</h3>
+                        <div class="detail-container">
+                            <label>POL</label>
+                            <p>@Model.booking.booking.location.pol_portname</p>
+                        </div>
+                        <div class="detail-container">
+                            <label>POD</label>
+                            <p>@Model.booking.booking.location.pod_portname</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>

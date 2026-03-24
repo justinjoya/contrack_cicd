@@ -1,0 +1,82 @@
+﻿@using Contrack
+@model Contrack.PurchaseOrder
+
+<div class="card pb-0">
+    <div class="card-header px-5 flex" id="basic_settings">
+        <h3 class="card-title flex gap-3 align-items-center">
+            @if (string.IsNullOrEmpty(Model.pouuid))
+            {
+                <span class="py-1">PO No: <span class="text-primary">New</span></span>
+            }
+            else
+            {
+                <span class="py-1">Purchase Order Information</span>
+            }
+        </h3>
+    </div>
+    <div class="card-body px-5 flex flex-col gap-4 maininfo expanded">
+        @if (string.IsNullOrEmpty(Model.pouuid))
+        {
+            <div><h3 class="text-md font-medium text-gray-900">PO Company Info</h3></div>
+        }
+
+        <div class="grid lg:grid-cols-5 gap-4">
+            <div class="w-full">
+                <div class="flex flex-col items-baseline gap-2.5">
+                    <label class="form-label">Company<span class="text-danger">*</span></label>
+                    @if (string.IsNullOrEmpty(Model.pouuid))
+                    {
+                        @Html.DropDownListFor(m => m.agencydetailid.EncryptedValue,
+                            new SelectList(ViewBag.AgenciesDropdown, "Value", "Text", Model.agencydetailid.EncryptedValue),
+                            new { @id = "ddlAgencies", @class = "form-control select2", @datarequired = "yes", @style = "width:100%;" })
+                    }
+                    else
+                    {
+                        @Html.HiddenFor(m => m.agencydetailid.EncryptedValue)
+                        @Html.DropDownListFor(m => m.agencydetailid.EncryptedValue,
+                            new SelectList(ViewBag.AgenciesDropdown, "Value", "Text", Model.agencydetailid.EncryptedValue),
+                            new { @id = "ddlAgencies", @class = "form-control select2", @style = "width:100%;", @disabled = true })
+                    }
+                </div>
+            </div>
+
+            <div class="w-full">
+                <div class="flex flex-col items-baseline gap-2.5">
+                    <label class="form-label">Vendor<span class="text-danger">*</span></label>
+                    <div class="w-full" id="vendor_placeholder">
+                        @Html.DropDownListFor(m => m.vendordetailid.EncryptedValue,
+                            new SelectList(ViewBag.VendorDropdown, "Value", "Text", Model.vendordetailid.EncryptedValue),
+                            new { @id = "ddlVendor", @class = "select2", @style = "width:100%;", @datarequired = "yes" })
+                    </div>
+                </div>
+            </div>
+
+            <div class="w-full">
+                <div class="flex flex-col items-baseline gap-2.5">
+                    <label class="form-label">Currency<span class="text-danger">*</span></label>
+                    @Html.DropDownListFor(m => m.vendorcurrency,
+                        new SelectList(ViewBag.CurrencyDropdown, "Value", "Text", Model.vendorcurrency),
+                        new { @class = "form-control select2", @datarequired = "yes", @style = "width:100%;" })
+                </div>
+            </div>
+        </div>
+
+        <div class="flex row gap-4">
+            <div class="flex-1">
+                <div class="flex flex-col items-baseline gap-2.5">
+                    <label class="form-label">Remarks</label>
+                    @Html.TextAreaFor(m => m.comments, new { @rows = "4", @class = "textarea", @placeholder = "Remarks", @id = "txt_Remarks" })
+                </div>
+            </div>
+        </div>
+
+        @if (string.IsNullOrEmpty(Model.pouuid))
+        {
+            <div class="flex gap-2 justify-end">
+                <button class="btn btn-primary" type="submit" name="saveaction" value="SaveHeader">
+                    <i class="ki-filled ki-save-2"></i> Create Purchase Order
+                </button>
+            </div>
+        }
+    </div>
+</div>

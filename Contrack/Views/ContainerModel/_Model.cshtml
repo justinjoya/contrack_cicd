@@ -1,0 +1,118 @@
+﻿@model Contrack.ContainerModelDTO
+
+<div class="model-card">
+    <div class="model-title">
+        <span class="model-code">@Model.iso_code</span>
+        <span class="model-type"> @(string.IsNullOrEmpty(Model.description) ? "N/A" : "(" + Model.description + ")")</span>
+    </div>
+    <!--<div class="stats-group">
+        <div class="color-group">
+            <div class="stat green">
+                <span class="head">
+                    <span class="dot">
+                    </span>
+                    <span>
+                        Available
+                    </span>
+                </span>
+                <span class="statcount">@Model.AvailableCount</span>
+            </div>
+            <div class="seperator"></div>
+            <div class="stat yellow">
+                <span class="head">
+                    <span class="dot">
+                    </span>
+                    <span>
+                        Booked
+                    </span>
+                </span>
+                <span class="statcount">@Model.BookedCount</span>
+            </div>
+            <div class="seperator"></div>
+            <div class="stat red">
+                <span class="head">
+                    <span class="dot">
+                    </span>
+                    <span>
+                        Repair
+                    </span>
+                </span>
+                <span class="statcount">@Model.RepairCount</span>
+            </div>
+        </div>-->
+    @*<div class="total">
+            <div class="stat">
+                <span class="head">
+
+                    <span>
+                        Total
+                    </span>
+                </span>
+                <span class="statcount">@Model.TotalCount</span>
+            </div>
+        </div>*@
+    <!--</div>-->
+    <div class="status-badges">
+        @if (Model.AvailableCount > 0 || Model.BookedCount > 0 || Model.RepairCount > 0)
+        {
+            if (Model.AvailableCount > 0)
+            {
+                <div class="status-badge">
+                    <span class="status-pill available">
+                        <span class="value">@Model.AvailableCount</span>
+                    </span>
+                    <span class="lable-bages">Available</span>
+                </div>
+            }
+            if (Model.BookedCount > 0)
+            {
+                <div class="status-badge">
+                    <span class="status-pill booked">
+                        <span class="value">@Model.BookedCount</span>
+                    </span>
+                    <span class="lable-bages">Booked</span>
+                </div>
+            }
+            if (Model.RepairCount > 0)
+            {
+                <div class="status-badge">
+                    <span class="status-pill repair">
+                        <span class="value">@Model.RepairCount</span>
+                    </span>
+                    <span class="lable-bages">Repair</span>
+                </div>
+            }
+        }
+        else
+        {
+            <span @*class="badge-styling yellow"*@>No Containers Available</span>
+        }
+    </div>
+
+    <div class="model-menu">
+        <div class="menu justify-center" data-menu="true">
+            <div class="menu-item menu-item-dropdown"
+                 data-menu-item-offset="0, 10px"
+                 data-menu-item-placement="bottom-end"
+                 data-menu-item-placement-rtl="bottom-start"
+                 data-menu-item-toggle="dropdown"
+                 data-menu-item-trigger="click|lg:click">
+
+                <button class="menu-toggle btn btn-sm btn-icon btn-light btn-clear">
+                    <i class="ki-filled ki-dots-vertical"></i>
+                </button>
+                <div class="menu-dropdown menu-default w-full max-w-[220px]" data-menu-dismiss="true">
+                    <div class="menu-item">
+                        <a onclick="OpenContainerModelModal('@Model.modelid.EncryptedValue')" class="menu-link">
+                            <span class="menu-icon">
+                                <i class="ki-filled ki-pencil"></i>
+                            </span>
+                            <span class="menu-title">Edit Model</span>
+                        </a>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

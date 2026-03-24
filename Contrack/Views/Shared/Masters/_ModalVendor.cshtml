@@ -1,0 +1,308 @@
+﻿@model Contrack.VendorDTO
+
+@using Contrack;
+<div class="modal" data-modal="true" data-modal-backdrop-static="true" data-modal-autofocus="true" id="ModalAddVendor">
+    <div class="modal-content modal-center-y max-w-[600px] max-h-[95%]">
+        <div class="modal-header">
+            <h3 class="modal-title">
+                @if (Model.vendorid.NumericValue == 0)
+                {
+                    @Html.Raw("Add Vendor")
+                }
+                else
+                {
+                    @Html.Raw("Edit Vendor")
+                }
+            </h3>
+            <button class="btn btn-xs btn-icon btn-light" data-modal-dismiss="true">
+                <i class="ki-outline ki-cross">
+                </i>
+            </button>
+        </div>
+        <div class="modal-body scrollable-y">
+            <div class="model-req flex items-center grow rounded-xl border border-dashed gap-4 p-2 mb-3 border-primary bg-primary-light">
+                <i class="ki-outline ki-information-1 text-3xl text-primary">
+                </i>
+                <div class="flex flex-col gap-0.5">
+                    <p class="text text-2sm font-normal">
+                        Fields marked with <span class="text-danger"> * </span> are mandatory.
+                    </p>
+                </div>
+            </div>
+            <form id="formVendor">
+                <div>
+                    @*<div class="card shadow-none mb-3">
+                        <div class="card-header p-3">
+                            <h3 class="card-title">
+                                Agency Info
+                            </h3>
+                        </div>
+                        <div class="card-body p-3">*@
+                    <div class="grid lg:grid-cols-1 items-stretch gap-5">
+                        <div class="flex flex-col1 items-baseline flex-wrap lg:flex-nowrap gap-1.5">
+                            <label class="form-label max-w-32 text-right">
+                                Vendor Name <span class="text-danger ps-2">*</span>
+                            </label>
+                            @Html.HiddenFor(m => m.vendorid.EncryptedValue)
+                            @Html.HiddenFor(m => m.vendoruuid)
+                            <div class="flex flex-col w-full">
+                                @Html.TextBoxFor(m => m.legalname, new { @class = "input", @placeholder = "Enter Vendor Name", @datarequired = "yes", @datarequired_message = "Please enter Vendor Name", @maxlength = "75" })
+                            </div>
+                        </div>
+
+
+
+                        <div class="flex flex-col1 items-baseline flex-wrap lg:flex-nowrap gap-1.5">
+                            <label class="form-label max-w-32">
+                                Created For <span class="text-danger ps-2">*</span>
+                            </label>
+                            <div class="flex flex-col w-full">
+                                @if (Common.UserType == 1) // Hub
+                                {
+                                    <div class="grid grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-5">
+                                        <label for="radio1" class="form-label flex items-center gap-2.5 text-nowrap" onclick="ShowHideEntity('1');">
+                                            <input datarequired="yes"
+                                                   datarequired-message="Please select Created for"
+                                                   data-append-parent="yes"
+                                                   id="radio1"
+                                                   class="radio"
+                                                   name="TypeEncrypted"
+                                                   type="radio"
+                                                   value="@Common.Encrypt(1)"
+                                                   @(Common.Decrypt(Model.agency.agencyid.EncryptedValue) == 0 ? "checked" : "") />
+
+                                            Hub
+                                        </label>
+                                        <label for="radio2" class="form-label flex items-center gap-2.5 text-nowrap" onclick="ShowHideEntity('2');">
+                                            <input datarequired="yes" datarequired-message="Please select Created for" data-append-parent="yes" id="radio2" class="radio" name="TypeEncrypted" type="radio" value="@Common.Encrypt(2)" @(Common.Decrypt(Model.agency.agencyid.EncryptedValue) > 0 ? "checked" : "") />
+                                            Agency
+                                        </label>
+                                    </div>
+                                    @*<div class="entity" id="Entiry_1" style="@(Common.Decrypt(Model.agency.agencyidenc) == 0 ? "" : "display:none;")">
+                                            <div class="flex items-center gap-4">
+                                                <div class="leading-none w-5 shrink-0">
+
+                                                    <i class="ki-filled ki-people text-primary text-2xl"></i>
+
+                                                </div>
+                                                <div class="flex flex-col gap-0.5">
+                                                    <span class="leading-none font-medium text-sm text-gray-900">Hub</span>
+                                                    <span class="text-2sm text-gray-700 font-normal">@Common.HubName</span>
+                                                </div>
+                                            </div>
+                                        </div>*@
+                                    <div class="entity" id="Entiry_2" style="@(Common.Decrypt(Model.agency.agencyid.EncryptedValue) > 0 ? "" : "display:none;")">
+                                        <div class="flex flex-col w-full pt-5">
+                                            @Html.DropDownListFor(
+                                                m => m.agency.agencyid.EncryptedValue,
+                                                new SelectList(@ViewBag.AgenciesDropdown, "Value", "Text", ""),
+                                                new { @id = "ddlAgencies", @placeholder = "Select agencies", @class = "form-control select2", @datarequired = "yes", @datarequired_message = "Please select Agency", @data_append_parent = "yes" }
+                                            )
+                                        </div>
+                                    </div>
+                                }
+                                else
+                                {
+                                    @Html.Hidden("TypeEncrypted", Common.Decrypt(Model.agency.agencyid.EncryptedValue) == 0 ? Common.Encrypt(1) : Common.Encrypt(2))
+                                    @Html.HiddenFor(m => m.agency.agencyid.EncryptedValue)
+
+                                    <div class="flex items-center gap-4">
+                                        <div class="leading-none w-5 shrink-0">
+                                            @if (Common.Decrypt(Model.agency.agencyid.EncryptedValue) == 0)
+
+                                            {
+                                                <i class="ki-filled ki-people text-primary text-2xl"></i>
+                                            }
+                                            else
+                                            {
+                                                <i class="ki-filled ki-users text-warning text-2xl"></i>
+                                            }
+                                        </div>
+                                        <div class="flex flex-col gap-0.5">
+                                            @if (Common.Decrypt(Model.agency.agencyid.EncryptedValue) == 0)
+
+                                            {
+                                                <span class="leading-none font-medium text-sm text-gray-900">Hub</span>
+                                                <span class="text-2sm text-gray-700 font-normal">@Common.HubName</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="leading-none font-medium text-sm text-gray-900">Agency</span>
+                                                <span class="text-2sm text-gray-700 font-normal">@Model.agency.agencyname</span>
+                                            }
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+
+                        <div class="flex flex-col1 items-baseline flex-wrap lg:flex-nowrap gap-1.5">
+                            <label class="form-label max-w-32">
+                                Email <span class="text-danger ps-2">*</span>
+                            </label>
+                            <div class="flex flex-col w-full">
+                                <div class="input-group">
+                                    @Html.TextBoxFor(m => m.emailtemp, new { @id = "txt_emailtemp", @class = "input", @placeholder = "Enter Email", @datarequired = "no", @datarequired_message = "Please enter Email" })
+                                    <button onclick="AddVendorEMail();" type="button" class="btn btn-light">
+                                        Add Email
+                                    </button>
+                                </div>
+                                @Html.HiddenFor(m => m.contactemail, new { id = "hdn_Vendor_Email", @datarequired = "yes", @datarequired_message = "Please enter Email", @datavalidate = "yes" })
+                            </div>
+                        </div>
+                        <div id="emaillist_Vendor" style="@(string.IsNullOrEmpty(Model.contactemail)?"display:none;":"")" class="flex flex-col1 items-baseline flex-wrap lg:flex-nowrap gap-1.5">
+                            <label class="form-label max-w-32">
+
+                            </label>
+                            <div class="flex flex-col w-full">
+                                <div class="card min-w-full">
+                                    <div class="card-table scrollable-x-auto pb-0">
+                                        <table class="table align-middle text-sm text-gray-500">
+                                            <tbody id="tbody_Vendor_Email">
+                                                @if (!string.IsNullOrEmpty(Model.contactemail))
+                                                {
+                                                    foreach (var email in Model.contactemail.Split(';').ToList())
+                                                    {
+                                                        <tr>
+
+                                                            <td class="emailtext py-2 text-gray-800 font-normaltext-sm">
+                                                                @email
+                                                            </td>
+                                                            <td class="py-2 text-center" style="padding-right:0;">
+                                                                <a class="btn btn-sm btn-icon btn-clear btn-danger" href="javascript:void(0);" onclick="RemoveVendorEMail(this);">
+                                                                    <i class="ki-filled ki-trash">
+                                                                    </i>
+                                                                </a>
+                                                            </td>
+                                                        </tr>
+                                                    }
+                                                }
+
+
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="flex flex-col1 items-baseline flex-wrap lg:flex-nowrap gap-1.5">
+                            <label class="form-label max-w-32">
+                                Accounts Email <span class="text-danger ps-2">*</span>
+                            </label>
+                            <div class="flex flex-col w-full">
+                                <div class="input-group">
+                                    @Html.TextBoxFor(m => m.accountsemailtemp, new { @id = "txt_accountsemailtemp", @class = "input", @placeholder = "Enter Email", @datarequired = "no", @datarequired_message = "Please enter Email" })
+                                    <button onclick="AddAccountsVendorEMail();" type="button" class="btn btn-light">
+                                        Add Email
+                                    </button>
+                                </div>
+                                @Html.HiddenFor(m => m.accountsemail, new { id = "hdn_Account_Vendor_Email", @datarequired = "yes", @datarequired_message = "Please enter Accounts Email", @datavalidate = "yes" })
+                            </div>
+                        </div>
+                        <div id="accounts_emaillist_Vendor" style="@(string.IsNullOrEmpty(Model.accountsemail)?"display:none;":"")" class="flex flex-col1 items-baseline flex-wrap lg:flex-nowrap gap-1.5">
+                            <label class="form-label max-w-32">
+
+                            </label>
+                            <div class="flex flex-col w-full">
+                                <div class="card min-w-full">
+                                    <div class="card-table scrollable-x-auto pb-0">
+                                        <table class="table align-middle text-sm text-gray-500">
+                                            <tbody id="tbody_acc_Vendor_Email">
+                                                @if (!string.IsNullOrEmpty(Model.accountsemail))
+                                                {
+                                                    foreach (var email in Model.accountsemail.Split(';').ToList())
+                                                    {
+                                                        <tr>
+
+                                                            <td class="emailtext py-2 text-gray-800 font-normaltext-sm">
+                                                                @email
+                                                            </td>
+                                                            <td class="py-2 text-center" style="padding-right:0;">
+                                                                <a class="btn btn-sm btn-icon btn-clear btn-danger" href="javascript:void(0);" onclick="RemoveAccVendorEMail(this);">
+                                                                    <i class="ki-filled ki-trash">
+                                                                    </i>
+                                                                </a>
+                                                            </td>
+                                                        </tr>
+                                                    }
+                                                }
+
+
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="flex flex-col1 items-baseline flex-wrap lg:flex-nowrap gap-1.5">
+                            <label class="form-label max-w-32">
+                                Phone
+                            </label>
+                            <div class="flex flex-col w-full">
+                                @Html.TextBoxFor(m => m.phone, new { @class = "input", @placeholder = "Enter Phone", @datarequired = "no", @datarequired_message = "Please enter Phone" })
+                            </div>
+                        </div>
+
+                        <div class="flex flex-col1 items-baseline flex-wrap lg:flex-nowrap gap-1.5">
+                            <label class="form-label max-w-32">
+                                Address <span class="text-danger ps-2">*</span>
+                            </label>
+                            <div class="flex flex-col w-full">
+                                @Html.TextAreaFor(m => m.registeredaddress, new { @class = "textarea", @rows = "4", @placeholder = "Enter Address", @datarequired = "yes", @datarequired_message = "Please enter Address" })
+                            </div>
+                        </div>
+                        <div class="flex flex-col1 items-baseline flex-wrap lg:flex-nowrap gap-1.5">
+                            <label class="form-label max-w-32">
+                                Billing Address <span class="text-danger ps-2">*</span>
+                            </label>
+                            <div class="flex flex-col w-full">
+                                @Html.TextAreaFor(m => m.billingaddress, new { @class = "textarea", @rows = "4", @placeholder = "Enter Billing Address", @datarequired = "yes", @datarequired_message = "Please enter Billing Address" })
+                            </div>
+                        </div>
+
+                        <div class="flex flex-col1 items-baseline flex-wrap lg:flex-nowrap gap-1.5">
+                            <label class="form-label max-w-32">
+                                Preferred Currency
+                            </label>
+                            <div class="flex flex-col w-full">
+                                @Html.DropDownListFor(m => m.preferredcurrency, new SelectList(@ViewBag.CurrencyDropdown, "Value", "Text", Model.preferredcurrency) { }, new { @id = "ddlpreferredcurrency", @placeholder = "Select currency", @class = "form-control select2" })
+                            </div>
+                        </div>
+                        <div class="flex flex-col1 items-baseline flex-wrap lg:flex-nowrap gap-1.5">
+                            <label class="form-label max-w-32">
+                                Payment Terms
+                            </label>
+                            <div class="flex flex-col w-full">
+                                @Html.TextBoxFor(m => m.paymentterms, new { @class = "input", @placeholder = "Enter Payment Terms", @datarequired = "no", @datarequired_message = "Please enter Payment Terms", @datatype = "number" })
+                            </div>
+                        </div>
+                        <div class="flex flex-col1 items-baseline flex-wrap lg:flex-nowrap gap-1.5">
+                            <label class="form-label max-w-32">
+                                Standing Instructions
+                            </label>
+                            <div class="flex flex-col w-full">
+                                @Html.TextAreaFor(m => m.standinginstructions, new { @class = "textarea", @rows = "6", @placeholder = "Enter Standing Instructions", @datarequired = "no", @datarequired_message = "Please enter Phone" })
+                            </div>
+                        </div>
+                        <div></div>
+                    </div>
+                </div>
+
+
+                @*  </div>
+
+                    </div>*@
+            </form>
+        </div>
+        <div class="modal-footer justify-end">
+            <div class="flex gap-4">
+                <button class="btn btn-light" data-modal-dismiss="true">
+                    Close
+                </button>
+                <button class="btn btn-primary" onclick="SaveVendor('','');">
+                    Save Vendor
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

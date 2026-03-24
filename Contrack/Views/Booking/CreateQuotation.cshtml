@@ -1,0 +1,449 @@
+﻿@using Contrack
+@model BookingQuotation
+@{
+    ViewBag.Title = "Booking Quotation";
+    ViewBag.MainManu = "Booking";
+    ViewBag.SubManu = "Quote";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<style>
+    .ck-editor__editable {
+        min-height: 300px;
+    }
+
+    .bottom-buffer {
+        padding-bottom: 50px;
+    }
+
+    .input:not(input) input {
+        color: var(--tw-gray-800);
+    }
+</style>
+<link href="~/css/Booking/booking.css?v=1.0.2" rel="stylesheet" />
+<link href="~/css/Container/containerBooking.css?v=2.0.1" rel="stylesheet" />
+@using (Html.BeginForm("CreateQuotation", "Booking", FormMethod.Post, new { id = "frmCreateQuotation" }))
+{
+    @Html.Partial("_BookingHeader", Model.booking.bookinguuid)
+
+    <div class="container-fluid nobottom">
+        <div class="booking-section full-width flex flex-col">
+            <div class="booking-info">
+                @*@Html.Partial("_Stepper", 3)*@
+                <div class="booking-max-width">
+                    <div class="booking-content">
+                        <div class="flex justify-between items-center pb-6">
+                            <div class="page-header-holder" style="padding-bottom:0">
+                                <span class="head">Create Quotation</span>
+                                <span class="subhead">
+                                    Create a new customer quotation with pricing and delivery details.
+                                </span>
+
+                            </div>
+                            @*<div class="flex gap-2">
+                                    <button class="btn btn-md text-md btn-outline only-outline btn-primary">Booking Summary</button>
+                                </div>*@
+                        </div>
+                        <div class="left-section page-header-holder">
+                            <div id="cargo_placeholder">
+                                @Html.Partial("_Comment", Model.comments)
+                                @Html.Partial("_ModalConversations", Model.comments)
+                                <div class="w-full flex flex-col bottom-buffer">
+                                    <main class="flex flex-col grow" id="content">
+                                        <div class="card cardoverride">
+                                            <div class="card-header px-5 flex">
+                                                <h3 class="card-title w-full flex justify-between items-center">
+                                                    <span class="py-1">
+                                                        <span>
+                                                            Quotation No:
+                                                        </span>
+                                                        @if (string.IsNullOrEmpty(Model.quotation.quotationuuid))
+                                                        {
+                                                            <span class="text-primary">
+                                                                New
+                                                            </span>
+                                                        }
+                                                        else
+                                                        {
+                                                            <span class="text-primary">
+                                                                @Model.quotation.quotationno
+                                                            </span>
+                                                        }
+                                                        <span>
+                                                            <span class="pi-margin-dot badge badge-dot size-2 bg-gray-500">
+                                                            </span> @Model.booking.customer.client.clientname
+                                                        </span>
+                                                        <span>
+                                                            <span class="pi-margin-dot badge badge-dot size-2 bg-gray-500">
+                                                            </span>
+                                                            @Html.Raw(Model.quotation.status.SubText)
+
+                                                        </span>
+                                                    </span>
+
+                                                </h3>
+                                            </div>
+
+                                            <div class="card-body px-5 flex flex-col gap-5">
+                                                <h3 class="text-md font-medium text-gray-900">
+                                                    Quotation Information
+                                                </h3>
+
+                                                @Html.HiddenFor(m => m.quotation.quotationid.EncryptedValue)
+                                                @Html.HiddenFor(m => m.quotation.quotationuuid, new { id = "hdn_quotationuuid" })
+                                                @Html.HiddenFor(m => m.quotation.bookinguuid, new { id = "hdn_bookinguuid" })
+                                                @Html.HiddenFor(m => m.quotation.quotationno)
+
+
+
+                                                <div class="grid lg:grid-cols-5 gap-5">
+                                                    <div class="w-full">
+                                                        <div class="flex flex-col items-baseline flex-wrap lg:flex-nowrap gap-2.5">
+                                                            <label class="form-label flex items-center gap-1 max-w-56">
+                                                                Company <span class="text-danger">*</span>
+                                                            </label>
+                                                            @if (string.IsNullOrEmpty(Model.quotation.quotationuuid))
+                                                            {
+                                                                @Html.DropDownListFor(
+                                                                             m => m.quotation.agencydetailid.EncryptedValue,
+                                                                             new SelectList(ViewBag.AgenciesDropdown, "Value", "Text",
+                                                                                 Model.quotation.agencydetailid.EncryptedValue),
+                                                                             new
+                                                                             {
+                                                                                 @class = "form-control select2",
+                                                                                 @id = "ddlAgency",
+                                                                                 @datarequired = "yes",
+                                                                                 @datarequired_message = "Please choose Company",
+                                                                                 @data_append_parent = "yes",
+                                                                                 @style = "width:100%;"
+                                                                             })
+                                                            }
+                                                            else
+                                                            {
+                                                                @Html.DropDownListFor(
+                                                                         m => m.quotation.agencydetailid.EncryptedValue,
+                                                                         new SelectList(ViewBag.AgenciesDropdown, "Value", "Text",
+                                                                             Model.quotation.agencydetailid.EncryptedValue),
+                                                                         new
+                                                                         {
+                                                                             @class = "form-control select2",
+                                                                             @id = "ddlAgency",
+                                                                             @datarequired = "yes",
+                                                                             @datarequired_message = "Please choose Company",
+                                                                             @data_append_parent = "yes",
+                                                                             @style = "width:100%;",
+                                                                             @disabled = true
+                                                                         })
+                                                                @Html.HiddenFor(m => m.quotation.agencydetailid.EncryptedValue)
+                                                            }
+                                                        </div>
+                                                    </div>
+                                                    <div class="w-full">
+                                                        <div class="flex flex-col items-baseline flex-wrap lg:flex-nowrap gap-2.5">
+                                                            <label class="form-label flex items-center gap-1 max-w-56">
+                                                                Client <span class="text-danger">*</span>
+                                                            </label>
+
+                                                            @Html.DropDownListFor(
+                                                                m => m.quotation.quotationfor.EncryptedValue,
+                                                                new SelectList(ViewBag.ClientDropdown, "Value", "Text",
+                                                                    Model.quotation.quotationfor.EncryptedValue), "Select Client",
+                                                                new
+                                                                {
+                                                                    @class = "form-control select2 reloadpricing",
+                                                                    @id = "ddlquotationfor",
+                                                                    @datarequired = "yes",
+                                                                    @datarequired_message = "Please choose Client",
+                                                                    @data_append_parent = "yes",
+                                                                    @style = "width:100%;",
+                                                                    @onchange = "loadBillToByClient(this);"
+                                                                })
+                                                        </div>
+                                                    </div>
+                                                    <div class="w-full">
+                                                        <div class="flex flex-col items-baseline flex-wrap lg:flex-nowrap gap-2.5">
+                                                            <label class="form-label flex items-center gap-1 max-w-56">
+                                                                Quotation Date <span class="text-danger">*</span>
+                                                            </label>
+
+                                                            <div class="input-group w-full">
+                                                                @Html.TextBoxFor(m => m.quotation.quotedate.DBFormattedText,
+                                                                    new
+                                                                    {
+                                                                        @class = "datepicker-here input",
+                                                                        @placeholder = "dd/mm/yyyy",
+                                                                        @datavalidate = "yes",
+                                                                        @datarequired = "yes",
+                                                                        @data_trigger = "btnTarget1",
+                                                                        @data_append_parent = "yes",
+                                                                        @data_min_date_field = "txtexpirydate",
+                                                                        @datarequired_message = "Please select Quotation Date"
+                                                                    })
+                                                                <button type="button" id="btnTarget1" class="btn btn-icon btn-outline btn-icon-lg btn-light">
+                                                                    <i class="ki-filled ki-calendar-2"></i>
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="w-full">
+                                                        <div class="flex flex-col items-baseline flex-wrap lg:flex-nowrap gap-2.5">
+                                                            <label class="form-label flex items-center gap-1 max-w-56">
+                                                                Expiry Date <span class="text-danger">*</span>
+                                                            </label>
+
+                                                            <div class="input-group w-full">
+                                                                @Html.TextBoxFor(m => m.quotation.expirydate.DBFormattedText,
+                                                                    new
+                                                                    {
+                                                                        @id = "txtexpirydate",
+                                                                        @data_trigger = "btnTarget",
+                                                                        @class = "datepicker-here input",
+                                                                        @placeholder = "dd/mm/yyyy",
+                                                                        @datavalidate = "yes",
+                                                                        @datarequired = "yes",
+                                                                        @data_append_parent = "yes",
+                                                                        @datarequired_message = "Please select Expiry Date"
+                                                                    })
+                                                                <button type="button" id="btnTarget" class="btn btn-icon btn-outline btn-icon-lg btn-light">
+                                                                    <i class="ki-filled ki-calendar-2"></i>
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="w-full">
+                                                        <div class="flex flex-col items-baseline flex-wrap lg:flex-nowrap gap-2.5">
+                                                            <label class="form-label flex items-center gap-1 max-w-56">
+                                                                Currency <span class="text-danger">*</span>
+                                                            </label>
+
+                                                            @Html.DropDownListFor(
+                                                                m => m.quotation.currency,
+                                                                new SelectList(ViewBag.CurrencyDropdown, "Value", "Text",
+                                                                    Model.quotation.currency),
+                                                                new
+                                                                {
+                                                                    @class = "form-control select2 reloadpricing",
+                                                                    @id = "ddlCurrency",
+                                                                    @datarequired = "yes",
+                                                                    @datarequired_message = "Please choose Currency",
+                                                                    @data_append_parent = "yes",
+                                                                    @style = "width:100%;"
+                                                                })
+                                                        </div>
+                                                    </div>
+
+
+                                                    <div class="grid-2">
+                                                        <div class="flex flex-col items-baseline flex-wrap lg:flex-nowrap gap-2.5">
+                                                            <label class="form-label flex items-center gap-1 max-w-56">
+                                                                Bill To  <span class="text-danger">*</span>
+                                                            </label>
+                                                            @Html.TextAreaFor(m => m.quotation.billto, new { @rows = "4", @class = "textarea", @placeholder = "Billing Address", @datarequired = "yes", @datarequired_message = "Please Enter Bill To", @id = "txt_BillTo" })
+                                                        </div>
+                                                    </div>
+                                                    <div class="grid-3">
+                                                        <div class="flex flex-col items-baseline flex-wrap lg:flex-nowrap gap-2.5">
+                                                            <label class="form-label flex items-center gap-1 max-w-56">
+                                                                Remarks
+                                                            </label>
+                                                            @Html.TextAreaFor(m => m.quotation.remarks, new { @rows = "4", @class = "textarea", @placeholder = "Remarks", @datarequired = "no", @datarequired_message = "", @id = "txt_BillTo" })
+                                                        </div>
+                                                    </div>
+
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                        <div class="card cardoverride mt-4">
+                                            <div class="card-header py-2 px-5 flex justify-between items-center">
+                                                <div class="card-title">
+                                                    Quotation Line Items
+                                                </div>
+                                                <div class="flex gap-3 items-center">
+                                                    <label class="switch switch-sm">
+                                                        <span class="switch-label">
+                                                            TAX Applicable?
+                                                        </span>
+                                                        <input name="check" type="checkbox" onchange="ShowTaxInfo(this);">
+                                                    </label>
+                                                    <div class="flex gap-2">
+                                                        <label class="input input-sm min-w-32">
+                                                            @Html.TextBox("Tax", "0.00", new { @id = "txtTaxPercentage", @disabled = true, @placeholder = "0.00", @class = "focus-input ", @style = "width:50px;" })
+                                                            %
+                                                        </label>
+
+                                                    </div>
+                                                    <button type="button"
+                                                            class="btn btn-sm btn-outline btn-primary"
+                                                            onclick="OpenQuotationLineItemModal('');">
+                                                        <i class="ki-filled ki-plus"></i>
+                                                        Add Line Item
+                                                    </button>
+                                                </div>
+                                            </div>
+
+
+                                            <div id="quotationLineItemsTable">
+                                                @Html.Partial("_QuotationLineItemsTable", Model)
+                                            </div>
+
+                                        </div>
+                                        <div class="card cardoverride mt-4">
+                                            <div class="card-body px-5 flex flex-col gap-4">
+                                                <div class="w-full" @*style="grid-column: span 4;"*@>
+                                                    <div class="flex flex-col items-baseline flex-wrap lg:flex-nowrap gap-2.5">
+                                                        <label class="form-label flex items-center gap-1 max-w-56">
+                                                            Terms & Conditions <span class="text-danger">*</span>
+                                                        </label>
+                                                        <div style="width:100%;">
+                                                            @Html.TextAreaFor(
+                                                                m => m.quotation.termsandconditions,
+                                                                new
+                                                                {
+                                                                    @id = "editor1",
+                                                                    @class = "textarea ckeditor-classic",
+                                                                    @rows = "10",
+                                                                    @placeholder = "Enter terms and conditions",
+                                                                    @datarequired = "yes",
+                                                                    @datarequired_message = "Please Enter Terms & Conditions"
+                                                                })
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </main>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    @*<div class="booking-summary">
+                            <div class="summary-content" id="summarycard">
+                                @Html.Partial("_SummaryFixed", new ContainerBooking() { booking = Model.booking })
+                            </div>
+                            <div class="summary-footer">
+                                <div class="flex flex-col justify-center gap-3">
+                                    <button type="button" class="btn btn-gray actionbutton">
+                                        Back to List
+                                    </button>
+                                    <button type="submit" class="btn btn-primary actionbutton">
+
+                                        Save Quotation
+                                    </button>
+                                </div>
+                            </div>
+                        </div>*@
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div style="position:relative;">
+        <div class="floating-action">
+            @{
+                var quoteamount = Model.quotation.details.Sum(x => x.qty * x.amount);
+                var taxamount = Model.quotation.details.Sum(x => (x.qty * x.amount * x.tax / 100));
+            }
+            <div class="card1">
+                <div class="card-body flex flex-row justify-between items-center py-2 lg:gap-2 gap-1">
+                    <div class="flex items-center justify-end gap-2.5">
+                        <div class="grid grid-cols-1 text-center1 content-between gap-1.5 border1 border-dashed border-gray-400 shrink-0 rounded-md px-3.5 py-2 min-w-24 max-w-auto">
+                            <div class="flex flex-col gap-2">
+                                <span class="text-xs font-normal text-gray-700">
+                                    Sub Total Amount
+                                </span>
+                                <div class="text-2xl text-gray-900 font-semibold leading-none">
+                                    <span class="text-xl">@Model.quotation.currency</span>
+                                    <span id="lblSubTotal">@Display.DisplayCurrency(quoteamount)</span>
+                                </div>
+
+                            </div>
+                        </div>
+                        <div class="text-2xl">+</div>
+                        <div class="grid grid-cols-1 text-center1 content-between gap-1.5 border1 border-dashed border-gray-400 shrink-0 rounded-md px-3.5 py-2 min-w-24 max-w-auto">
+                            <div class="flex flex-col gap-2">
+                                <span class="text-xs font-normal text-gray-700">
+                                    Tax Charges
+                                </span>
+                                <div class="text-2xl text-gray-900 font-semibold leading-none">
+                                    <span class="text-xl">@Model.quotation.currency</span>
+                                    <span id="lblTaxAmount">@Display.DisplayCurrency(taxamount)</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="text-2xl">=</div>
+                        <div class="grid grid-cols-1  text-center1 content-between gap-1.5 border1 border-dashed border-gray-400 shrink-0 rounded-md px-3.5 py-2 min-w-24 max-w-auto">
+                            <div class="flex flex-col gap-2">
+                                <span class="text-xs font-normal text-gray-700">
+                                    Total Amount
+                                </span>
+                                <div class="text-2xl text-primary font-semibold leading-none flex justify-between gap-3">
+                                    <span>
+                                        <span class="text-xl">@Model.quotation.currency</span>
+                                        <span id="lblGrandTotal">@Display.DisplayCurrency(quoteamount + taxamount)</span>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flex justify-end gap-2.5">
+                        @if (!string.IsNullOrEmpty(Model.quotation.quotationuuid))
+                        {
+                            if (Model.quotation.status.Value == QuoteStatus.Approved)
+                            {
+                                <a target="_blank"
+                                   href="@Url.Action("PDFDownload", "Download",
+                                          new
+                                          {
+                                              refid = Model.quotation.quotationuuid,
+                                              type = "quote",
+                                              code = Model.quotation.quotationno,
+                                              Download = 1
+                                          })"
+                                   class="btn btn-dark original actionbutton">
+                                    <i class="ki-filled ki-add-files"></i>
+                                    Download Quote
+                                </a>
+                            }
+                            if (Model.quotation.status.Value == QuoteStatus.Draft || Model.quotation.status.Value == QuoteStatus.HOD_Rejected)
+                            {
+                                if (Common.RoleID == UserRols.Approver_HOD)
+                                {
+                                    <button class="btn btn-dark actionbutton" type="submit" name="saveaction" value="Approval">
+                                        <i class="ki-filled ki-check-circle"></i>
+                                        Approve
+                                    </button>
+                                }
+                                else
+                                {
+                                    <button class="btn btn-dark actionbutton" type="submit" name="saveaction" value="Approval">
+                                        <i class="ki-filled ki-check-circle"></i>
+                                        Send for Approval
+                                    </button>
+                                }
+
+                            }
+                        }
+                        @if (Model.quotation.status.Value == QuoteStatus.Draft || Model.quotation.status.Value == QuoteStatus.HOD_Rejected || string.IsNullOrEmpty(Model.quotation.quotationuuid))
+                        {
+                            <button class="btn btn-primary actionbutton" type="submit" name="saveaction" value="Save" id="btnSaveQuote">
+                                <i class="ki-filled ki-save-2"></i>
+                                Save Draft
+                            </button>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+<div id="modalsection"></div>
+
+@section PageScripts {
+    <script src="~/js/customer.js"></script>
+    <script src="~/assets/libs/ckeditor/ckeditor5-build-classic/build/ckeditor.js"></script>
+    <script src="~/js/ContainerBooking/Booking.js?v=1.0.3"></script>
+}

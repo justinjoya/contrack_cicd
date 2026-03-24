@@ -1,0 +1,170 @@
+﻿@using Contrack;
+@model Contrack.PurchaseOrder
+@{
+    ViewBag.Title = "Purchase Order";
+    ViewBag.MainManu = "Purchase";
+    ViewBag.SubManu = "PIPO";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    .sticky-row {
+        position: fixed;
+        top: 71px;
+        z-index: 10;
+        width: calc(100% - var(--tw-sidebar-width) - 101px);
+        display: table;
+    }
+
+    .w-item { /*width: 40%;*/
+    }
+
+    .ck-editor__editable {
+        min-height: 300px;
+    }
+
+    .mtop-6 {
+        margin-top: 6px;
+    }
+
+    .stepperline {
+        top: 6px;
+    }
+
+    .border-light {
+        border-color: #fff;
+    }
+</style>
+
+<div class="mb-5">
+    <div class="container-fluid flex items-center justify-between flex-wrap gap-5">
+        <div class="flex flex-col justify-center items-start flex-wrap gap-1">
+            <h1 class="font-medium text-lg text-gray-900 flex items-center gap-2">
+                @Html.Partial("_GoBack")
+                <span>@Html.Raw(ViewBag.Title)</span>
+            </h1>
+        </div>
+    </div>
+</div>
+
+@using (Html.BeginForm("Create", "PO", FormMethod.Post, new { @id = "frmCreatePO" }))
+{
+    @Html.HiddenFor(m => m.poid)
+    @Html.HiddenFor(m => m.dpoid)
+    @Html.HiddenFor(m => m.dpouuid)
+    @Html.HiddenFor(m => m.QuotationUUID)
+    @Html.HiddenFor(m => m.IsDirectPo)
+    @Html.HiddenFor(m => m.pouuid)
+    @Html.HiddenFor(m => m.pocode)
+
+    <div class="container-fluid w-full flex bottom-buffer1">
+        <main class="flex flex-col grow" id="content" role="content">
+            <div class="flex flex-col items-stretch grow gap-5 lg-gap-5">
+
+                @Html.Partial("_DirectPOHeader", Model)
+
+                @if (!string.IsNullOrEmpty(Model.pouuid))
+                {
+                    <div class="card">
+                        <div class="card-body p-5">
+                            <div class="flex flex-col items-stretch gap-5">
+                                <div class="flex flex-wrap items-center gap-5 justify-between">
+                                    <div class="flex flex-col gap-1">
+                                        <div class="flex items-center gap-1.5">
+                                            <h2 class="text-2xl font-semibold text-gray-900"><span>@Model.vendor_name</span></h2>
+                                            <span class="pi-margin-dot badge badge-dot size-2 bg-gray-500"></span>
+                                            <h2 class="text-2xl font-semibold text-gray-900"><span class="text-primary">@Model.pocode</span></h2>
+                                            <span class="pi-margin-dot badge badge-dot size-2 bg-gray-500"></span>
+                                            @Html.Raw(Status.GetStatusValue(4, Model.status_desc))
+                                        </div>
+                                        <p class="text-2sm text-gray-700">No Ratings</p>
+                                    </div>
+                                    <div class="flex gap-2.5">
+                                        @*<button type="submit" class="btn btn-xs btn-sm btn-primary btn-light" name="saveaction" value="Download"><i class="ki-filled ki-exit-down"></i> Download PO</button>*@
+                                        <button type="submit" class="btn btn-xs btn-sm btn-primary" name="saveaction" value="Save"><i class="ki-filled ki-save-2"></i> Save PO</button>
+                                    </div>
+                                </div>
+                                @{
+                                    int received = 0;
+                                    string amount = Display.DisplayCurrency(Model.Details.Sum(x => (x.quantity * x.vendorprice) * (1 + x.tax / 100)));
+                                }
+                                <div class="flex flex-wrap gap-3">
+                                    <div class="grid grid-cols-1 content-between gap-1.5 border border-dashed border-gray-400 shrink-0 rounded-md px-3.5 py-2 min-w-24">
+                                        <span class="text-gray-900 text-primary text-md font-semibold leading-none ">@Model.vendorcurrency @amount</span>
+                                        <span class="text-gray-700 text-2sm">Total Amount</span>
+                                    </div>
+                                    <div class="grid grid-cols-1 content-between gap-1.5 border border-dashed border-gray-400 shrink-0 rounded-md px-3.5 py-2 min-w-24">
+                                        <span class="text-gray-900 text-md font-medium leading-none ">@Display.DisplayClientDateTimeHumanFriendly(Model.createdat)</span>
+                                        <span class="text-gray-700 text-2sm">Created Date</span>
+                                    </div>
+                                    <div class="grid grid-cols-1 content-between gap-1.5 border border-dashed border-gray-400 shrink-0 rounded-md px-3.5 py-2 min-w-24">
+                                        <span class="text-gray-900 text-md font-semibold leading-none ">@Display.DisplayString(Model.createdby_username)</span>
+                                        <span class="text-gray-700 text-2sm">Created By</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card" id="section_po_details">
+                        @Html.Partial("_PODetail", Model)
+                    </div>
+
+                    <div class="card">
+                        <div class="card-body px-5 flex flex-col gap-4">
+                            <div class="flex row gap-4">
+                                <div class="flex-2">
+                                    <div class="flex flex-col items-baseline flex-wrap lg:flex-nowrap gap-2.5">
+                                        <label class="form-label">Vendor Address</label>
+                                        @Html.TextAreaFor(m => m.vendoraddress, new { @rows = "4", @class = "textarea", @placeholder = "Vendor Address" })
+                                    </div>
+                                </div>
+                                <div class="flex-2">
+                                    <div class="flex flex-col items-baseline flex-wrap lg:flex-nowrap gap-2.5">
+                                        <label class="form-label">Invoice To</label>
+                                        @Html.TextAreaFor(m => m.billto, new { @rows = "4", @class = "textarea", @placeholder = "Billing Address" })
+                                    </div>
+                                </div>
+                                <div class="flex-2">
+                                    <div class="flex flex-col items-baseline flex-wrap lg:flex-nowrap gap-2.5">
+                                        <label class="form-label">Delivery Address</label>
+                                        @Html.TextAreaFor(m => m.deliveryaddress, new { @rows = "4", @class = "textarea", @placeholder = "Delivery Address" })
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="flex row gap-4">
+                                <div class="w-full">
+                                    <div class="flex flex-col items-baseline flex-wrap lg:flex-nowrap gap-2.5">
+                                        <label class="form-label">Terms &amp; Conditions</label>
+                                        <div style="width:100%;">
+                                            @Html.TextAreaFor(x => x.terms, new { @id = "editor2", @class = "textarea ckeditor-classic" })
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="flex row gap-4">
+                                <div class="w-full">
+                                    <div class="flex flex-col items-baseline flex-wrap lg:flex-nowrap gap-2.5">
+                                        <label class="form-label">Invoice Instructions</label>
+                                        <div style="width:100%;">
+                                            @Html.TextAreaFor(x => x.invoiceinstruction, new { @id = "editor1", @class = "textarea ckeditor-classic" })
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </main>
+    </div>
+}
+
+<div id="modalsection"></div>
+
+@section PageScripts
+{
+    <script src="~/assets/libs/ckeditor/ckeditor5-build-classic/build/ckeditor.js"></script>
+    <script src="~/js/Purchase/purchaseintent.js?v=1.0.1"></script>
+    <script src="~/js/PO/po.js?v=1.0.4"></script>
+}

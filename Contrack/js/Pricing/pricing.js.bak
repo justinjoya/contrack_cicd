@@ -1,0 +1,333 @@
+<<<<<<< .mine
+﻿
+var $ddlCustomer = $("#ddlCustomerPricing");
+$ddlCustomer.pricingcustomerSelect2({ multiline: true, minLength: 1, templateid: $("#hdn_PricingID").val() });
+function OpenPricingTemplate(pricingid) {
+||||||| .r893
+﻿function OpenPricingTemplate(pricingid) {
+=======
+﻿let dataTable;
+$(document).ready(function () {
+    initPricingTable();
+    $(".select2").select2({ width: '100%' });
+});
+
+const apiUrl = domain + '/TableDisplay/Pricings';
+const element = document.querySelector('#TablePricing');
+
+function initPricingTable() {
+    if (!element) return;
+
+    const dataTableOptions = {
+        apiEndpoint: apiUrl,
+        pageSize: 20,
+        stateSave: false,
+        columns: {
+            description: {
+                title: 'Template Details',
+                render: (data, row) => {
+                    let pricingId = row.PricingID?.NumericValue || "";
+                    let refId = row.PricingUUID || "";
+                    let desc = row.Description || 'No Description';
+                    let tNo = row.TemplateNo || '-';
+
+                    return `
+        <div class="flex flex-col gap-0.5">
+            <span data-tooltip="#tooltip_desc_${pricingId}" class="text-gray-900 font-semibold text-sm ellipsis max-w-[180px]">
+                ${desc}
+            </span>
+
+            <a text-gray-600 text-sm  href="/Pricing/Template?refid=${refId}">
+                ${tNo}
+            </a>
+        </div>
+        <div class="tooltip" id="tooltip_desc_${pricingId}">
+            <div class="flex items-center gap-1">
+                ${desc} <i class="ki-solid ki-information-5 text-sm text-warning"></i>
+            </div>
+        </div>`;
+                }
+            },
+            pol: {
+                title: 'POL',
+                render: (data, row) => {
+                    let flagBase = '/assets/Flags/';
+                    let polFlag = row.POL.Flag ? `<img src="${flagBase}${row.POL.Flag}" class="w-6 h-6 rounded-full flex-shrink-0 shadow-sm mr-1" onerror="this.style.display='none'">` : '';
+                    let polText = row.POL.PortCode || 'N/A';
+                    return `<div class="flex items-center">
+                                ${polFlag}
+                                <span class="text-gray-700 font-semibold text-sm">${polText}</span>
+                            </div>`;
+                }
+            },
+            pod: {
+                title: 'POD',
+                render: (data, row) => {
+                    let flagBase = '/assets/Flags/';
+                    let podFlag = row.POD.Flag ? `<img src="${flagBase}${row.POD.Flag}" class="w-6 h-6 rounded-full flex-shrink-0 shadow-sm mr-1" onerror="this.style.display='none'">` : '';
+                    let podText = row.POD.PortCode || 'N/A';
+                    return `<div class="flex items-center">
+                                ${podFlag}
+                                <span class="text-gray-700 font-semibold text-sm">${podText}</span>
+                            </div>`;
+                }
+            },
+            transfertype: {
+                title: 'Transfer Type',
+                render: (data, row) => {
+                    return `<span class="text-gray-700 font-medium text-sm">${row.TransferTypeName || '-'}</span>`;
+                },
+                createdCell(cell) {
+                    cell.classList.add('text-center');
+                }
+            },
+            clients: {
+                title: 'No of Clients',
+                render: (data, row) => {
+                    let count = row.ClientCount || 0;
+                    return `<span class="badge badge-light-dark badge-sm">${count} Clients</span>`;
+                },
+                createdCell(cell) {
+                    cell.classList.add('text-center');
+                }
+            },
+            createdby: {
+                title: 'Created By',
+                render: (data, row) => {
+                    return `<span class="text-gray-900 font-semibold text-sm">${row.CreatedByName || '-'}</span>`;
+                }
+            },
+            created: {
+                title: 'Created Date',
+                render: (data, row) => {
+                    const date = row.CreatedAt?.Text || '-';
+                    const timeAgo = row.CreatedAt?.SubText || '';
+                    return `
+                    <div class="flex flex-col gap-0.5">
+                        <span class="text-gray-700 font-medium text-sm">${date}</span>
+                        <span class="text-gray-500 text-xs">${timeAgo}</span>
+                    </div>`;
+                }
+            },
+            action: {
+                title: 'Action',
+                render: (data, row) => {
+                    let pId = row.PricingID?.EncryptedValue || "";
+                    return `
+                    <div class="menu justify-center" data-menu="true">
+                        <div class="menu-item menu-item-dropdown" data-menu-item-offset="0, 10px" data-menu-item-placement="bottom-end" data-menu-item-placement-rtl="bottom-start" data-menu-item-toggle="dropdown" data-menu-item-trigger="click|lg:click">
+                            <button class="menu-toggle btn btn-sm btn-icon btn-light btn-clear">
+                                <i class="ki-filled ki-dots-vertical"></i>
+                            </button>
+                            <div class="menu-dropdown menu-default w-full max-w-[200px]" data-menu-dismiss="true">
+                                <div class="menu-item">
+                                    <a class="menu-link" href="javascript:void(0);" onclick="OpenPricingTemplate('${pId}')">
+                                        <span class="menu-icon"><i class="ki-filled ki-notepad-edit"></i></span>
+                                        <span class="menu-title">Edit Header</span>
+                                    </a>
+                                </div>
+                                <div class="menu-item">
+                                    <a class="menu-link" href="javascript:void(0);" onclick="ClonePricingTemplate('${pId}')">
+                                        <span class="menu-icon"><i class="ki-filled ki-copy"></i></span>
+                                        <span class="menu-title">Clone Template</span>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>`;
+                },
+                createdCell(cell) {
+                    cell.classList.add('text-center');
+                }
+            }
+        }
+    };
+    dataTable = new KTDataTable(element, dataTableOptions);
+    dataTable.on('draw', () => {
+        if (dataTable._data.length === 0) {
+            $('.carddatatable').hide();
+            $('.emptydatatable').show();
+        } else {
+            $('.emptydatatable').hide();
+            $('.carddatatable').show();
+            setTimeout(() => { if (typeof KTMenu !== 'undefined') KTMenu.createInstances(); }, 50);
+        }
+    });
+}
+function OpenPricingTemplate(pricingid) {
+>>>>>>> .r905
+    blockui();
+    $.ajax({
+        url: '/Pricing/GetPricingModal?pricingid=' + pricingid,
+        type: 'GET',
+        success: function (data) {
+            unblockui();
+            $("#modalsection").html(data);
+            $("#modalsection .select2").select2();
+            $(".ddlPort").portSelect2();
+            OpenModal('ModalPricingHeader');
+        },
+        error: function () {
+            unblockui();
+            ErrorMessage("Error in getting Template details.");
+        }
+    });
+}
+
+
+function SavePricingTemplate() {
+    var validated = $("#formPricingTemplate").Validate();
+    if (validated) {
+        blockui();
+        var formdata = $("#formPricingTemplate").serializeArray();
+        $.ajax({
+            url: '/Pricing/SavePricingTemplate',
+            data: formdata,
+            type: 'POST',
+            dataType: "json",
+            success: function (data) {
+                unblockui();
+                if (data.ResultId == "1") {
+                    CloseModal("ModalPricingHeader");
+                    SuccessMessage("Saved Successfully!");
+                    setTimeout(function () { window.location = data.ResultMessage; }, 500);
+                } else {
+                    ErrorMessage(data.ResultMessage);
+                }
+            },
+            error: function () {
+                unblockui();
+                ErrorMessage("Cannot Save Template!");
+            }
+        });
+    } else {
+        ErrorMessage("Please fill all required fields.");
+    }
+}
+
+function OpenPricingCurrency(pricinguuid, currencyid) {
+    blockui();
+    $.ajax({
+        url: '/Pricing/OpenPricingCurrency?pricinguuid=' + pricinguuid + '&currencyid=' + currencyid,
+        type: 'GET',
+        success: function (data) {
+            unblockui();
+            $("#modalsection").html(data);
+            $("#modalsection .select2").select2();
+            OpenModal('ModalPricingCurrency');
+        },
+        error: function () {
+            unblockui();
+            ErrorMessage("Error in getting Template details.");
+        }
+    });
+}
+
+function SavePricingCurrency() {
+    var validated = $("#formPricingCurrency").Validate();
+    if (validated) {
+        blockui();
+        var formdata = $("#formPricingCurrency").serializeArray();
+        $.ajax({
+            url: '/Pricing/SavePricingCurrency',
+            data: formdata,
+            type: 'POST',
+            dataType: "json",
+            success: function (data) {
+                unblockui();
+                if (data.ResultId == "1") {
+                    CloseModal("ModalPricingCurrency");
+                    SuccessMessage("Saved Successfully!");
+                    setTimeout(function () { window.location = data.ResultMessage; }, 500);
+                } else {
+                    ErrorMessage(data.ResultMessage);
+                }
+            },
+            error: function () {
+                unblockui();
+                ErrorMessage("Cannot Save Template!");
+            }
+        });
+    } else {
+        ErrorMessage("Please fill all required fields.");
+    }
+}
+
+function OpenPricingLineItem(currencyid, detailid) {
+    blockui();
+    $.ajax({
+        url: '/Pricing/OpenPricingLineItem?currencyid=' + currencyid + '&detailid=' + detailid,
+        type: 'GET',
+        success: function (data) {
+            unblockui();
+            $("#modalsection").html(data);
+            $("#modalsection .select2").select2();
+            OpenModal('ModalPricingDetail');
+        },
+        error: function () {
+            unblockui();
+            ErrorMessage("Error in getting Line Item details.");
+        }
+    });
+}
+
+function SavePricingDetail() {
+    var validated = $("#formPricingDetail").Validate();
+    if (validated) {
+        blockui();
+        var formdata = $("#formPricingDetail").serializeArray();
+        $.ajax({
+            url: '/Pricing/SavePricingDetail',
+            data: formdata,
+            type: 'POST',
+            dataType: "json",
+            success: function (data) {
+                unblockui();
+                if (data.ResultId == "1") {
+                    CloseModal("ModalPricingDetail");
+                    SuccessMessage("Saved Successfully!");
+                    setTimeout(function () { window.location = window.location.href; }, 500);
+                } else {
+                    ErrorMessage(data.ResultMessage);
+                }
+            },
+            error: function () {
+                unblockui();
+                ErrorMessage("Cannot Save Line Item!");
+            }
+        });
+    } else {
+        ErrorMessage("Please fill all required fields.");
+    }
+}
+
+function OpenClonePricingCurrency(pricinguuid, sourcecurrencyid) {
+    ShowConfirmation({
+        title: 'Clone Currency?',
+        message: `Are you sure you want to clone this currency?`,
+        confirmtext: `Yes, Clone`,
+        canceltext: `Cancel`,
+        onConfirm: () => {
+            blockui();
+            $.ajax({
+                url: '/Pricing/OpenClonePricingCurrency?pricinguuid=' + pricinguuid + '&sourcecurrencyid=' + sourcecurrencyid,
+                type: 'GET',
+                success: function (data) {
+                    unblockui();
+                    $("#modalsection").html(data);
+                    $("#modalsection .select2").select2();
+                    OpenModal('ModalPricingCurrency');
+                },
+                error: function () {
+                    unblockui();
+                    ErrorMessage("Error in getting Template details.");
+                }
+            });
+        },
+        onCancel: () => {
+            //$(current).prop('checked', !$(current).prop('checked'));
+        }
+    });
+
+
+}

@@ -1,0 +1,57 @@
+﻿@using Contrack;
+@model ContainerBooking
+@{
+    List<BookingStepCount> list = BookingStepCount.GetBookingCount(Model.booking.bookinguuid);
+
+    int CustomerStepCount = list.Where(x => x.document_type == "Step1").Sum(x => x.count);
+    int LocationStepCount = list.Where(x => x.document_type == "Step2").Sum(x => x.count);
+    int ContainerStepCount = list.Where(x => x.document_type == "Step3").Sum(x => x.count);
+
+}
+
+<div class="folder-tab">
+    <a href="@Url.Action("CustomerSelection","Booking",new {refid=Model.booking.bookinguuid})" class="tab-item @(ViewBag.TabName == "Customer"?"active":"") z-20">
+        <i class="ki-filled ki-user-edit"></i>
+        <span class="tab-text">Customer</span>
+    </a>
+    <a href="@(CustomerStepCount>0?Url.Action("LocationSelection","Booking",new {refid=Model.booking.bookinguuid}):"javascript:void(0);")" class="tab-item @(ViewBag.TabName == "Location"?"active":"") z-10">
+        <i class="ki-filled ki-geolocation"></i>
+        <span class="tab-text">Location</span>
+    </a>
+    <a href="@(LocationStepCount>0?Url.Action("ContainerSelection","Booking",new {refid=Model.booking.bookinguuid}):"javascript:void(0);")" class="tab-item @(ViewBag.TabName == "Container"?"active":"") z-5">
+        <i class="ki-filled ki-cube-2"></i>
+        <span class="tab-text">Containers</span>
+    </a>
+    <a href="@(ContainerStepCount>0?Url.Action("FinalSummary","Booking",new {refid=Model.booking.bookinguuid}):"javascript:void(0);")" class="tab-item @(ViewBag.TabName == "Summary"?"active":"") z-4">
+        <i class="ki-filled ki-eye"></i>
+        <span class="tab-text">Preview</span>
+    </a>
+</div>
+
+@*<div class="flex items-end px-0 h-10 overflow-hidden1">
+        <a href="@Url.Action("CustomerSelection","Booking",new {refid=Model.booking.bookinguuid})" class="@(ViewBag.TabName == "Customer"?"folder-tab-first-active":"folder-tab-first") z-20 flex items-center min-w-[200px] max-w-[240px] h-10  h-full relative group">
+            <div class="@(ViewBag.TabName == "Customer"?"tab-content-active":"tab-content") flex items-center gap-2 w-full h-full">
+                <i class="ki-filled ki-user-edit"></i>
+                <span class="tab-text">Customer</span>
+            </div>
+            <div class="whiteline"></div>
+        </a>
+        <a href="@Url.Action("LocationSelection","Booking",new {refid=Model.booking.bookinguuid})" class="@(ViewBag.TabName == "Location"?"folder-tab-subsequent-active z-20":"folder-tab-subsequent")  flex items-center min-w-[200px] max-w-[240px] h-10 shadow-inner z-10 group">
+            <div class="@(ViewBag.TabName == "Location"?"tab-content-subsequent-active":"tab-content-subsequent") flex items-center gap-2 w-full h-full text-gray-600 dark:text-gray-300">
+                <i class="ki-filled ki-geolocation"></i>
+                <span class="tab-text">Location</span>
+            </div>
+        </a>
+        <a href="@Url.Action("ContainerSelection","Booking",new {refid=Model.booking.bookinguuid})" class="folder-tab-subsequent last flex items-center min-w-[200px] max-w-[240px] h-10 shadow-inner z-5 group">
+            <div class="tab-content-subsequent flex items-center gap-2 w-full h-full text-gray-600 dark:text-gray-300">
+                <i class="ki-filled ki-cube-2"></i>
+                <span class="tab-text">Containers</span>
+            </div>
+        </a>
+        <a href="@Url.Action("FinalSummary","Booking",new {refid=Model.booking.bookinguuid})" class="folder-tab-subsequent last flex items-center min-w-[200px] max-w-[240px] h-10 shadow-inner z-4 group">
+            <div class="tab-content-subsequent flex items-center gap-2 w-full h-full text-gray-600 dark:text-gray-300">
+                <i class="ki-filled ki-eye"></i>
+                <span class="tab-text">Summary</span>
+            </div>
+        </a>
+    </div>*@

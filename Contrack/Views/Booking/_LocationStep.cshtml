@@ -1,0 +1,269 @@
+﻿@using Contrack;
+@model ContainerBooking
+
+<div class="location-group">
+    <div>
+        @Html.Partial("_BookingTab", Model)
+        <div class="shipper-select-box notop mb-4.5">
+            <div class="grid grid-cols-2 gap-5 column-grid">
+                <div class="flex flex-col gap-2.5 page-customer">
+                    <label class="form-label">
+                        Port of Loading <span class="text-danger ps-2">*</span>
+                    </label>
+
+                    <div class="flex flex-col w-full portmultiline">
+                        @Html.DropDownListFor(m => m.booking.location.pol.EncryptedValue, new SelectList(ViewBag.PortDropdown, "Value", "Text", ""), "Select Port", new
+                   {
+                       @class = "select2",
+                       @id = "ddlPOL",
+                       @datarequired = "yes",
+                       @datarequired_message = "Please select POL",
+                       @data_placeholder_main = "Port of Loading",
+                       @data_placeholder_sub = "Select POL",
+                       @data_append_parent = "yes",
+                       @dataportid = Model.booking.location.pol.NumericValue == 0 ? "" : Model.booking.location.pol.EncryptedValue,
+                       @dataportname = Model.booking.location.pol_portname,
+                       @dataportcode = Model.booking.location.pol_portcode,
+                       @datacountryname = Model.booking.location.pol_countryname,
+                       @dataflag = Contrack.Common.FlagFolder + Model.booking.location.pol_countryflag,
+                   })
+                    </div>
+                </div>
+                <div class="flex flex-col gap-2.5 page-customer">
+                    <label class="form-label">
+                        Port of Discharge <span class="text-danger ps-2">*</span>
+                    </label>
+
+                    <div class="flex flex-col w-full portmultiline">
+                        @Html.DropDownListFor(m => m.booking.location.pod.EncryptedValue, new SelectList(ViewBag.PortDropdown, "Value", "Text", ""), "Select Port", new
+                   {
+                       @class = "select2",
+                       @id = "ddlPOD",
+                       @datarequired = "yes",
+                       @datarequired_message = "Please select POD",
+                       @data_placeholder_main = "Port of Discharge",
+                       @data_placeholder_sub = "Select POD",
+                       @data_append_parent = "yes",
+                       @dataportid = Model.booking.location.pod.NumericValue == 0 ? "" : Model.booking.location.pod.EncryptedValue,
+                       @dataportname = Model.booking.location.pod_portname,
+                       @dataportcode = Model.booking.location.pod_portcode,
+                       @datacountryname = Model.booking.location.pod_countryname,
+                       @dataflag = Contrack.Common.FlagFolder + Model.booking.location.pod_countryflag,
+                   })
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="shipper-select-box">
+            <div class="holderdropdown">
+                <div class="search-wrapper customerselection">
+                    <i class="ki-filled ki-magnifier"></i>
+                    @Html.DropDownListFor(m => m.booking.location.shipperdetailid.EncryptedValue, new SelectList(ViewBag.ClientDropdown, "Value", "Text", ""), "Select Shipper", new
+               {
+                   @class = "form-control select2 customerselect2",
+                   @id = "ddlShipper",
+                   @style = "width:100%;",
+                   @datarequired = "no",
+                   @datarequired_message = "Please select Shipper",
+                   @onchange = "LoadCustomerInfo(this);",
+                   @dataid = Model.booking.location.shipperdetailid.NumericValue == 0 ? "" : Model.booking.location.shipperdetailid.EncryptedValue,
+                   @dataname = Model.booking.location.shippername,
+               })
+                </div>
+                <div class="centeror">
+                    <span>or</span>
+                </div>
+            </div>
+            <div class="grid grid-cols-2 gap-5 column-grid" id="shipper_grid">
+                @Html.Partial("_Shipper", Model)
+
+            </div>
+        </div>
+    </div>
+    <div class="shipper-select-box">
+        <div class="holderdropdown">
+            <div class="search-wrapper customerselection">
+                <i class="ki-filled ki-magnifier"></i>
+                @Html.DropDownListFor(m => m.booking.location.consigneedetailid.EncryptedValue, new SelectList(ViewBag.ClientDropdown, "Value", "Text", ""), "Select Consignee", new
+           {
+               @class = "form-control select2 customerselect2",
+               @id = "ddlConsignee",
+               @style = "width:100%;",
+               @datarequired = "no",
+               @datarequired_message = "Please select Consignee",
+               @onchange = "LoadCustomerInfo(this);",
+               @dataid = Model.booking.location.consigneedetailid.NumericValue == 0 ? "" : Model.booking.location.consigneedetailid.EncryptedValue,
+               @dataname = Model.booking.location.consigneename,
+           })
+            </div>
+            <div class="centeror">
+                <span>or</span>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-5 column-grid" id="consignee_grid">
+            @Html.Partial("_Consignee", Model)
+        </div>
+
+    </div>
+
+    @*<div class="voyage-wrapper">
+            <p class="voyage-text">
+                <img src="~/assets/img/routing.svg" />
+                Voyage options:
+            </p>
+            <div class="voyage-grid">
+                <div class="voyage-card">
+                    <input name="PI.Priority" id="voyage1" type="radio" checked />
+                    <label for="voyage1">
+                        <span class="inner">
+                            <span class="flex">
+                                <span class="circle">
+                                    <i class="ki-filled ki-check"></i>
+                                </span>
+                                <span class="voyage-info">
+
+                                    <span class="title">MV Sea Wanderer</span>
+                                    <span class="date">ETD: (15 Oct 2024) – ETA (5 Nov 2024)</span>
+
+                                </span>
+                            </span>
+                            <span class="flex flex-col items-end pr-1">
+                                <span class="days">21 days</span>
+                            </span>
+                        </span>
+                    </label>
+                </div>
+                <div class="voyage-card">
+                    <input class="radio" id="voyage2" name="PI.Priority" type="radio" />
+                    <label for="voyage2">
+                        <span class="inner">
+                            <span class="flex">
+                                <span class="circle">
+                                    <i class="ki-filled ki-check"></i>
+                                </span>
+                                <span class="voyage-info">
+
+                                    <span class="title">CS Atlantic Adventurer</span>
+                                    <span class="date">ETD: (15 Oct 2024) – ETA (15 Nov 2024)</span>
+
+                                </span>
+                            </span>
+                            <span class="days">31 days</span>
+                        </span>
+                    </label>
+                </div>
+                <div class="voyage-card">
+                    <input class="radio" id="voyage3" name="PI.Priority" type="radio" />
+                    <label for="voyage3">
+                        <span class="inner">
+                            <span class="flex">
+                                <span class="circle">
+                                    <i class="ki-filled ki-check"></i>
+                                </span>
+                                <span class="voyage-info">
+
+                                    <span class="title">CS Atlantic Adventurer</span>
+                                    <span class="date">ETD: (15 Oct 2024) – ETA (15 Nov 2024)</span>
+
+                                </span>
+                            </span>
+                            <span class="days">51 days</span>
+                        </span>
+                    </label>
+                </div>
+            </div>
+        </div>*@
+
+    @*<div class="voyage-wrapper">
+            <p class="voyage-text">
+                <img src="~/assets/img/routing.svg" />
+                Voyage options:
+            </p>
+
+            <div id="voyageContainer">
+                <div class="text-muted p-4">
+                    Please select Port of Loading and Port of Discharge
+                </div>
+            </div>
+        </div>*@
+
+    @*<div class="voyage-wrapper">
+            <div class="flex items-center justify-between">
+                <p class="voyage-text flex items-center gap-2">
+                    <img src="~/assets/img/routing.svg" />
+                    Voyage options:
+                </p>
+                <button type="button"
+                        id="btnChangeVoyage"
+                        class="text-sm text-primary underline hover:text-primary-dark">
+                    Change Voyage
+                </button>
+            </div>
+            <div id="voyageContainer">
+                <div class="text-muted p-4">
+                    Please select Port of Loading and Port of Discharge
+                </div>
+            </div>
+        </div>*@
+    <div class="voyage-wrapper">
+        <div class="voyage-header pb-4 w-full flex gap-3 justify-between1 items-center">
+            <p class="voyage-text flex items-center gap-2">
+                <img src="~/assets/img/routing.svg" />
+                Voyage options:
+            </p>
+
+            <button type="button"
+                    id="btnChangeVoyage"
+                    class="btn btn-dark btn-outline btn-sm">
+                Change Voyage
+            </button>
+        </div>
+
+        <div id="voyageContainer">
+            <div class="text-muted p-4">
+                Please select Port of Loading and Port of Discharge
+            </div>
+        </div>
+    </div>
+
+
+
+    @*<div class="service-box">
+
+            <h3 class="cd-header-title">Additional services</h3>
+
+            <div class="services-grid mt-5">
+
+                <label class="service-card">
+                    <input type="checkbox" class="checkbox tick">
+                    <div class="top"><p class="title">Reach Stacker Hire</p></div>
+                    <div class="bottom grey">Add hours</div>
+                </label>
+
+                <label class="service-card selected">
+                    <input type="checkbox" class="checkbox tick" checked>
+                    <div class="top"><p class="title">ForkLift Hire</p></div>
+                    <input class="blue-input" value="24" />
+                </label>
+
+                <label class="service-card">
+                    <input type="checkbox" class="checkbox tick">
+                    <div class="top"><p class="title">Telehandler</p></div>
+                    <div class="bottom grey">Add hours</div>
+                </label>
+
+                <label class="service-card full">
+                    <input type="checkbox" class="checkbox tick">
+                    <div class="top"><p class="title">Stuffing/Unstuffing AFU Site</p></div>
+
+                    <div class="bottom-grid-full">
+                        <div class="bottom-cell">Add hours 20’</div>
+                        <div class="bottom-cell">Add hours 40’</div>
+                    </div>
+                </label>
+
+            </div>
+
+        </div>*@
+</div>

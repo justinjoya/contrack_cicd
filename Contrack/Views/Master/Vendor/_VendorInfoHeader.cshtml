@@ -1,0 +1,48 @@
+﻿@model Contrack.Vendor
+<div class="bg-center bg-cover bg-no-repeat hero-bg">
+    <!-- Container -->
+    <div class="container-fluid">
+        <div class="flex flex-col items-center gap-2 lg:gap-3.5 py-4 lg:pt-5 lg:pb-10">
+            <div class="flex items-center1 gap-1.5">
+                <div class="text-lg leading-5 font-semibold text-gray-900">
+                    @Model.vendor.legalname
+                </div>
+            </div>
+
+            @{
+                var email = Model.vendor.contactemail;
+                var emailList = email.Split(';');
+            }
+            @if (!string.IsNullOrEmpty(email))
+            {
+                <div class="flex flex-wrap justify-center gap-1 lg:gap-4.5 text-sm">
+                    <div class="flex gap-1.25 items-center">
+                        <i class="ki-filled ki-sms text-gray-500 text-sm">
+                        </i>
+                        @if (emailList.Count() > 1)
+                        {
+                            <a data-tooltip="#advanced_tooltip_@Model.vendor.vendorid" class="text-gray-600 font-medium hover:text-primary" href="mailto: @emailList[0]">
+                                @emailList[0]<span class='text-primary'> +@(emailList.Length - 1)</span>
+                            </a>
+                            <div class="tooltip" id="advanced_tooltip_@Model.vendor.vendorid">
+
+                                <div class="flex items-center gap-1">
+                                    @email
+                                    <i class="ki-solid ki-information-5 text-lg text-warning">
+                                    </i>
+                                </div>
+                            </div>
+                        }
+                        else
+                        {
+                            <a class="text-gray-600 font-medium hover:text-primary" href="mailto: @Model.vendor.contactemail">
+                                @Model.vendor.contactemail
+                            </a>
+                        }
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+    <!-- End of Container -->
+</div>

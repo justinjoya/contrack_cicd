@@ -1,0 +1,147 @@
+﻿@model Contrack.LocationListFilter
+@using Contrack
+@{
+    ViewBag.Title = "Locations";
+    ViewBag.MainManu = "Container";
+    ViewBag.SubManu = "Locations";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<link href="~/css/Location/location.css?v=2.0.2" rel="stylesheet" />
+
+<div class="breadscrumb-holder">
+    <div class="container-fluid flex items-center justify-between flex-wrap gap-5">
+        <div class="flex flex-col justify-center items-start flex-wrap gap-1.5">
+
+            <h1 class="page-header">Locations</h1>
+            <div class="flex items-center gap-1 text-sm font-normal">
+                <span class="text-gray-700">Manage and maintain all operational locations.</span>
+            </div>
+        </div>
+        <div class="flex items-center flex-wrap gap-1.5 lg:gap-2">
+            <div class="">
+                <label class="input input-md">
+                    <i class="ki-filled ki-magnifier"></i>
+                    <input data-datatable-search="#TableLocations" placeholder="Search Port, Country, Location..." type="text" id="txtSearchDisplay" />
+                </label>
+            </div>
+            <button class="btn btn-md text-md btn-primary" onclick="OpenLocationModal('')">
+                <i class="ki-filled ki-plus"></i> Add Location
+            </button>
+        </div>
+
+    </div>
+</div>
+
+<div class="container-fluid">
+    <div class="grid">
+        <div class="card card-grid min-w-full">
+
+            @*<div class="card-header flex-wrap gap-2 ">
+                    <h3 class="card-title font-medium text-md">
+                        Locations List
+                    </h3>
+                    <div class="flex flex-wrap gap-2 lg:gap-2">
+                        <div class="flex">
+                            <label class="input input-sm">
+                                <i class="ki-filled ki-magnifier"></i>
+                                <input data-datatable-search="#TableLocations" placeholder="Search" type="text" value="" id="txtSearchDisplay" />
+                            </label>
+                        </div>
+                    </div>
+                </div>*@
+
+            <div class="card-body">
+                <div id="TableLocations" class="custom-dt">
+                    <div class="scrollable-x-auto">
+                        <table class="table table-auto table-border align-middle text-gray-700 font-medium text-sm" data-datatable-table="true">
+                            <thead>
+                                <tr>
+
+                                    <th class="min-w-[200px]" data-datatable-column="locationname">
+                                        <span class="sort">
+                                            <span class="sort-label">Location</span>
+                                            <span class="sort-icon"></span>
+                                        </span>
+                                    </th>
+                                    <th class="min-w-[200px]" data-datatable-column="portname">
+                                        <span class="sort">
+                                            <span class="sort-label">Port Name</span>
+                                            <span class="sort-icon"></span>
+                                        </span>
+                                    </th>
+                                    <th class="min-w-[100px] text-center" data-datatable-column="total">
+                                        <span class="sort">
+                                            <span class="sort-label">Total</span>
+                                            <span class="sort-icon"></span>
+                                        </span>
+                                    </th>
+                                    <th class="min-w-[100px] text-end1" data-datatable-column="available">
+                                        <span class="sort">
+                                            <span class="sort-label">Available</span>
+                                            <span class="sort-icon"></span>
+                                        </span>
+                                    </th>
+                                    <th class="min-w-[100px] text-end1" data-datatable-column="blocked">
+                                        <span class="sort">
+                                            <span class="sort-label">Blocked</span>
+                                            <span class="sort-icon"></span>
+                                        </span>
+                                    </th>
+                                    <th class="min-w-[100px] text-end1" data-datatable-column="booked">
+                                        <span class="sort">
+                                            <span class="sort-label">Booked</span>
+                                            <span class="sort-icon"></span>
+                                        </span>
+                                    </th>
+                                    <th class="min-w-[100px] text-end1" data-datatable-column="repair">
+                                        <span class="sort">
+                                            <span class="sort-label">Damaged</span>
+                                            <span class="sort-icon"></span>
+                                        </span>
+                                    </th>
+
+
+                                    <th class="w-[100px] text-center" data-datatable-column="action">
+                                        Action
+                                    </th>
+                                </tr>
+                            </thead>
+                        </table>
+                    </div>
+                    <div class="card-footer justify-center md:justify-between flex-col md:flex-row gap-3 text-gray-600 text-2sm font-medium">
+                        <div class="flex items-center gap-2">
+                            Show
+                            <select class="select select-sm w-16" data-datatable-size="true" name="perpage">
+                            </select>
+                            per page
+                        </div>
+                        <div class="flex items-center gap-4">
+                            <span data-datatable-info="true"></span>
+                            <div class="pagination" data-datatable-pagination="true"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="emptydatatable hidden">
+                @Html.Partial("_EmptyTable", new EmptyTable()
+               {
+                   Heading = "No Location found",
+                   SubHead = "Try adjusting your search or add a new location to get started",
+                   Icon = "<i class=\"ki-filled ki-geolocation text-gray-900 text-3xl\"></i>",
+
+               })
+            </div>
+
+
+        </div>
+    </div>
+</div>
+
+<div id="modalsection"></div>
+
+@section PageScripts {
+    <script src="~/js/port.js"></script>
+    <script src="~/js/Location/location.js?v=3.0.2"></script>
+}

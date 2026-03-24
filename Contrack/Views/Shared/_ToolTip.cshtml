@@ -1,0 +1,8 @@
+﻿@model Contrack.Tooltip
+<div class="tooltip text-left" style="" id="@Model.ID">
+    <div class="flex flex-col gap-1">
+        @Html.Raw(Model.Message)
+        <i class="ki-solid ki-information-5 text-lg text-warning">
+        </i>
+    </div>
+</div>

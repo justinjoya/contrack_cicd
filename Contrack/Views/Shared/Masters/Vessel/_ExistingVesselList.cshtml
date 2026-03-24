@@ -1,0 +1,42 @@
+﻿@using Contrack;
+@model List<Contrack.VesselDTO>
+
+<div class="card h-full">
+    <div class="card-header">
+        <h3 class="card-title">
+            Matching Vessels
+        </h3>
+        <button type="button" class="pull-right btn btn-outline btn-xs btn-sm btn-danger" onclick="CreateNewVessel();">
+            No, I wanted to create new
+        </button>
+    </div>
+    @for (int i = 0; i < Model.Count; i++)
+    {
+        <label for="input_vessel_@Model[i].vassignment.assignmentuuid" class="card-group flex items-center1 justify-between py-4 gap-1.5">
+            <div class="flex flex-col justify-center gap-1.5">
+                <span class="leading-none font-medium text-sm text-gray-900">
+                    @Model[i].vesselname
+                </span>
+                <span class="text-2sm text-gray-700">
+                    IMO : @Model[i].imono
+                </span>
+                <span class="text-2sm text-gray-700">
+                    MMSI : @Model[i].mmsino
+                </span>
+                <span class="text-2sm text-gray-700">
+                    Agency : @Model[i].vassignment.agencyname
+                </span>
+
+            </div>
+            @if (Common.Decrypt(Model[i].vassignment.agencyid.EncryptedValue) != 0)
+            {
+                <button type="button" class="pull-right btn btn-outline btn-xs btn-sm btn-primary" onclick="MoveVesselToHub('@Model[i].vassignment.vesselassignmentid.EncryptedValue','@Model[i].vassignment.assignmentuuid')">
+                    Add to My List
+                </button>
+            }
+            @*<input checked id="input_vessel_@Model[i].vassignment.assignmentuuid" name="input_vessel" class="radio" type="radio" value="1" />*@
+        </label>
+    }
+
+</div>
+

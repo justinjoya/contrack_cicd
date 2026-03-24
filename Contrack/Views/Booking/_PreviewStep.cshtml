@@ -1,0 +1,218 @@
+﻿@using Contrack;
+@model ContainerBooking
+<div class="previewpage">
+    <div>
+        @Html.Partial("_BookingTab", Model)
+        <div class="summary-card notop">
+            <div class="summary-card-header">
+                <span class="header-title">Customer Details:</span>
+                @*<a href="@Url.Action("CustomerSelection", "Booking", new { refid = Model.booking.bookinguuid })" class="edit-btn">*@
+                <a href="@Url.Action("CustomerSelection", "Booking", new { refid = Model.booking.bookinguuid, SaveOnly = true })" class="edit-btn">
+                    <img src="~/assets/img/edit-02.svg" /> Edit
+                </a>
+            </div>
+
+            <div class="summary-card-body cd-card-body">
+                <div class="cd-left-block">
+                    <h2 class="cd-customer-name">@Model.booking.customer.client.clientname</h2>
+                    <div class="cd-info-list">
+                        <div class="cd-info-item">
+                            <span class="cd-info-ico">
+                                <img src="~/assets/img/sms.svg" />
+                            </span>
+                            <span class="cd-info-text">@Html.Partial("_FormatWithCount", new FormatDisplay() { Name = "Email", Text = string.IsNullOrEmpty(Model.booking.customer.client.email) ? "No Email" : Model.booking.customer.client.email, Delimiter = ";" })</span>
+                        </div>
+
+                        <div class="cd-info-item">
+                            <span class="cd-info-ico"><img src="~/assets/img/call.svg" /></span>
+                            <span class="cd-info-text">@Html.Partial("_FormatWithCount", new FormatDisplay() { Name = "Phone", Text = string.IsNullOrEmpty(Model.booking.customer.client.phone) ? "No Phone" : Model.booking.customer.client.phone, Delimiter = "," })</span>
+                        </div>
+
+                    </div>
+                </div>
+                <div class="cd-right-box">
+                    <span class="cd-badge">@IDReferences.GetCustomerTypeName(Model.booking.customer.customertype.NumericValue).ToUpper()</span>
+
+                    <p class="cd-address-text">
+                        @Html.Raw(Model.booking.customer.client.address.Replace("\n", "<br/>"))
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="summary-card">
+        <div class="summary-card-header">
+            <h3 class="header-title">Location Details:</h3>
+            @*<a href="@Url.Action("LocationSelection", "Booking", new { refid = Model.booking.bookinguuid })" class="edit-btn">*@
+            <a href="@Url.Action("LocationSelection", "Booking", new { refid = Model.booking.bookinguuid, SaveOnly = true })" class="edit-btn">
+                <img src="~/assets/img/edit-02.svg" /> Edit
+            </a>
+        </div>
+
+        <div class="summary-card-body">
+            <div class="ld-polpod-box">
+                <div class="ld-loc-col">
+                    <img src="@Common.FlagFolder@Model.booking.location.pol_countryflag" class="ld-flag" />
+                    <div class="ld-loc-details">
+                        <div class="ld-label">POL</div>
+                        <div class="ld-city">@Model.booking.location.pol_portname, @Model.booking.location.pol_countryname</div>
+                        <div class="ld-sub">@(string.IsNullOrEmpty(Model.booking.location.pol_portcode)?"N/A": Model.booking.location.pol_portcode)</div>
+                    </div>
+                </div>
+                <div class="route-arrow"></div>
+
+                <div class="ld-loc-col">
+                    <img src="@Common.FlagFolder@Model.booking.location.pod_countryflag" class="ld-flag" />
+                    <div class="ld-loc-details">
+                        <div class="ld-label">POD</div>
+                        <div class="ld-city">@Model.booking.location.pod_portname, @Model.booking.location.pod_countryname</div>
+                        <div class="ld-sub">@(string.IsNullOrEmpty(Model.booking.location.pod_portcode)?"N/A": Model.booking.location.pod_portcode)</div>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="ld-person-box">
+
+                <div class="ld-person-row">
+                    <div class="ld-person-left">
+                        <div class="avatar-black">
+                            <span class="avatar-lable">
+                                <img src="~/assets/img/map1.svg" />
+                            </span>
+                        </div>
+
+                        <div class="person-detail-info">
+                            <div class="flex">
+                                <span class="ld-person-name">@Model.booking.location.shippername</span>
+                                <span class="ld-role">(Shipper)</span>
+                            </div>
+                            <div class="ld-email">@Html.Partial("_FormatWithCount", new FormatDisplay() { Name = "Email", Text = string.IsNullOrEmpty(Model.booking.location.shipperemail) ? "No Email" : Model.booking.location.shipperemail, Delimiter = ";" })</div>
+                            <div class="ld-phone">@Html.Partial("_FormatWithCount", new FormatDisplay() { Name = "Phone", Text = string.IsNullOrEmpty(Model.booking.location.shipperphone) ? "No Email" : Model.booking.location.shipperphone, Delimiter = "," })</div>
+                        </div>
+                    </div>
+
+                    <div class="ld-person-right">
+                        @Html.Raw(Model.booking.location.shipperaddress.Replace("\n", "<br/>"))
+                    </div>
+                </div>
+
+                <div class="ld-person-row">
+                    <div class="ld-person-left">
+                        <div class="avatar-black">
+                            <span class="avatar-lable">
+                                <img src="~/assets/img/map2.svg" />
+                            </span>
+                        </div>
+                        <div class="person-detail-info">
+                            <div class="flex">
+                                <span class="ld-person-name">@Model.booking.location.consigneename </span>
+                                <span class="ld-role">(Consignee)</span>
+                            </div>
+                            <div class="ld-email">@Html.Partial("_FormatWithCount", new FormatDisplay() { Name = "Email", Text = string.IsNullOrEmpty(Model.booking.location.consigneeemail) ? "No Email" : Model.booking.location.consigneeemail, Delimiter = ";" })</div>
+                            <div class="ld-phone">@Html.Partial("_FormatWithCount", new FormatDisplay() { Name = "Phone", Text = string.IsNullOrEmpty(Model.booking.location.consigneephone) ? "No Email" : Model.booking.location.consigneephone, Delimiter = "," })</div>
+                        </div>
+                    </div>
+
+                    <div class="ld-person-right">
+                        @Html.Raw(Model.booking.location.consigneeaddress.Replace("\n", "<br/>"))
+                    </div>
+                </div>
+            </div>
+            @if (!string.IsNullOrEmpty(Model.booking.location.voyageuuid))
+            {
+                <div class="ld-vessel-box">
+                    <div class="ld-vessel-left">
+                        <div class="border-vessel"></div>
+                        <div class="ld-vessel-text">
+                            <div class="ld-vessel-title">@Model.voyage.Vesselname</div>
+                            <div class="ld-vessel-sub">ETD: @Display.DisplayDateHumanFriendly(Model.voyage.minDate.Value) - ETA @Display.DisplayDateHumanFriendly(Model.voyage.maxDate.Value)</div>
+                        </div>
+                    </div>
+                    <div class="ld-vessel-days">@(Model.voyage.maxDate.Value.Date.Subtract(Model.voyage.minDate.Value.Date).Days + 1) Days</div>
+                </div>
+            }
+        </div>
+
+    </div>
+    <div class="summary-card">
+        <div class="summary-card-header">
+            <h3 class="header-title">Cargo Details</h3>
+            <a href="@Url.Action("ContainerSelection", "Booking", new { refid = Model.booking.bookinguuid, SaveOnly = true })" class="edit-btn">
+                <img src="~/assets/img/edit-02.svg" /> Edit
+            </a>
+        </div>
+        <div class="summary-card-body cargo-card-body">
+            @foreach (var item in Model.booking.details)
+            {
+                <div class="cargo-card">
+                    <div class="cargo-left">
+
+                        <div class="icon-circle green">
+                            <img src="/assets/img/container.svg">
+                        </div>
+
+                        <div class="cargo-info">
+
+                            <div class="top-row">
+                                <span>@IDReferences.GetOwnership(item.ownership)</span>
+                                <span class="dot"></span>
+                                <span>@Display.DisplayStringNA(item.commodity)</span>
+                                <span class="dot"></span>
+                                <span>@Display.DisplayStringNA(IDReferences.GetFullOREmpty(item.empty_full))</span>
+                            </div>
+
+                            <h4>@item.qty x @item.sizename @item.containertypename (@(string.IsNullOrEmpty(item.containermodeluuid)? "ISO : Any" : "ISO : " + item.isocode))</h4>
+
+                            @*<div class="sub-details">
+                                    <span>@item.grossweight.ToString("0.00") kg</span>
+                                    <span class="dot"></span>
+                                    <span>@Display.DisplayStringNA(item.pickuplocation)</span>
+                                    <span class="dot"></span>
+                                    <span>@Display.DisplayCurrency(item.cargovalue)</span>
+                                </div>*@
+
+
+                            <div class="tags-cargo">
+                                @*<div class="tag-cargo">GROSS WEIGHT: @item.grossweight.ToString("0.00") CBM</div>*@
+                                <div class="tag-cargo">VOLUME: @item.volumeweight.ToString("0.00") CBM</div>
+                                <div class="tag-cargo">PACKAGING: @Display.DisplayStringNA(IDReferences.GetPackageType(item.packagetype.NumericValue))</div>
+                            </div>
+                            @if (item.services.Count > 0)
+                            {
+                                <div class="ld-service-box" style="margin-top: 0px;">
+                                    @*<span class="ld-service-title">ADDITIONAL SERVICES:</span>*@
+
+                                    <div class="ld-service-line">
+                                        @foreach (var iteminner in item.services)
+                                        {
+                                            <div class="service-item">
+                                                <i class="ki-filled ki-check"></i>
+                                                <span>@iteminner.servicename</span>
+                                            </div>
+                                        }
+
+
+
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+
+                    <div class="cargo-right">
+                        <div class="warehouse">@Display.DisplayStringNA(item.stuffinglocation)</div>
+                        <div class="date">@Display.DisplayStringNA(item.expectedstuffingdate.Text)</div>
+                    </div>
+                </div>
+            }
+
+
+
+
+        </div>
+
+    </div>
+
+    @Html.Partial("~/Views/Booking/_BookingSummary.cshtml", Model)
+</div>

@@ -1,0 +1,94 @@
+﻿<div class="card card-grid min-w-full">
+    <div class="card-body">
+        <div id="TableQuotation" class="custom-dt">
+            <div class="scrollable-x-auto">
+                <table class="table table-auto table-border align-middle"
+                       data-datatable-table="true">
+                    <thead>
+                        <tr>
+                            <th class="min-w-[220px]" data-datatable-column="quotationno">
+                                <span class="sort">
+                                    <span class="sort-label">
+                                        Quotation No
+                                    </span>
+                                    <span class="sort-icon">
+                                    </span>
+                                </span>
+                            </th>
+                            <th class="min-w-[150px]" data-datatable-column="quoteDate">
+                                <span class="sort">
+                                    <span class="sort-label">
+                                        Quote Date
+                                    </span>
+                                    <span class="sort-icon">
+                                    </span>
+                                </span>
+                            </th>
+                            @*<th class="min-w-[150px]" data-datatable-column="billto">
+                                <span class="sort">
+                                    <span class="sort-label">
+                                        Bill To
+                                    </span>
+                                    <span class="sort-icon">
+                                    </span>
+                                </span>
+                            </th>*@
+                            <th class="min-w-[150px]" data-datatable-column="customername">
+                                <span class="sort">
+                                    <span class="sort-label">
+                                        Customer Name
+                                    </span>
+                                    <span class="sort-icon">
+                                    </span>
+                                </span>
+                            </th>
+                            <th class="min-w-[150px]" data-datatable-column="totalamount">
+                                <span class="sort">
+                                    <span class="sort-label">
+                                        Amount
+                                    </span>
+                                    <span class="sort-icon">
+                                    </span>
+                                </span>
+                            </th>
+                            <th class="min-w-[150px]" data-datatable-column="expiryDate">
+                                <span class="sort">
+                                    <span class="sort-label">
+                                        Expiry Date
+                                    </span>
+                                    <span class="sort-icon">
+                                    </span>
+                                </span>
+                            </th>
+                            <th class="min-w-[150px]" data-datatable-column="createdby">
+                                <span class="sort">
+                                    <span class="sort-label">
+                                        Created By
+                                    </span>
+                                    <span class="sort-icon">
+                                    </span>
+                                </span>
+                            </th>
+                            <th class="min-w-[150px] text-center" data-datatable-column="status">
+                                Status
+                            </th>
+                            <th data-datatable-column="action" class="text-center w-[80px]">Action</th>
+                        </tr>
+                    </thead>
+                </table>
+            </div>
+            <div class="card-footer justify-center md:justify-between flex-col md:flex-row gap-3 text-gray-600 text-2sm font-medium">
+                <div class="flex items-center gap-2">
+                    Show
+                    <select class="select select-sm w-16" data-datatable-size="true" name="perpage">
+                    </select>
+                    per page
+                </div>
+                <div class="flex items-center gap-4">
+                    <span data-datatable-info="true"></span>
+                    <div class="pagination" data-datatable-pagination="true"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

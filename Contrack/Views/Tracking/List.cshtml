@@ -1,0 +1,347 @@
+﻿@model Contrack.TrackingFilterPage
+@using Contrack;
+@{
+    ViewBag.Title = "Movement History";
+    ViewBag.MainManu = "Container";
+    ViewBag.SubManu = "Tracking";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<style>
+    .dynamicicon {
+        width: 24px;
+    }
+
+    .smallicon .dynamicicon {
+        width: 20px;
+    }
+
+    .spanfixed {
+        width: 110px;
+        position: relative;
+    }
+
+        .spanfixed:after {
+            content: ':';
+            position: absolute;
+            right: 0;
+        }
+</style>
+<link href="~/css/Container/container-list.css?v=2.0.1" rel="stylesheet" />
+<link href="~/css/Container/tracking.css?v=1.0.0" rel="stylesheet" />
+<link href="~/css/Container/details.css?v=1.0.0" rel="stylesheet" />
+<div class="breadscrumb-holder">
+    <div class="container-fluid flex items-center justify-between flex-wrap gap-5">
+        <div class="flex flex-col justify-center items-start flex-wrap gap-1.5">
+            <h1 class="page-header">
+                @Html.Partial("_GoBack")
+                Container Info &amp; Tracking
+            </h1>
+            <div class="flex items-center gap-1 text-sm font-normal">
+                <span class="text-gray-700">Manage and maintain all operational Tracking.</span>
+            </div>
+        </div>
+        <div class="flex items-center flex-wrap gap-1.5 lg:gap-2">
+            <div class="">
+                <label class="input input-md">
+                    <i class="ki-filled ki-magnifier"></i>
+                    <input data-datatable-search="#TableTrackings" placeholder="Search..." type="text" id="txtSearchDisplay" />
+                </label>
+            </div>
+
+            <button class="btn btn-md text-md btn-outline original btn-light dropdown-toggle" data-drawer-toggle="#drawer_filter">
+                <i class="ki-filled ki-setting-4"></i>
+                Filters
+                @{
+                    int count = Model.GetFilterCount();
+                    if (count > 0)
+                    {
+                        <span class="badge text-2xs badge-xs batch-new badge-primary">@count</span>
+                    }
+                }
+            </button>
+            @using (Html.BeginForm("List", "Tracking", new { id = Model.ContainerUUID }, FormMethod.Post, new { @id = "frmTrackingDownload", @style = "display:inline;" }))
+            {
+                @Html.HiddenFor(m => m.filters.startdate)
+                @Html.HiddenFor(m => m.filters.enddate)
+
+                <button class="btn btn-md text-md btn-light original" type="submit" name="Action" value="Download">
+                    <i class="ki-filled ki-exit-down">
+                    </i>
+                    Download
+                </button>
+            }
+
+            <a id="btnRecordMove" class="btn btn-md text-md btn-primary" href="javascript:void(0);" data-containerid="@Model.ContainerInfo.containerid.EncryptedValue"
+               data-bookingid="@Model.ContainerInfo.bookingid.EncryptedValue" onclick="TriggerSingleRecordMove(this)">
+                <i class="ki-filled ki-route"></i> Record Move
+            </a>
+        </div>
+    </div>
+</div>
+@{
+
+    string containerimage = "/assets/dbicons/container-img.svg";
+    IContainerTypeRepository repo = new ContainerTypeRepository();
+    ContainerTypeService type = new ContainerTypeService(repo);
+    List<ContainerTypeDTO> typelist = type.GetContainerTypesList();
+    var selectedtype = typelist.Where(x => x.typename == Model.ContainerInfo.type_name).FirstOrDefault();
+    if (selectedtype != null)
+    {
+        containerimage = Common.GetIconPath(selectedtype.icon.iconid.NumericValue, true);
+        if (containerimage == "")
+        {
+            containerimage = "/assets/dbicons/container-img.svg";
+        }
+    }
+
+}
+
+<div class="container-fluid">
+    <div class="details-container">
+        <div class="spec-wrapper row1">
+            <div class="details-card">
+                <div class="container-wrapper">
+                    <div class="container-img">
+                        <img alt="container" src="@containerimage" />
+                    </div>
+                    <div class="container-info">
+                        @{
+                            var ageText = Model.ContainerInfo.manufacturedate.SubText;
+                            var age = "/assets/img/agebar1.svg";
+                            var agetext = "A+";
+                            if (Model.ContainerInfo.ageinyears >= 12) { age = "/assets/img/agebar5.svg"; agetext = "D"; }
+                            else if (Model.ContainerInfo.ageinyears >= 7) { age = "/assets/img/agebar4.svg"; agetext = "C"; }
+                            else if (Model.ContainerInfo.ageinyears >= 3) { age = "/assets/img/agebar3.svg"; agetext = "B"; }
+                            else if (Model.ContainerInfo.ageinyears >= 1) { age = "/assets/img/agebar2.svg"; agetext = "A"; }
+
+                        }
+                        <div class="flex items-center gap-3">
+                            <img src="@age" style="height: 56px;" />
+                            <div>
+                                <h2 class="container-id">
+                                    <span class="flex items-center gap-2">
+                                        @*<img src="@age" />*@
+                                        @Model.ContainerInfo.equipmentno <span class="text-lg text-gray-600">(@agetext)</span>
+                                    </span>
+                                </h2>
+                                <p class="size">
+                                    @Model.ContainerInfo.sizename @Model.ContainerInfo.type_name
+                                    <span class="dot"></span>
+                                    ISO: @(string.IsNullOrEmpty(Model.ContainerInfo.model_iso_code) ? "N/A" : Model.ContainerInfo.model_iso_code)
+                                    <span class="dot"></span>
+                                    @Display.DisplayStringNA(Model.ContainerInfo.operatorname)
+                                    <span class="dot"></span>
+                                    <span class="flex items-center gap-2">
+                                        @if (Model.ContainerInfo.is_empty.Value)
+                                        {
+                                            <i class="text-md text-gray-400 ki-filled ki-cube-2"></i>
+                                            <span>Empty</span>
+                                        }
+                                        else
+                                        {
+                                            <i class="text-md text-info ki-filled ki-cube-2"></i>
+                                            <span>Full</span>
+                                        }
+                                    </span>
+                                    <span class="dot"></span>
+                                    <span class="flex items-center gap-2">
+                                        @if (Model.ContainerInfo.status_code == 1)
+                                        {
+                                            <span class="available-circle"></span>
+                                            <span>Available</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="booked-circle"></span>
+                                            <span>Booked</span>
+                                        }
+                                    </span>
+                                </p>
+                            </div>
+                        </div>
+                        <div class="hr-splitter"></div>
+
+                        <div class="container-feat">
+                            <i class="ki-filled ki-geolocation"></i>
+                            <span class="spanfixed">Location</span>
+                            @Model.ContainerInfo.locationname
+                        </div>
+                        <div class="container-feat">
+                            <i class="ki-filled ki-route"></i>
+                            <span class="spanfixed">
+                                Last Move
+                            </span>
+                            @if (string.IsNullOrEmpty(Model.ContainerInfo.lastmove))
+                            {
+                                <span>
+                                    N/A
+                                </span>
+                            }
+                            else
+                            {
+                                <span class="flex items-center gap-1">
+                                    <span class="text-primary">
+                                        @Model.ContainerInfo.lastmove
+                                    </span> @@ @Model.ContainerInfo.lastmovedatetime
+                                </span>
+                            }
+                        </div>
+                        <div class="container-feat items-center">
+                            <i class="ki-filled ki-calendar-2"></i>
+                            <span class="spanfixed">
+                                Last Booking
+                            </span>
+                            @if (string.IsNullOrEmpty(Model.ContainerInfo.bookinguuid))
+                            {
+                                <span>
+                                    N/A
+                                </span>
+                            }
+                            else
+                            {
+
+                                <a href="@Url.Action("BookingDecider", "Booking", new {refid=Model.ContainerInfo.bookinguuid})" class="text-primary">
+                                    @Model.ContainerInfo.bookingno
+                                </a>
+                            }
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="container-fluid">
+    <div class="grid gap-5">
+        <div class="card cardoverride card-grid min-w-full">
+            <div class="card-body carddatatable">
+                <div id="TableTrackings" class="custom-dt norightborder1">
+                    <div class="scrollable-x-auto">
+                        <table class="table table-auto table-border align-middle text-gray-700 font-medium text-sm" data-datatable-table="true">
+                            <thead>
+                                <tr>
+                                    @*<th class="min-w-[120px]" data-datatable-column="recorddatetime">
+                                            <span class="sort"><span class="sort-label">Date & Time</span><span class="sort-icon"></span></span>
+                                        </th>*@
+                                    <th class="min-w-[150px]" data-datatable-column="move">
+                                        <span class="sort"><span class="sort-label">Move</span><span class="sort-icon"></span></span>
+                                    </th>
+                                    <th class="min-w-[200px]" data-datatable-column="location">
+                                        <span class="sort"><span class="sort-label">Location</span><span class="sort-icon"></span></span>
+                                    </th>
+                                    @*<th class="min-w-[150px]" data-datatable-column="container">
+                                            <span class="sort"><span class="sort-label">Container</span><span class="sort-icon"></span></span>
+                                        </th>*@
+                                    <th class="min-w-[100px] text-center" data-datatable-column="status">Status</th>
+                                    <th class="min-w-[80px] text-center" data-datatable-column="damage">Damage</th>
+                                    <th class="min-w-[150px]" data-datatable-column="booking">
+                                        <span class="sort"><span class="sort-label">Booking</span><span class="sort-icon"></span></span>
+                                    </th>
+                                    <th class="min-w-[200px]" data-datatable-column="nextmove">Next Activity</th>
+                                    <th class="w-[100px] text-center">Action</th>
+                                </tr>
+                            </thead>
+                        </table>
+                    </div>
+                    <div class="card-footer justify-center md:justify-between flex-col md:flex-row gap-3 text-gray-600 text-2sm font-medium">
+                        <div class="flex items-center gap-2">Show <select class="select select-sm w-16" data-datatable-size="true" name="perpage"></select> per page</div>
+                        <div class="flex items-center gap-4"><span data-datatable-info="true"></span><div class="pagination" data-datatable-pagination="true"></div></div>
+                    </div>
+                </div>
+            </div>
+            <div class="emptydatatable hidden">
+                @Html.Partial("_EmptyTable", new Contrack.EmptyTable()
+               {
+                   Heading = "No Movements found",
+                   SubHead = "No tracking records available for this container.",
+                   Icon = "<i class=\"ki-filled ki-route text-5xl\"></i>",
+               })
+            </div>
+        </div>
+    </div>
+</div>
+
+@using (Html.BeginForm("List", "Tracking", new { id = Model.ContainerUUID }, FormMethod.Post, new { @id = "frmTrackingList" }))
+{
+    <div class="drawer drawer-end flex flex-col h-full filter-width" data-drawer="true" id="drawer_filter">
+        <div class="flex items-center justify-between p-5 border-b">
+            <h3 class="text-base font-semibold text-gray-900">Filters</h3>
+            <button type="button" class="btn btn-xs btn-icon btn-light" data-drawer-dismiss="true"><i class="ki-outline ki-cross"></i></button>
+        </div>
+
+        <div class="scrollable-y flex-grow py-5 px-5">
+            <div class="grid lg:grid-cols-2 gap-5">
+                <div class="w-full">
+                    <div class="flex flex-col items-baseline flex-wrap lg:flex-nowrap gap-2.5">
+                        <label class="form-label flex items-center gap-1 max-w-56">From Date</label>
+                        <div class="input-group w-full">
+                            @Html.TextBoxFor(m => m.filters.startdate, new { @class = "datepicker-here input", @placeholder = "dd/mm/yyyy", @id = "txt_Filter_Datefrom", @data_provider = "flatpickr1", @readonly = true })
+                            <button type="button" id="btnTarget_From" class="btn btn-icon btn-outline btn-icon-lg btn-light">
+                                <i class="ki-filled ki-calendar-2"></i>
+                            </button>
+                            <button type="button" class="btn btn-icon btn-outline btn-icon-lg btn-light" data-clear-input="txt_Filter_Datefrom"><i class="ki-filled ki-cross"></i></button>
+                        </div>
+                    </div>
+                </div>
+                <div class="w-full">
+                    <div class="flex flex-col items-baseline flex-wrap lg:flex-nowrap gap-2.5">
+                        <label class="form-label flex items-center gap-1 max-w-56">To Date</label>
+                        <div class="input-group w-full">
+                            @Html.TextBoxFor(m => m.filters.enddate, new { @class = "datepicker-here input", @placeholder = "dd/mm/yyyy", @id = "txt_Filter_enddate", @data_provider = "flatpickr1", @readonly = true })
+                            <button type="button" id="btnTarget_From" class="btn btn-icon btn-outline btn-icon-lg btn-light">
+                                <i class="ki-filled ki-calendar-2"></i>
+                            </button>
+                            <button type="button" class="btn btn-icon btn-outline btn-icon-lg btn-light" data-clear-input="txt_Filter_enddate"><i class="ki-filled ki-cross"></i></button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="w-full lg:col-span-2">
+                    <div class="flex flex-col items-baseline flex-wrap lg:flex-nowrap gap-2.5">
+                        <label class="form-label flex items-center gap-1 max-w-56">Activity</label>
+                        <div class="input-group w-full">
+                            @Html.DropDownListFor(m => m.filters.activity_encrypted, new SelectList(ViewBag.MovesDropdown, "Value", "Text"), new { @class = "form-control select2", @style = "width:100%;", @id = "ddlActivity" })
+                        </div>
+                    </div>
+                </div>
+
+                <div class="w-full lg:col-span-2">
+                    <div class="flex flex-col items-baseline flex-wrap lg:flex-nowrap gap-2.5">
+                        <label class="form-label flex items-center gap-1 max-w-56">Is Damaged?</label>
+                        <div class="input-group w-full">
+                            @Html.DropDownListFor(m => m.filters.isdamaged, new SelectList(ViewBag.DamageDropdown, "Value", "Text"), "All", new { @class = "form-control select2", @style = "width:100%;", @id = "ddlDamage" })
+                        </div>
+                    </div>
+                </div>
+
+                <div class="w-full lg:col-span-2">
+                    <div class="flex flex-col items-baseline flex-wrap lg:flex-nowrap gap-2.5">
+                        <label class="form-label flex items-center gap-1 max-w-56">Status (Full/Empty)</label>
+                        <div class="input-group w-full">
+                            @Html.DropDownListFor(m => m.filters.isfull, new SelectList(ViewBag.FullEmptyDropdown, "Value", "Text"), "All", new { @class = "form-control select2", @style = "width:100%;", @id = "ddlFullEmpty" })
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="flex justify-between items-center p-5 border-t mt-auto">
+            <button type="button" class="btn btn-light" data-drawer-dismiss="true">Close</button>
+            <div class="flex gap-2">
+                <button type="submit" name="action" value="Reset" class="btn btn-light">Reset Filter</button>
+                <button type="submit" name="action" value="filter" class="btn btn-dark">Apply Filter</button>
+            </div>
+        </div>
+
+    </div>
+}
+
+<div id="modalsection">
+</div>
+
+@section PageScripts {
+    <script src="~/js/Tracking/tracking-list.js?v=2.0.3"></script>
+    <script src="~/js/Tracking/tracking.js"></script>
+    <script src="~/js/voyageselect2.js"></script>
+}

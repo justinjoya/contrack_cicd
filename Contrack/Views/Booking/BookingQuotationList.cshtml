@@ -1,0 +1,159 @@
+﻿@using Contrack
+@model BookingQuotationList
+@{
+    ViewBag.Title = "Quotation List";
+    ViewBag.MainManu = "Booking";
+    ViewBag.SubManu = "Quote";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<link href="~/css/Booking/booking.css?v=1.0.2" rel="stylesheet" />
+<link href="~/css/Container/containerBooking.css?v=2.0.1" rel="stylesheet" />
+<link href="~/css/Container/quote.css?v=1.0.1" rel="stylesheet" />
+@Html.Partial("_BookingHeader", Model.bookinguuid)
+<div class="container-fluid nobottom">
+    <div class="booking-section full-width flex flex-col">
+        <div class="booking-info">
+            @*@Html.Partial("_Stepper", 3)*@
+            <div class="booking-max-width">
+                <div class="booking-content">
+                    <div class="flex justify-between items-center pb-6">
+                        <div class="page-header-holder" style="padding-bottom:0">
+                            <span class="head">Quotation List</span>
+                            <span class="subhead">
+                                List of all quotations with current status and details.
+                            </span>
+
+                        </div>
+                        <div class="flex gap-2">
+                            <a href="@Url.Action("CreateQuotation", "Booking", new { bookinguuid = Model.bookinguuid })" class="btn btn-md text-md btn-primary">
+                                <i class="ki-filled ki-plus"></i>
+                                Create Quote
+                            </a>
+                        </div>
+                    </div>
+                    <div class="left-section page-header-holder">
+                        <div id="cargo_placeholder">
+                            @if (Model.quotation.Any())
+                            {
+                                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+
+                                    @foreach (var quote in Model.quotation)
+                                    {
+                                        bool approve = quote.status.NumericValue == QuoteStatus.Awaiting_HOD_approval && Common.RoleID == UserRols.Approver_HOD;
+                                        bool delete = quote.status.NumericValue == QuoteStatus.Draft;
+                                        <div class="quote-card">
+                                            <div class="flex justify-between items-center quote-header">
+                                                <span class="header-text">@quote.quotationno</span>
+
+                                                <div class="menu justify-center" data-menu="true">
+                                                    <div class="menu-item menu-item-dropdown" data-menu-item-offset="0, 10px" data-menu-item-placement="bottom-end" data-menu-item-placement-rtl="bottom-start" data-menu-item-toggle="dropdown" data-menu-item-trigger="click|lg:click">
+                                                        @if (approve || delete)
+                                                        {
+                                                            <button class="menu-toggle btn btn-sm btn-icon btn-light btn-clear">
+                                                                <i class="ki-filled ki-dots-vertical"></i>
+                                                            </button>
+                                                            <div class="menu-dropdown menu-default w-full max-w-[200px]" data-menu-dismiss="true">
+                                                                @if (approve)
+                                                                {
+                                                                    <div class="menu-item">
+                                                                        <a class="menu-link" href="@Url.Action("ApproveQuotation", "Booking", new { refid = quote.quotationuuid })">
+                                                                            <span class="menu-icon">
+                                                                                <i class="ki-filled ki-check-circle"></i>
+                                                                            </span>
+                                                                            <span class="menu-title text-danger">
+                                                                                Approve
+                                                                            </span>
+                                                                        </a>
+                                                                    </div>
+                                                                }
+                                                                @if (delete)
+                                                                {
+                                                                    <div class="menu-item">
+                                                                        <a class="menu-link" href="javascript:void(0);" onclick="DeleteQuotation('@quote.quotationuuid')">
+                                                                            <span class="menu-icon">
+                                                                                <i class="ki-filled ki-trash text-danger"></i>
+                                                                            </span>
+                                                                            <span class="menu-title text-danger">
+                                                                                Delete
+                                                                            </span>
+                                                                        </a>
+                                                                    </div>
+                                                                }
+                                                            </div>
+                                                        }
+                                                        else
+                                                        {
+                                                            <button class="menu-toggle btn btn-sm btn-icon btn-light btn-clear" style="opacity:0;">
+                                                                <i class="ki-filled ki-dots-vertical"></i>
+                                                            </button>
+                                                        }
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                            <div class="px-4 py-4 flex-1">
+                                                <div class="flex justify-between items-end">
+                                                    <div class="totalamount">
+                                                        <div class="header-text">Quote Amount</div>
+                                                        <div class="amount-text"><span>@quote.currency</span> @Display.DisplayCurrency(quote.totalamount)</div>
+                                                    </div>
+
+                                                </div>
+                                                <div class="flex justify-between items-end">
+                                                    <div class="flex items-center gap-1 mt-2 text-slate-400 text-sm">
+                                                        <i class="ki-filled ki-note"></i>
+                                                        @quote.totalitems Line Items
+                                                    </div>
+                                                    @Html.Raw(quote.status.SubText)
+                                                </div>
+                                            </div>
+                                            <div class="border-t border-gray-200">
+                                                <div class="px-4 py-3 flex justify-between items-center">
+                                                    <div>
+                                                        <p class="text-sm text-gray-600">Created</p>
+                                                        <p class="text-md text-gray-800 font-semibold">@quote.createdat.Text</p>
+                                                    </div>
+                                                    <div class="text-right">
+                                                        <p class="text-sm text-gray-600">Expires @quote.expirydate.SubText</p>
+                                                        <p class="text-md @(quote.expirydate.NumericValue<0?"text-danger" : "text-gray-800")  font-semibold">@quote.expirydate.Text</p>
+                                                    </div>
+                                                </div>
+                                                <div class="quote-footer1 p-4 flex  gap-3">
+                                                    @*<p class="text-sm text-gray-600 flex items-center gap-2">
+                                                            <i class="ki-filled ki-verify"></i>
+                                                            Approved by: Sarah J.
+                                                        </p>*@
+                                                    @*<a href="@Url.Action("CreateQuotation", "Booking", new { refid = quote.quotationuuid })" class="btn btn-primary btn-outline1 original text-center justify-center w-full text-md">Approve</a>*@
+                                                    <a href="@Url.Action("CreateQuotation", "Booking", new { refid = quote.quotationuuid })" class="btn btn-dark btn-outline1 original text-center justify-center w-full text-md">Manage Quote</a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    }
+
+
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="w-full">
+                                    @Html.Partial("_EmptyTable", new EmptyTable
+                               {
+                                   Heading = "No quotation available",
+                                   SubHead = "You don’t have any quotations for this booking at the moment",
+                                   Icon = "<i class='ki-filled ki-book text-5xl'></i>",
+                               })
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section PageScripts {
+    <script src="~/js/ContainerBooking/Booking.js"></script>
+}

@@ -1,0 +1,81 @@
+﻿@using Contrack
+@model ContainerBooking
+
+<div class="card-table1 w-full mt-4">
+    <table class="table table-border">
+        <thead>
+            <tr>
+                <th class="w-[60px] text-center">S.No</th>
+                <th class="text-start">Charge Name</th>
+                <th class="text-center w-[120px]">UOM</th>
+                <th class="text-end w-[150px]">Amount</th>
+                <th class="text-center w-[100px]">Action</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            @if (Model.bookingSummary.otherfees != null && Model.bookingSummary.otherfees.Any())
+            {
+                for (int i = 0; i < Model.bookingSummary.otherfees.Count; i++)
+                {
+                    @Html.HiddenFor(m => m.bookingSummary.otherfees[i].otherfeeuuid)
+                    @Html.HiddenFor(m => m.bookingSummary.otherfees[i].chargename)
+                    @Html.HiddenFor(m => m.bookingSummary.otherfees[i].amount)
+                    @Html.HiddenFor(m => m.bookingSummary.otherfees[i].uom)
+                    @Html.HiddenFor(m => m.bookingSummary.otherfees[i].remarks)
+                    @Html.HiddenFor(m => m.bookingSummary.otherfees[i].remarks)
+
+                    var item = Model.bookingSummary.otherfees[i];
+
+                    <tr>
+                        <td class="text-center">
+                            @(i + 1)
+                        </td>
+                        <td>
+                            <div class="text-sm font-medium text-gray-900">
+                                @Html.Raw(Common.ToString(item.chargename).Replace("\n", "<br/>"))
+                            </div>
+                            @if (!string.IsNullOrEmpty(item.remarks))
+                            {
+                                <div class="mt-1 text-xs text-gray-500">
+                                    Remarks : @Html.Raw(Common.ToString(item.remarks).Replace("\n", "<br/>"))
+                                </div>
+                            }
+                        </td>
+                        <td class="text-center">
+                            <span class="text-sm text-gray-800">
+                                @item.uom
+                            </span>
+                        </td>
+                        <td class="text-end">
+                            <span class="text-sm font-semibold text-gray-900">
+                                @Display.DisplayCurrency(item.amount)
+                            </span>
+                        </td>
+                        <td class="text-center">
+                            <div class="flex items-center justify-center gap-2">
+                                <a class="btn btn-sm btn-icon btn-clear btn-light" href="javascript:void(0);" onclick="OpenOtherFeesModal('@item.otherfeeuuid')">
+                                    <i class="ki-filled ki-notepad-edit"></i>
+                                </a>
+                                <span class="text-gray-300">|</span>
+                                <a class="btn btn-sm btn-icon btn-clear btn-danger"
+                                   href="javascript:void(0);"
+                                   onclick="DeleteOtherFee('@item.otherfeeuuid')">
+                                    <i class="ki-filled ki-trash"></i>
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr>
+                    <td colspan="6" class="text-center text-gray-500 py-6">
+                        No Other Fees Added
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

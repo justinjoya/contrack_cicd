@@ -1,0 +1,252 @@
+﻿@model Contrack.ContainerAllocation
+@using Contrack;
+@{
+    ViewBag.Title = "Container Allocation";
+    ViewBag.MainManu = "Container";
+    ViewBag.SubManu = "";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<link href="~/css/Booking/booking.css?v=1.0.2" rel="stylesheet" />
+<link href="~/css/Booking/allocation.css?v=1.0.0" rel="stylesheet" />
+<div class="container-fluid1 nobottom">
+    <div class="booking-section  flex flex-col">
+        <div class="booking-info">
+            <div class="container-fluid booking-max-width">
+                <div class="booking-content">
+                    <div class="page-header-holder">
+                        <span class="head">Container Allocation</span>
+                        <span class="subhead">Allocate containers based on available locations and equipment models.</span>
+                    </div>
+                    <div class="left-section">
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Persistent Booking Summary on the side -->
+        <div class="booking-summary">
+            <div class="summary-content">
+               
+            </div>
+            
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="breadscrumb-holder">
+    <div class="container-fluid flex items-center justify-between flex-wrap gap-5">
+        <div class="flex flex-col justify-center items-start flex-wrap gap-1.5">
+            <div class="flex items-center gap-1 text-sm font-normal">
+                <span class="text-gray-700">Home</span>
+                <span class="text-gray-400 text-sm">/</span>
+                <span class="text-gray-700">Booking</span>
+                <span class="text-gray-400 text-sm">/</span>
+                <span class="text-gray-900">Container Allocation</span>
+            </div>
+            <h1 class="page-header">Container Allocation</h1>
+        </div>
+
+        <div class="flex items-center flex-wrap gap-1.5 lg:gap-3.5">
+            @*<button class="btn btn-sm btn-primary text-md" onclick="OpenContainerModal('')">
+                    <i class="ki-filled ki-plus"></i> Add Container
+                </button>*@
+        </div>
+    </div>
+</div>
+@{
+    int requiredcount = Model.Container.qty;
+    int selectedcount = Model.Allocations.Sum(x => x.Models.Sum(y => y.SelectedCount));
+    int remaingcount = requiredcount - selectedcount;
+    decimal percentage = requiredcount == 0 ? 0 : ((decimal)selectedcount / requiredcount) * 100;
+}
+<div class="container-fluid">
+    <div class="allocation-section">
+        <div class="allocation-cards">
+            @Html.HiddenFor(m => m.Container.bookingdetailid.EncryptedValue, new { @id = "bookingdetailid" })
+            @Html.HiddenFor(m => m.Container.bookingid.EncryptedValue, new { @id = "bookingid" })
+
+            @for (int i = 0; i < Model.Allocations.Count; i++)
+            {
+                <div class="allocation-card">
+                    @Html.HiddenFor(m => m.Allocations[i].LocationId.EncryptedValue, new { @class = "LocationId" })
+                    <div class="allocation-card-header">
+                        <img src="~/assets/Flags/74_IN.png" />
+                        <span class="port-group">
+                            <span class="port-name">
+                                @Model.Allocations[i].LocationName (@Model.Allocations[i].LocationType)
+                            </span>
+                            <span class="port-country">
+                                <span class="port-country-name">
+                                    @Model.Allocations[i].PortName
+                                </span>
+                                <span class="dot"></span>
+                                <span class="port-terminal">
+                                    @Model.Allocations[i].CountryName
+                                </span>
+                            </span>
+                        </span>
+                    </div>
+                    <div class="allocation-card-body">
+                        @for (int j = 0; j < Model.Allocations[i].Models.Count; j++)
+                        {
+                            <div class="model-card @(Model.Allocations[i].Models[j].AvailableCount>=Model.Container.qty?"available":"critical")">
+                                @Html.HiddenFor(m => m.Allocations[i].Models[j].ContainerModelId.EncryptedValue, new { @class = "ContainerModelId" })
+                                @Html.HiddenFor(m => m.Allocations[i].Models[j].ReservationID.EncryptedValue, new { @class = "ReservationID" })
+                                <div class="model-card-info">
+                                    <div class="model-card-info-detail">
+                                        <span class="model-card-name">
+                                            @(Model.Allocations[i].Models[j].ContainerSizeName + " " + Model.Allocations[i].Models[j].ContainerTypeName)
+                                        </span>
+                                        <span class="model-card-iso">
+                                            ISO: @Model.Allocations[i].Models[j].ContainerModelIso
+                                        </span>
+                                    </div>
+                                    <div class="model-card-info-counts">
+                                        <div class="count-item available">
+                                            <div class="count-text">
+                                                <span class="count-text-label">Available</span>
+                                                <span class="count-text-count">@Model.Allocations[i].Models[j].AvailableCount</span>
+                                            </div>
+                                            <div class="count-icon">
+                                                <img src="~/assets/img/greentick.png" />
+                                            </div>
+                                        </div>
+
+                                        <div class="count-item gray">
+                                            <div class="count-text">
+                                                <span class="count-text-label">Blocked</span>
+                                                <span class="count-text-count"><span>@Model.Allocations[i].Models[j].SelectedCount of</span> @Model.Allocations[i].Models[j].BlockedCount</span>
+                                            </div>
+                                            <div class="count-icon">
+                                                <img src="~/assets/img/redclose.png" />
+                                            </div>
+                                        </div>
+                                        <div class="count-item gray">
+                                            <div class="count-text">
+                                                <span class="count-text-label">Coming Soon</span>
+                                                <span class="count-text-count">@Model.Allocations[i].Models[j].ComingSoon</span>
+                                            </div>
+                                            <div class="count-icon">
+                                                <img src="~/assets/img/yellowwait.png" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="model-card-action">
+                                    @if (Model.Allocations[i].Models[j].SelectedCount > 0)
+                                    {
+                                        <button onclick="DeleteAllocateQty(this);" class="btn btn-md text-md btn-outline btn-danger">
+                                            <i class="ki-filled ki-trash"></i>
+                                            Remove (@Model.Allocations[i].Models[j].SelectedCount Qty)
+                                        </button>
+                                    }
+                                    else if (Model.Allocations[i].Models[j].AvailableCount == 0)
+                                    {
+                                        <button disabled class="btn btn-md text-md btn-light">
+                                            Out of Stock
+                                        </button>
+                                    }
+                                    else if (remaingcount == 0)
+                                    {
+                                        <button disabled type="button" class="btn btn-md text-md btn-primary">
+                                            Allocate
+                                        </button>
+                                    }
+                                    else if (Model.Allocations[i].Models[j].AvailableCount > 0)
+                                    {
+                                        @Html.TextBoxFor(m => m.Allocations[i].Models[j].SelectedCount, new { @class = "input SelectedCount", @placeholder = "0", @datarequired = "no", @data_max = Math.Min(Model.Allocations[i].Models[j].AvailableCount, Model.Container.qty) })
+                                        <button onclick="AllocateQty(this);" type="button" class="btn btn-md text-md btn-primary">
+                                            Allocate
+                                        </button>
+                                    }
+                                    else
+                                    {
+                                        <button disabled class="btn btn-md text-md btn-light">
+                                            Out of Stock
+                                        </button>
+                                    }
+                                </div>
+                            </div>
+                        }
+
+                    </div>
+                </div>
+            }
+        </div>
+
+        <div class="allocation-summary">
+            <div class="requirement @(remaingcount==0?"green":"red")">
+                <img src="~/assets/img/container-half.svg" class="corner-logo" />
+                <span class="heading">Container allocation (1 of 2)</span>
+                <div class="container-info">
+                    <div class="avatar">
+                        <img src="~/assets/img/container-wh.svg" />
+                    </div>
+                    <div class="info-item">
+                        <span class="type-size">
+                            @Model.Container.sizename @Model.Container.containertypename (@(string.IsNullOrEmpty(Model.Container.containermodeluuid)? "ISO : Any" : "ISO : " + Model.Container.isocode))
+                        </span>
+                        <span class="qty">
+                            Required Qty : @requiredcount
+                        </span>
+                        <div class="progress">
+                            <div class="progress-bar" style="width: @percentage%"></div>
+                        </div>
+                        <span class="qty-remain">
+                            @selectedcount of @requiredcount allocated
+                        </span>
+                    </div>
+                </div>
+            </div>
+            <div class="selected-list">
+                <div class="header">
+                    <span class="head-text">Selected Containers:</span>
+                    <span class="head-count">2 of 4 Selected</span>
+                </div>
+                <div class="body">
+                </div>
+            </div>
+            <div class="actions">
+                <div class="flex flex-col justify-center gap-3">
+                    <button type="button" class="btn btn-gray actionbutton">
+                        Cancel
+                    </button>
+
+                    <button type="submit" class="btn btn-primary actionbutton">
+                        Select 2 more containers
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section PageScripts {
+    <script src="~/js/ContainerBooking/allocation.js?v=1.0.0"></script>
+}

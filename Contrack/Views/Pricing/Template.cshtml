@@ -1,0 +1,339 @@
+﻿@using Contrack;
+@model Contrack.QuotationPricing
+@{
+    ViewBag.Title = "Agency";
+    ViewBag.MainManu = "Agencies";
+    ViewBag.SubManu = "AgencyInfo";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<link href="~/css/Booking/booking.css?v=1.0.2" rel="stylesheet" />
+<style>
+    .customerselection .select2-container--default .select2-selection--single .select2-selection__rendered {
+        padding: 6px 10px 6px 40px;
+        color: #959595;
+        font-size: 14px;
+        font-weight: 500;
+    }
+
+    .customerselection > i {
+        position: absolute;
+        z-index: 2;
+        font-size: 18px;
+        color: #959595;
+        left: 14px;
+        top: 13px;
+    }
+
+    .customerselection .select2-container--default .select2-selection--single .select2-selection__arrow {
+        top: 8px;
+        right: 15px;
+    }
+
+    .customerselection .select2-container--default .select2-selection--single .select2-selection__rendered {
+        line-height: 30px;
+    }
+</style>
+@{
+    var typecurrent = Model.pricing.Types.FirstOrDefault(x => x.IsCurrent) ?? new PricingTypeDTO { };
+}
+<div class="container-fluid nobottom">
+    @Html.HiddenFor(x => x.pricing.PricingID.EncryptedValue, new { id = "hdn_PricingID" })
+    @Html.HiddenFor(x => x.pricing.PricingUUID, new { id = "hdn_pricinguuid" })
+
+    <div class="booking-section notopheader flex flex-col">
+        <div class="booking-info">
+            <div class="booking-max-width">
+                <div class="booking-content">
+                    <div class="flex justify-between gap-2">
+                        <div class="page-header-holder items-start" style="padding-bottom: 24px;">
+
+                            <span class="head">@Model.pricing.Description</span>
+                            <div class="subhead flex gap-3 items-center">
+                                @Model.pricing.Currency
+                                <div class="dot"></div>
+                                Created by @Model.pricing.CreatedByName
+                                <div class="dot"></div>
+                                @Model.pricing.CreatedAt.Text
+                            </div>
+
+                        </div>
+                        <div class="flex gap-2">
+                            <button type="button" class="btn btn-md text-md btn-light original" onclick="OpenClonePricingHeader('@Model.pricing.PricingID.EncryptedValue')">
+                                <i class="ki-filled ki-copy"></i>
+
+                            </button>
+                            <button type="button" class="btn btn-md text-md btn-light original" onclick="OpenPricingTemplate('@Model.pricing.PricingUUID','')">
+                                <i class="ki-filled ki-plus">
+                                </i>
+                                Edit Template
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="flex justify-center pb-7">
+                        <div class="card p-2 px-4" style="border-radius: 30px;">
+                            <div class="flex items-center gap-4 whitespace-nowrap">
+                                <div class="flex items-center">
+                                    <img src="/assets/Flags/@Model.pricing.POL.Flag" class="w-5 h-5 rounded-full flex-shrink-0 shadow-sm mr-1">
+                                    <span class="text-gray-700 font-semibold text-md">
+                                        @Model.pricing.POL.PortName, @Model.pricing.POL.CountryName
+                                    </span>
+                                </div>
+                                <i class="ki-filled ki-right"></i>
+                                <div class="flex items-center">
+                                    <img src="/assets/Flags/@Model.pricing.POD.Flag" class="w-5 h-5 rounded-full flex-shrink-0 shadow-sm mr-1">
+                                    <span class="text-gray-700 font-semibold text-md">
+                                        @Model.pricing.POD.PortName, @Model.pricing.POD.CountryName
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class="left-section">
+                        <div class="allocation-section">
+                            @if (Model.pricing.Types.Count > 0)
+                            {
+                                int j = 0;
+                                string zindex = "";
+                                <div class="folder-tab">
+                                    @foreach (var item in Model.pricing.Types)
+                                    {
+                                        switch (j)
+                                        {
+                                            case 0:
+                                                zindex = "z-20";
+                                                break;
+                                            case 1:
+                                                zindex = "z-10";
+                                                break;
+                                            case 2:
+                                                zindex = "z-5";
+                                                break;
+                                            case 3:
+                                                zindex = "z-4";
+                                                break;
+                                            default:
+                                                break;
+                                        }
+                                        <a href="@Url.Action("Template", "Pricing", new { refid = Model.pricing.PricingUUID, currency = item.TypeUUID })" class="tab-item @(item.IsCurrent ? "active" : "") @zindex">
+                                            @*<i class="ki-filled ki-cube-2"></i>*@
+                                            @Html.Raw(IDReferences.GetTransferTypeIcon(item.TransferType.NumericValue))
+                                            @IDReferences.GetTransferType(item.TransferType.NumericValue)
+                                        </a>
+                                        j++;
+                                    }
+                                    <button class="btn btn-sm btn-icon btn-clear btn-light" onclick="OpenPricingType('@Model.pricing.PricingUUID','')">
+                                        <i class="ki-filled ki-plus"></i>
+                                    </button>
+                                </div>
+                                if (Model.transfertype.Details.Count == 0)
+                                {
+                                    <div class="w-full">
+                                        @Html.Partial("_EmptyTable", new EmptyTable
+                                   {
+                                       Heading = "No line items with this transfer type are available",
+                                       SubHead = "Add a line item with pricing for the selected currency ",
+                                       Icon = "<i class=\"ki-filled ki-wallet text-5xl\"></i>",
+                                       Button = "<button type='button' class='btn btn-primary' onclick=\"OpenPricingLineItem('" + typecurrent.TypeID.EncryptedValue + "','')\">Add Line Item</button>",
+                                       NoleftRadius = true
+                                   })
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div class="card no-left-radius cardoverride">
+                                        <div class="card-header py-2 px-5" id="job_details">
+                                            <div class="card-title px-0 flex flex-row justify-center align-items-center gap-2">
+                                                Line Items (@Model.transfertype.Details.Count)
+                                            </div>
+                                            <div class="flex gap-2">
+                                                @*<button type="button" class="btn btn-sm btn-light original" onclick="OpenClonePricingCurrency('@Model.pricing.PricingUUID','@typecurrent.TypeID.EncryptedValue')">
+                                                        <i class="ki-filled ki-trash text-danger "></i>
+                                                    </button>
+                                                    <button type="button" class="btn btn-sm btn-light original" onclick="OpenClonePricingCurrency('@Model.pricing.PricingUUID','@typecurrent.TypeID.EncryptedValue')">
+                                                        <i class="ki-filled ki-copy"></i>
+                                                    </button>*@
+                                                <button type="button" class="btn btn-sm btn-light original" onclick="OpenPricingLineItem('@typecurrent.TypeID.EncryptedValue','')">
+                                                    <i class="ki-filled ki-plus">
+                                                    </i>
+                                                    Add Line Item
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <div class="card-body p-3">
+                                            <div class="card-table1 w-full">
+                                                <table class="table table-border" id="quotation_detail_table">
+                                                    <thead>
+                                                        <tr>
+                                                            <th class="w-[30px] text-center">S.No</th>
+
+                                                            <th class="text-start min-w-[150px] w-item !text-gray-700">
+                                                                Description
+                                                            </th>
+                                                            <th class="w-[200px] text-center !text-gray-700">
+                                                                Full/Empty
+                                                            </th>
+
+                                                            <th class="w-[200px] text-right !text-gray-700">
+                                                                Amount (@Model.pricing.Currency)
+                                                            </th>
+
+                                                            <th class="w-[100px] text-center !text-gray-700">
+                                                                Action
+                                                            </th>
+                                                        </tr>
+                                                    </thead>
+                                                    @{
+                                                        var grouplist = Model.transfertype.Details.GroupBy(x => new { typeid = x.ContainerTypeID.NumericValue, sizeid = x.ContainerSizeID.NumericValue }).ToList();
+                                                        int count = 0;
+                                                        foreach (var item in grouplist)
+                                                        {
+
+                                                            <tr style="padding:0;">
+                                                                <td colspan="5" class="text-left border bg-border-greenshadow font-semibold text-gray-800 uppercase">
+                                                                    @(string.IsNullOrEmpty(item.First().TypeSizeCombined) ?"Common": item.First().TypeSizeCombined)
+                                                                </td>
+
+                                                            </tr>
+                                                            foreach (var iteminner in item.ToList())
+                                                            {
+                                                                count++;
+
+                                                                var amount = item.Where(
+                                                                    x => x.ContainerTypeID.NumericValue == item.Key.typeid
+                                                                    && x.ContainerSizeID.NumericValue == item.Key.sizeid
+                                                                    && x.LineItemUUID == iteminner.LineItemUUID).FirstOrDefault()?.Amount ?? 0;
+
+
+                                                                <tr>
+                                                                    <td class="text-center">@count</td>
+                                                                    <td>
+                                                                        <span class="flex items-start gap-2">
+                                                                            <span class="flex flex-col gap-0.5">
+                                                                                <span class="flex gap-2">
+                                                                                    <span class="text-gray-700 font-semibold">
+                                                                                        @iteminner.LineItemDesc
+                                                                                    </span>
+                                                                                    @if (iteminner.IsFrightCharges)
+                                                                                    {
+                                                                                        <span class="badge-styling gray flex gap-1">
+                                                                                            FC
+                                                                                        </span>
+                                                                                    }
+                                                                                </span>
+                                                                                @if (!string.IsNullOrEmpty(iteminner.Comments))
+                                                                                {
+                                                                                    <span class="text-gray-600 font-medium">
+                                                                                        Remarks: @iteminner.Comments
+                                                                                    </span>
+                                                                                }
+                                                                            </span>
+
+                                                                        </span>
+                                                                    </td>
+                                                                    <td class="text-center">
+                                                                        <span class="text-gray-700 flex justify-center">
+                                                                            @Html.Raw(IDReferences.GetFullOREmptyHTML(iteminner.FullEmpty))
+                                                                        </span>
+                                                                    </td>
+                                                                    <td class="text-right">
+                                                                        <span class="flex flex-col text-gray-900 font-semibold">
+                                                                            <span>@Display.DisplayCurrency(amount)</span>
+                                                                            <span class="text-gray-500 text-xs font-medium">
+                                                                                per @iteminner.UOM
+                                                                            </span>
+                                                                        </span>
+                                                                    </td>
+                                                                    <td class="text-center nowrap">
+                                                                        <a onclick="OpenPricingLineItem('@typecurrent.TypeID.EncryptedValue','@iteminner.DetailID.EncryptedValue');" class="btn btn-sm btn-icon btn-clear btn-light" href="javascript:void(0);"><i class="ki-filled ki-notepad-edit"></i></a> <span class="text-gray-300">|</span>
+                                                                        <a onclick="DeleteLineItem('@typecurrent.TypeUUID','@iteminner.DetailUUID');" class="btn btn-sm btn-icon btn-clear btn-danger " href="javascript:void(0);"><i class="ki-filled ki-trash"></i></a>
+                                                                    </td>
+                                                                </tr>
+                                                            }
+
+                                                        }
+                                                    }
+
+
+                                                    <tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                            }
+                            else
+                            {
+                                <div class="w-full">
+                                    @Html.Partial("_EmptyTable", new EmptyTable
+                               {
+                                   Heading = "No Transfer types are available for this template",
+                                   SubHead = "Add a Transfer type for this template ",
+                                   Icon = "<i class=\"ki-filled ki-dollar text-5xl\"></i>",
+                                   Button = "<button type='button' class='btn btn-primary' onclick=\"OpenPricingType('" + Model.pricing.PricingUUID + "','')\">Add Transfer type</button>",
+                               })
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="booking-summary">
+            <div class="summary-content">
+                <div class="flex flex-col p-5 gap-0.5 border-img border-b-2">
+                    <span class="text-lg text-gray-800 font-semibold">Client Assignment</span>
+                    <span class="text-md text-gray-500">Manage Clients for this template</span>
+                </div>
+                <div class="p-5 py-3 border-b-2">
+                    <div class="holderdropdown">
+                        <div class="search-wrapper customerselection small">
+                            <i class="ki-filled ki-magnifier"></i>
+                            @Html.DropDownList("clientdetailid", new SelectList(Dropdowns.EmptyDropdown(), "Value", "Text", ""), "Search Client", new
+                       {
+                           @class = "form-control select2 customerselect2",
+                           @id = "ddlCustomerPricing",
+                           @style = "width:100%;",
+                           @datarequired = "yes",
+                           @datarequired_message = "Please select Customer",
+                           @data_append_parent = "no",
+                           //@dataid = Model.booking.customer.client.clientdetailid.NumericValue == 0 ? "" : Model.booking.customer.client.clientdetailid.EncryptedValue,
+                           //@dataname = Model.booking.customer.client.clientname,
+                           @onchange = "AddCustomerToList('" + Model.pricing.PricingID.EncryptedValue + "',this);"
+                       })
+                        </div>
+                    </div>
+                </div>
+                <div class="flex flex-col" id="client_list">
+                    @Html.Partial("_ClientList", Model)
+
+
+                </div>
+            </div>
+            @*<div class="summary-footer">
+                    <div class="flex flex-col justify-center gap-3">
+
+                        <button type="button" class="btn btn-gray actionbutton">
+                            Close
+                        </button>
+
+                        <button type="submit" class="btn btn-primary actionbutton" id="btnCustomerSelection">
+                            Save Changes
+                        </button>
+
+                    </div>
+                </div>*@
+        </div>
+    </div>
+</div>
+<div id="modalsection">
+</div>
+@section PageScripts {
+    <script src="~/js/port.js"></script>
+    <script src="~/js/pricing/pricingcustomer.js?v=1.0.0"></script>
+    <script src="~/js/pricing/pricing.js?v=1.0.1"></script>
+}

@@ -1,0 +1,162 @@
+﻿@model Contrack.SmtpConfig
+@using Contrack;
+<div class="modal" data-modal="true" data-modal-backdrop-static="true" data-modal-autofocus="true" id="ModalAddSmtpConfig">
+    <div class="modal-content modal-center-y max-w-[600px] max-h-[95%]">
+        <div class="modal-header">
+            <h3 class="modal-title">
+                @if (@Common.Decrypt(Model.smtpconfig.smtp_id.EncryptedValue) > 0)
+                {
+                    @Html.Raw("Edit SMTP Configuration")
+                }
+                else
+                {
+                    @Html.Raw("Add SMTP Configuration")
+                }
+            </h3>
+            <button class="btn btn-xs btn-icon btn-light" data-modal-dismiss="true">
+                <i class="ki-outline ki-cross">
+                </i>
+            </button>
+        </div>
+        <div class="modal-body scrollable-y">
+            <div class="model-req flex items-center grow rounded-xl border border-dashed gap-4 p-2 mb-3 border-primary bg-primary-light">
+                <i class="ki-outline ki-information-1 text-3xl text-primary">
+                </i>
+                <div class="flex flex-col gap-0.5">
+                    <p class="text text-2sm font-normal">
+                        Fields marked with <span class="text-danger"> * </span> are mandatory.
+                    </p>
+                </div>
+            </div>
+            <form id="formSmtpConfig">
+                <div>
+                    <div class="grid lg:grid-cols-1 items-stretch gap-5">
+                        <div class="flex flex-col1 items-baseline flex-wrap lg:flex-nowrap gap-1.5">
+                            <label class="form-label max-w-32">
+                                Created For <span class="text-danger ps-2">*</span>
+                            </label>
+                            @Html.HiddenFor(m => m.smtpconfig.smtp_id.EncryptedValue)
+                            <div class="flex flex-col w-full">
+                                <div class="grid grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-5">
+                                    <label for="radio1" class="form-label flex items-center gap-2.5 text-nowrap" onclick="ShowHideEntity('1');">
+                                        <input datarequired="yes" datarequired-message="Please select Created for" data-append-parent="yes" id="radio1" class="radio" name="smtpconfig.TypeEncrypted" type="radio" value="@Common.Encrypt(1)" @(Common.Decrypt(Model.smtpconfig.agency.agencyid.EncryptedValue) == 0 ? "checked" : "")>
+                                        Hub
+                                    </label>
+                                    <label for="radio2" class="form-label flex items-center gap-2.5 text-nowrap" onclick="ShowHideEntity('2');">
+                                        <input datarequired="yes" datarequired-message="Please select Created for" data-append-parent="yes" id="radio2" class="radio" name="smtpconfig.TypeEncrypted" type="radio" value="@Common.Encrypt(2)" @(Common.Decrypt(Model.smtpconfig.agency.agencyid.EncryptedValue) > 0 ? "checked" : "")>
+                                        Agency
+                                    </label>
+                                </div>
+                                <div class="entity" id="Entiry_2" style="@(Common.Decrypt(Model.smtpconfig.agency.agencyid.EncryptedValue) > 0 ? "" : "display:none;")">
+                                    <div class="flex flex-col w-full pt-5">
+                                        @Html.DropDownListFor(m => m.smtpconfig.agency.agencyid.EncryptedValue, new SelectList(@ViewBag.AgencyDropdown, "Value", "Text", "") { }, new { @id = "ddlAgencies", @placeholder = "Select agencies", @class = "form-control select2", @datarequired = "yes", @datarequired_message = "Please select Agency", @data_append_parent = "yes" })
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="flex flex-col1 items-baseline flex-wrap lg:flex-nowrap gap-1.5">
+                            <label class="form-label max-w-32 text-right">
+                                Config Name <span class="text-danger ps-2">*</span>
+                            </label>
+                            <div class="flex flex-col w-full">
+                                @Html.TextBoxFor(m => m.smtpconfig.config_name, new { @class = "input", @placeholder = "Enter Config Name", @datarequired = "yes", @datarequired_message = "Please enter Config Name" })
+                            </div>
+                        </div>
+
+                        <div class="flex flex-col1 items-baseline flex-wrap lg:flex-nowrap gap-1.5">
+                            <label class="form-label max-w-32 text-right">
+                                SMTP Host <span class="text-danger ps-2">*</span>
+                            </label>
+                            <div class="flex flex-col w-full">
+                                @Html.TextBoxFor(m => m.smtpconfig.smtp_host, new { @class = "input", @placeholder = "Enter Smtp Host", @datarequired = "yes", @datarequired_message = "Please enter SMTP Host" })
+                            </div>
+                        </div>
+
+                        <div class="flex flex-col1 items-baseline flex-wrap lg:flex-nowrap gap-1.5">
+                            <label class="form-label max-w-32 text-right">
+                                SMTP Username <span class="text-danger ps-2">*</span>
+                            </label>
+                            <div class="flex flex-col w-full">
+                                @Html.TextBoxFor(m => m.smtpconfig.smtp_username, new { @class = "input", @placeholder = "Enter SMTP Username", @datarequired = "yes", @datarequired_message = "Please enter Username" })
+                            </div>
+                        </div>
+
+                        <div class="flex flex-col1 items-baseline flex-wrap lg:flex-nowrap gap-1.5">
+                            <label class="form-label max-w-32 text-right">
+                                Password <span class="text-danger ps-2">*</span>
+                            </label>
+                            <div class="flex flex-col w-full">
+                                @if (@Common.Decrypt(Model.smtpconfig.smtp_id.EncryptedValue) > 0)
+                                {
+                                    @Html.PasswordFor(m => m.smtpconfig.smtp_password, new
+                                    {
+                                        @class = "input",
+                                        @placeholder = "Enter SMTP Password",
+                                        @datarequired = "no",
+                                        @datarequired_message = "Leave blank to keep existing password"
+                                    })
+                                    <small class="form-text text-muted text-xs fw-bold mt-2">
+                                        (Leave blank to keep existing password)
+                                    </small>
+                                }
+                                else
+                                {
+                                    @Html.PasswordFor(m => m.smtpconfig.smtp_password, new
+                                    {
+                                        @class = "input",
+                                        @placeholder = "Enter SMTP Password",
+                                        @datarequired = "yes",
+                                        @datarequired_message = "Please enter Password"
+                                    })
+                                }
+                            </div>
+                        </div>
+
+                        <div class="flex flex-col1 items-baseline flex-wrap lg:flex-nowrap gap-1.5">
+                            <label class="form-label max-w-32 ">
+                                Encryption Type
+                            </label>
+                            <div class="flex flex-col w-full">
+                                @Html.DropDownListFor(m => m.smtpconfig.encryption_type, new SelectList(new[] { "NONE", "SSL", "TLS" }), "Select Encryption", new { @class = "form-control select2" })
+                            </div>
+                        </div>
+
+                        <div class="flex flex-col1 items-baseline flex-wrap lg:flex-nowrap gap-1.5">
+                            <label class="form-label max-w-32 text-right">
+                                SMTP Port <span class="text-danger ps-2">*</span>
+                            </label>
+                            <div class="flex flex-col w-full">
+                                @Html.TextBoxFor(m => m.smtpconfig.smtp_port, new { @class = "input", @placeholder = "Enter Smtp Port", @datarequired = "yes", @datarequired_message = "Please enter Port" })
+                            </div>
+                        </div>
+
+                        <div class="flex flex-col1 items-baseline flex-wrap lg:flex-nowrap gap-1.5">
+                            <label class="form-label max-w-32"></label>
+                            <label class="switch">
+                                @Html.CheckBoxFor(m => m.smtpconfig.is_default, new { @id = "is_default" })
+                                <span class="switch-label">Is Default?</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer justify-end">
+            <div class="flex gap-4">
+                <button class="btn btn-light" data-modal-dismiss="true">
+                    Close
+                </button>
+                @*@if (PagePermission.GetPermissions().SMTP.edit)
+                 {
+                    <button class="btn btn-primary" onclick="SaveSmtpConfig();">
+                        Save SMTP Configuration
+                    </button>
+                }*@
+                <button class="btn btn-primary" onclick="SaveSmtpConfig();">
+                    Save SMTP Configuration
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

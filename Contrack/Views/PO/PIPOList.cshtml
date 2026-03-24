@@ -1,0 +1,80 @@
+﻿@using Contrack
+@model Contrack.PIPOList
+@{
+    ViewBag.Title = "Purchase Orders";
+    ViewBag.MainManu = "Purchase";
+    ViewBag.SubManu = "POList";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<style>
+    .sticky-row {
+        position: fixed;
+        top: 71px;
+        z-index: 10;
+        width: calc(100% - var(--tw-sidebar-width) - 101px);
+        display: table;
+    }
+</style>
+
+@using (Html.BeginForm("PIPOList", "PO", FormMethod.Post, new { @id = "frmPIPOList" }))
+{
+    <div class="container-fluid w-full">
+        <div class="grid gap-5">
+            <div>
+                <div class="flex flex-col gap-5">
+
+                    <div class="card min-w-full">
+                        <div class="card-header">
+                            <h3 class="card-title">PO List (@Model.POList.Count)</h3>
+                        </div>
+                        <div class="card-table scrollable-x-auto">
+                            <div class="scrollable-auto">
+                                @if (Model.POList.Count > 0)
+                                {
+                                    <table class="table table-border align-middle text-gray-700 text-sm" id="pi_po_list">
+                                        <thead>
+                                            <tr>
+                                                <th class="w-[60px] text-center"><input class="checkbox checkbox-sm checkall" type="checkbox"></th>
+                                                <th class="text-center min-w-20">PO Number</th>
+                                                <th class="text-start min-w-20">Vendor Name</th>
+                                                <th class="text-center min-w-20">No Of Items</th>
+                                                <th class="text-start min-w-20">Created Date</th>
+                                                <th class="text-start min-w-20">Created By</th>
+                                                <th class="text-center min-w-20">Status</th>
+                                                <th class="text-end min-w-20">Amount</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @for (int i = 0; i < Model.POList.Count; i++)
+                                            {
+                                                <tr>
+                                                    <td><input class="checkbox checkbox-sm checksingle" type="checkbox" value="@Model.POList[i].POUUID"></td>
+                                                    <td class="text-center nowrap"><a class="btn btn-link" href="@Url.Action("Create", "PO", new { refid = Model.POList[i].POUUID })">@Model.POList[i].POCode</a></td>
+                                                    <td>@Model.POList[i].VendorName</td>
+                                                    <td class="text-center">@Model.POList[i].POCount Items</td>
+                                                    <td class="nowrap">@Display.DisplayClientDateTimeHumanFriendly(Model.POList[i].CreatedAt)</td>
+                                                    <td class="text-start">@Model.POList[i].CreatedBy</td>
+                                                    <td class="text-center">@Html.Raw(Status.GetStatusValue(4, Model.POList[i].StatusName))</td>
+                                                    <td class="nowrap text-end">@Display.DisplayCurrency(Model.POList[i].POAmount)</td>
+                                                </tr>
+                                            }
+                                        </tbody>
+                                    </table>
+                                }
+                                else
+                                {
+                                    @Html.Partial("_EmptyTable", new EmptyTable() { Heading = "No POs found", SubHead = "No POs exist at the moment" })
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+<div id="modalsection"></div>
+@section PageScripts {
+    <script src="~/js/PO/polist.js?v=1.0.1"></script>
+}

@@ -1,0 +1,53 @@
+﻿@using Contrack;
+@model Contrack.TrackingDamage
+@{
+    int rows = 12;
+    int cols = 6;
+
+    var points = new List<(int x, int y)>();
+
+    points.Add((2, 5));
+    points.Add((3, 8));
+}
+<style>
+
+    .damage-grid {
+        width: 100%;
+        height: 400px;
+        transition: width 0.3s ease;
+        grid-template-columns: repeat( @rows, 1fr);
+        grid-template-rows: repeat( @cols, 1fr);
+    }
+</style>
+<div class="damage-box-container">
+    <div class="top-stands"></div>
+    <div class="bottom-stands"></div>
+    <div class="damage-header">
+        <div class="heading">
+            @Model.Side.SideName
+        </div>
+        <div class="dimention">
+            @rows x @cols grid
+        </div>
+    </div>
+    @*<div class="container-number">MSI154265</div>*@
+    <div class="damage-grid">
+        @for (var x = 1; x <= cols; x++)
+        {
+            for (var y = 1; y <= rows; y++)
+            {
+                if (points.Contains((x, y)))
+                {
+                    <div class="damage-cell selected">
+                        <div class="damage-count">3</div>
+                    </div>
+                }
+                else
+                {
+                    <div class="damage-cell">
+                    </div>
+                }
+            }
+        }
+    </div>
+</div>

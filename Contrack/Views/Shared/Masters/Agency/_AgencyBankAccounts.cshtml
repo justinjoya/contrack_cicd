@@ -1,0 +1,81 @@
+﻿@using Contrack;
+@model Contrack.Agency
+@{
+    Model.agency.BankInfo = Model.agency.BankInfo.Where(x => !string.IsNullOrEmpty(x.AliasName)).ToList();
+    <div class="card shadow-none1 min-w-full mb-3">
+        <div class="card-header p-3 flex items-between">
+            <h3 class="card-title">
+                Bank Accounts (@Model.agency.BankInfo.Count)
+            </h3>
+
+            <button type="button" onclick="OpenAgencyBankAccount('');" class=" btn btn-xs btn-sm btn-outline btn-light">
+                <i class="ki-filled ki-plus">
+                </i>
+                Add Bank Account
+            </button>
+
+        </div>
+        <div class="card-body p-0">
+            <div class="card-table scrollable-x-auto pb-3">
+                <table class="table align-middle text-sm text-gray-500">
+                    <tbody>
+                        @{
+                            if (Model.agency.BankInfo.Count > 0)
+                            {
+                                for (int i = 0; i < Model.agency.BankInfo.Count; i++)
+                                {
+
+                                    <tr>
+                                        <td class="py-4 text-gray-700 text-md font-bold">
+                                            <div class="flex">
+                                                <i style="margin-top:5px;" class="ki-filled ki-wallet text-1.5xl ps-px text-secondary">
+                                                </i>
+                                                <h3 class="py-3 text-base font-medium leading-none text-gray-900 px-3">
+                                                    @Model.agency.BankInfo[i].AliasName
+                                                    <span class="mx-2 py-1 badge badge-outline badge-secondary">
+                                                        @Model.agency.BankInfo[i].Currency.ToUpper()
+                                                    </span>
+                                                </h3>
+
+                                            </div>
+                                            <table class="bankaccount-table text-gray-500">
+                                                @{
+                                                    for (int j = 0; j < Model.agency.BankInfo[i].BankAttributes.Count; j++)
+                                                    {
+                                                        <tr>
+                                                            @if (!string.IsNullOrEmpty(Model.agency.BankInfo[i].BankAttributes[j].KeyValue))
+                                                            {
+                                                                @Html.Raw("<td class='bankkey max-w-[170px]'>" + @Model.agency.BankInfo[i].BankAttributes[j].KeyName + ":</td>" + " <td class='text-gray-700 text-sm font-medium'> " + Model.agency.BankInfo[i].BankAttributes[j].KeyValue + "</td>")
+                                                            }
+                                                        </tr>
+                                                    }
+                                                }
+
+                                            </table>
+
+                                        </td>
+
+                                        <td class="py-4 text-right" style="vertical-align:top;" nowrap>
+                                            <a class="btn btn-sm btn-icon btn-clear btn-primary" href="javascript:void(0);" onclick="OpenAgencyBankAccount('@Model.agency.BankInfo[i].BankAccountUUID');"><i class="ki-filled ki-notepad-edit"></i></a>
+                                            <a class="btn btn-sm btn-icon btn-clear btn-danger" href="javascript:void(0)" onclick="DeleteAgencyBankAccount('@Model.agency.BankInfo[i].BankAccountUUID');"><i class="ki-filled ki-filled ki-trash"></i></a>
+                                        </td>
+
+                                    </tr>
+                                }
+                            }
+                            else
+                            {
+                                <tr>
+                                    <td colspan="3" style="padding-top:15px">
+                                        No bank accounts added
+                                    </td>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+}

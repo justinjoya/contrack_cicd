@@ -1,0 +1,121 @@
+﻿@using Contrack;
+@model ContainerBooking
+
+@{
+    var shipperPicList = ViewBag.ShipperPICDropdown as List<System.Web.UI.WebControls.ListItem>;
+    bool hasShipperPicData = shipperPicList != null && shipperPicList.Any();
+    bool hasSelectedPic = Model.booking.location.shipperpic.NumericValue > 0;
+}
+
+
+<input type="hidden"
+       id="hdnShipperDetailId"
+       value="@Model.booking.location.shipperdetailid.EncryptedValue" />
+
+<input type="hidden"
+       id="hdnShipperPic"
+       value="@Model.booking.location.shipperpic.EncryptedValue" />
+
+<input type="hidden"
+       id="hdnShipperPicCustom"
+       value="@Model.booking.location.shipperpiccustom" />
+
+
+<div class="w-full">
+    <div class="flex flex-col items-baseline flex-wrap lg:flex-nowrap gap-2.5">
+        <label class="form-label flex items-center gap-1 max-w-56">
+            Shipper Name <span class="text-danger ps-2">*</span>
+        </label>
+        @Html.TextBoxFor(m => m.booking.location.shippername, new { @class = "input", @placeholder = "Shipper Name", @datarequired = "yes", @datarequired_message = "Please enter Shipper Name", @id = "txt_ShipperName" })
+    </div>
+</div>
+
+@*<div class="w-full" id="shipper_pic_textbox" style="@(Model.booking.location.shipperdetailid.NumericValue> 0 ? "display:none;":"")">
+        <div class="flex flex-col items-baseline flex-wrap lg:flex-nowrap gap-2.5">
+            <label class="form-label flex items-center gap-1 max-w-56">
+                Shipper PIC <span class="text-danger ps-2">*</span>
+            </label>
+            @Html.TextBoxFor(m => m.booking.location.shipperpiccustom, new { @class = "input", @placeholder = "Shipper PIC", @datarequired = "yes", @datarequired_message = "Please enter Shipper PIC", @id = "txt_ShipperPIC" })
+        </div>
+    </div>
+
+    <div id="shipper_pic_container" class="flex flex-col items-baseline flex-wrap lg:flex-nowrap gap-2.5" style="@(Model.booking.location.shipperdetailid.NumericValue> 0 ? "":"display:none")">
+        @Html.Partial("~/Views/Booking/_ShipperPIC.cshtml", Model)
+    </div>*@
+
+<div class="w-full" id="shipper_pic_textbox" style="@(hasShipperPicData || hasSelectedPic ? "display:none;" : "")">
+    <div class="flex flex-col items-baseline flex-wrap lg:flex-nowrap gap-2.5">
+        <label class="form-label flex items-center gap-1 max-w-56">
+            Shipper PIC <span class="text-danger ps-2">*</span>
+        </label>
+        @Html.TextBoxFor(m => m.booking.location.shipperpiccustom, new { @class = "input", @placeholder = "Shipper PIC", @datarequired = "yes", @datarequired_message = "Please enter Shipper PIC", @id = "txt_ShipperPIC" })
+    </div>
+</div>
+
+<div id="shipper_pic_container" class="flex flex-col items-baseline flex-wrap lg:flex-nowrap gap-2.5" style="@(hasShipperPicData || hasSelectedPic ? "" : "display:none;")">
+    @if (hasShipperPicData || hasSelectedPic)
+    {
+        @Html.Partial("~/Views/Booking/_ShipperPIC.cshtml", Model)
+    }
+</div>
+
+<div class="flex flex-col items-baseline flex-wrap lg:flex-nowrap gap-2.5">
+    <label class="form-label">
+        Shipper Email <span class="text-danger ps-2">*</span>
+    </label>
+    <div class="flex flex-col w-full">
+        <div class="input-group relative">
+            @Html.TextBoxFor(m => m.booking.location.shipperemailtemp, new { @id = "txt_shipperemailtemp", @class = "input right-padding-input", @placeholder = "Enter Email", @datarequired = "no", @datarequired_message = "Please enter Email" })
+            <a onclick="AddBulkItemByType('shipper_email');" href="javascript:void();" class="add-inside">
+                + Add
+            </a>
+        </div>
+        @Html.HiddenFor(m => m.booking.location.shipperemail, new { id = "hdn_shipper_Email", datavalidate = "yes", @datarequired = "yes", @datarequired_message = "Please enter Email" })
+    </div>
+    <ul class="bulksummary" style="@(string.IsNullOrEmpty(Model.booking.location.shipperemail)?"display:none;":"")" id="email_bulksummary">
+        @foreach (var email in Model.booking.location.shipperemail.Split(';').Where(x => x != "").ToList())
+        {
+            <li>
+                <span classs='emailtext'>@email</span>
+                <a class="btn btn-sm btn-icon btn-clear" href="javascript:void(0);" onclick="RemoveBulkItemByType(this,'shipper_email');">
+                    <i class="ki-filled ki-cross"></i>
+                </a>
+            </li>
+        }
+    </ul>
+</div>
+
+<div class="flex flex-col items-baseline flex-wrap lg:flex-nowrap gap-2.5">
+    <label class="form-label">
+        Shipper Phone <span class="text-danger ps-2">*</span>
+    </label>
+    <div class="flex flex-col w-full">
+        <div class="input-group relative">
+            @Html.TextBoxFor(m => m.booking.location.shipperphonetemp, new { @id = "txt_shipperphonetemp", @class = "input right-padding-input", @placeholder = "Enter Phone", @datarequired = "no", @datarequired_message = "Please enter Phone" })
+            <a onclick="AddBulkItemByType('shipper_phone');" href="javascript:void();" class="add-inside">
+                + Add
+            </a>
+        </div>
+        @Html.HiddenFor(m => m.booking.location.shipperphone, new { id = "hdn_shipper_Phone", datavalidate = "yes", @datarequired = "yes", @datarequired_message = "Please enter Phone" })
+    </div>
+    <ul class="bulksummary" style="@(string.IsNullOrEmpty(Model.booking.location.shipperphone) ? "display:none;" : "")" id="phone_bulksummary">
+        @foreach (var phone in Model.booking.location.shipperphone.Split(';').Where(x => x != "").ToList())
+        {
+            <li>
+                <span classs='phonetext'>@phone</span>
+                <a class="btn btn-sm btn-icon btn-clear" href="javascript:void(0);" onclick="RemoveBulkItemByType(this,'shipper_phone');">
+                    <i class="ki-filled ki-cross"></i>
+                </a>
+            </li>
+        }
+    </ul>
+</div>
+
+<div class="w-full grid-2">
+    <div class="flex flex-col items-baseline flex-wrap lg:flex-nowrap gap-2.5">
+        <label class="form-label flex items-center gap-1 max-w-56">
+            Shipper Address <span class="text-danger ps-2">*</span>
+        </label>
+        @Html.TextAreaFor(m => m.booking.location.shipperaddress, new { @rows = "3", @class = "textarea", @placeholder = "Shipper Address", @datarequired = "yes", @datarequired_message = "Please enter Shipper Address", @id = "txt_ShipperAddress" })
+    </div>
+</div>

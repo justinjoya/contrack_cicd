@@ -1,0 +1,220 @@
+﻿@using Contrack;
+@model Contrack.AgencyLog
+@{
+    ViewBag.Title = "Agency";
+    ViewBag.MainManu = "Agencies";
+    ViewBag.SubManu = "AgencyMod";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="mb-5 lg:mb-7.5">
+    <!-- Container -->
+    <div class="container-fluid flex items-center justify-between flex-wrap gap-5">
+        <div class="flex flex-col justify-center items-start flex-wrap gap-1 lg:gap-2">
+
+            <div class="flex items-center gap-1 text-sm font-normal">
+                <span class="text-gray-700">
+                    Masters
+                </span>
+                <span class="text-gray-400 text-sm">
+                    /
+                </span>
+                <a href="@Url.Action("Agencies","Master")" class="text-gray-700 hover:text-primary">
+                    Companies
+                </a>
+                <span class="text-gray-400 text-sm">
+                    /
+                </span>
+                <span class="text-gray-900">
+                    Company Modifications
+                </span>
+            </div>
+            <h1 class="font-medium text-lg text-gray-900 page-header">
+                @Html.Partial("_GoBack") Company Modifications
+            </h1>
+        </div>
+
+    </div>
+    <!-- End of Container -->
+</div>
+@if (Model.Info.agency.agencyid.NumericValue == 0)
+{
+    @Html.Partial("~/Views/Shared/Masters/_MasterNotFound.cshtml", new NotFound()
+{
+    Message = "Company not found",
+    ReturnURL = Url.Action("Agencies", "Master"),
+    ReturnButton = "Agencies"
+})
+}
+else
+{
+    <div class="container-fluid w-full flex px-0">
+        <!-- Content -->
+        <main class="flex flex-col grow" id="content" role="content">
+
+            @Html.Partial("_AgencyInfoHeader", Model.Info)
+            <div class="container-fluid">
+                <div class="flex items-center flex-wrap md:flex-nowrap lg:items-end justify-between border-b border-b-gray-200 dark:border-b-coal-100 gap-3 lg:gap-6 mb-5 lg:mb-5">
+                    @Html.Partial("_AgencyHeaderMenu", Model.Info)
+
+                    <div class="flex items-center justify-end grow lg:grow-0 lg:pb-4 gap-2.5 mb-3 lg:mb-0">
+                        <a href="@Url.Action("List","Agency")" class="btn btn-xs btn-sm btn-light">
+                            <i class="ki-filled ki-arrow-left">
+                            </i>
+                            Back to Company List
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <!-- Container -->
+            <div class="container-fluid">
+                <!-- begin: grid -->
+                <div class="flex gap-5 lg:gap-7.5">
+                    <div class="card grow" id="activity_2024" style="">
+
+                        <div class="card-body">
+                            <div class="flex flex-col">
+
+                                @for (int i = 0; i < Model.Logs.Count; i++)
+                                {
+                                    List<LogResult> resultlist = new List<LogResult>();
+                                    if (i < Model.Logs.Count - 1)
+                                    {
+                                        resultlist = LogConvertor.GetLogDifference(Model.Logs[i], Model.Logs[i + 1], "agencyname#Agency Name,address#Address,billingaddress#Billing Address,email#Email,accountsemail#Accounts Email,phone#Phone,websites#Website");
+                                        var resultlistcustom = LogConvertor.GetLogDifferenceForCustomAttribute(Model.Logs[i].agency.CustomAttributes, Model.Logs[i + 1].agency.CustomAttributes);
+                                        if (resultlistcustom.Count > 0)
+                                        {
+                                            resultlist.AddRange(resultlistcustom);
+                                        }
+                                        var resultlistbank = LogConvertor.GetLogDifferenceForBankAccount(Model.Logs[i].agency.BankInfo, Model.Logs[i + 1].agency.BankInfo);
+                                        if (resultlistbank.Count > 0)
+                                        {
+                                            resultlist.AddRange(resultlistbank);
+                                        }
+                                    }
+                                    bool iscreated = i == Model.Logs.Count - 1;
+                                    string added = string.Join(", ", resultlist.Where(x => x.Type == 1).Select(x => x.FieldName).ToArray());
+                                    string edited = string.Join(", ", resultlist.Where(x => x.Type == 2).Select(x => x.FieldName).ToArray());
+                                    if (edited != "" || added != "" || iscreated)
+                                    {
+                                        <div class="flex items-start relative">
+                                            @if (i < Model.Logs.Count - 1) // Last Record - To hide the extra line
+                                            {
+                                                <div class="w-9 start-0 top-9 absolute bottom-0 rtl:-translate-x-1/2 translate-x-1/2 border-s border-s-gray-300">
+                                                </div>
+                                            }
+                                            <div class="flex items-center justify-center shrink-0 rounded-full bg-gray-100 border border-gray-300 size-9 text-gray-600">
+                                                <i class="ki-filled ki-calendar-2 text-base">
+                                                </i>
+                                            </div>
+                                            <div class="ps-2.5 @(i < Model.Logs.Count - 1 ? "mb-7" : "") text-md grow">
+                                                <div class="flex flex-col pb-2.5">
+                                                    <span class="text-sm text-gray-800">
+                                                        @if (added != "" && edited != "")
+                                                        {
+                                                            @Html.Raw(Model.Logs[i].agency.ModifiedBy + " <span class='font-semibold'>added</span> new values for <span class='text-primary1'>" + added + "</span> and <span class='font-semibold'>modified</span> <span class='text-primary1'>" + edited + "</span>")
+                                                        }
+                                                        else if (added != "" && edited == "")
+                                                        {
+                                                            @Html.Raw(Model.Logs[i].agency.ModifiedBy + " <span class='font-semibold'>added</span> new values for <span class='text-primary1'>" + added + "</span>")
+                                                        }
+                                                        else if (added == "" && edited != "")
+                                                        {
+                                                            @Html.Raw(Model.Logs[i].agency.ModifiedBy + " <span class='font-semibold'>modified</span> <span class='text-primary1'>" + edited + "</span>")
+                                                        }
+                                                        else if (iscreated)
+                                                        {
+                                                            @Html.Raw(Model.Logs[i].agency.ModifiedBy + " <span class='font-semibold'>created</span> an agency")
+                                                        }
+                                                        else
+                                                        {
+                                                            @Html.Raw("No changes done")
+                                                        }
+                                                    </span>
+                                                    <span class="text-xs text-gray-600">
+                                                        @LogConvertor.GetTimeAgo(Model.Logs[i].agency.AgencyModifiedAt, true)
+                                                    </span>
+                                                </div>
+                                                @if (!iscreated)
+                                                {
+                                                    <div class="flex flex-row">
+                                                        <div class="card shadow-none">
+                                                            <div class="card-table">
+                                                                <table class="table table-border table-sm align-middle text-gray-700 font-medium text-sm custom-table">
+                                                                    <thead>
+                                                                        <tr>
+                                                                            <th class="min-w-[185px]">
+                                                                                Field Name
+                                                                            </th>
+                                                                            <th class="min-w-[150px]">
+                                                                                Old Value
+                                                                            </th>
+                                                                            <th class="min-w-[150px]">
+                                                                                New Value
+                                                                            </th>
+                                                                        </tr>
+                                                                    </thead>
+                                                                    <tbody>
+                                                                        @foreach (var ss in resultlist)
+                                                                        {
+                                                                            if (ss.FieldName.ToLower().Contains("email"))
+                                                                            {
+                                                                                ss.OldValue = ss.OldValue.Replace(";", "<br/>");
+                                                                                ss.NewValue = ss.NewValue.Replace(";", "<br/>");
+                                                                            }
+                                                                            <tr>
+                                                                                <td class="keyname">
+                                                                                    @ss.FieldName
+                                                                                </td>
+                                                                                <td>
+                                                                                    @if (!string.IsNullOrEmpty(ss.OldValue))
+                                                                                    {
+                                                                                        @Html.Raw(Common.ToString(ss.OldValue).Replace("\n", "<br/>"))
+                                                                                    }
+                                                                                    else
+                                                                                    {
+                                                                                        <span class="text-sm">[<span class="text-primary">Not Provided</span>]</span>
+                                                                                    }
+                                                                                </td>
+                                                                                <td>
+                                                                                    @if (!string.IsNullOrEmpty(ss.NewValue))
+                                                                                    {
+                                                                                        @Html.Raw(Common.ToString(ss.NewValue).Replace("\n", "<br/>"))
+                                                                                    }
+                                                                                    else
+                                                                                    {
+                                                                                        <span class="text-sm">[<span class="text-danger">Removed</span>]</span>
+                                                                                    }
+                                                                                </td>
+                                                                            </tr>
+                                                                        }
+                                                                    </tbody>
+                                                                </table>
+                                                            </div>
+                                                        </div>
+                                                        <div class="grow"></div>
+                                                    </div>
+                                                }
+                                            </div>
+                                        </div>
+                                    }
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- end: grid -->
+            </div>
+            <!-- End of Container -->
+
+        </main>
+        <!-- End of Content -->
+    </div>
+}
+
+<div id="modalsection">
+</div>
+@section PageScripts
+{
+    <script src="~/js/Masters/agency.js?v=1.0.1"></script>
+}

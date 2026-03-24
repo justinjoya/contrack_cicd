@@ -1,0 +1,2 @@
+﻿@model Contrack.DropdownModal
+@Html.DropDownList(Model.Name, new SelectList(@ViewBag.ClientDropdown, "Value", "Text", "") { }, new { @id = "ddlClientDetailID", @placeholder = "Select Client", @class = "form-control select2", @datarequired = "no", @datarequired_message = "Please select Port", @data_append_parent = "yes", @style = "width:100%;", @onchange = "OpenClientInfoDetailID(this,'txt_BillTo','billingaddress')" })

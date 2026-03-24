@@ -1,0 +1,41 @@
+﻿@model Contrack.EmptyTable
+<div class="empty-card @(Model.NoleftRadius?"no-left-radius":"")">
+    <div class="inner">
+        <div class="emptyicon">
+            @if (!string.IsNullOrEmpty(Model.Icon))
+            {
+                @Html.Raw(Model.Icon)
+            }
+        </div>
+        <h2 class="heading">
+            @Model.Heading
+        </h2>
+        <span class="subheading">
+            @Model.SubHead
+        </span>
+        <span class="button">
+            @Html.Raw(Model.Button)
+        </span>
+    </div>
+</div>
+<!--<div class="empty-card @(Model.NoleftRadius?"no-left-radius":"")">
+    <div class="inner gap-2">-->
+@*<img src="~/assets/img/empty.svg" style="width:150px;" />*@
+<!--<div class="emptytablebox">
+            @if (string.IsNullOrEmpty(Model.Icon))
+            {
+                <i class="ki-filled ki-element-equal"></i>
+            }
+            else
+            {
+                @Html.Raw(Model.Icon)
+            }
+        </div>
+        <h2 class="text-xl font-semibold text-gray-700">
+            @Model.Heading
+        </h2>
+        <span>
+            @Model.SubHead
+        </span>
+    </div>
+</div>-->

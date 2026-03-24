@@ -1,0 +1,65 @@
+﻿@using Contrack;
+@model List<ChatDTO>
+<div class="modal" data-modal="true" data-modal-backdrop-static="true" data-modal-autofocus="true" id="ModalChatHistory">
+    <div class="modal-content  top-[10%] model-width-medium">
+        <div class="modal-header">
+            <h3 class="modal-title">
+                Comments
+            </h3>
+            <button class="btn btn-xs btn-icon btn-light" type="button" data-modal-dismiss="true">
+                <i class="ki-outline ki-cross">
+                </i>
+            </button>
+        </div>
+        <div class="modal-body scrollable-y max-h-[95%]">
+
+            <div>
+                <div class="flex flex-col">
+
+                    @for (int i = 0; i < Model.Count; i++)
+                    {
+                        <div class="flex items-start relative">
+                            @if (i < Model.Count - 1) // Last Record - To hide the extra line
+                            {
+                                <div class="w-9 start-0 top-9 absolute bottom-0 rtl:-translate-x-1/2 translate-x-1/2 border-s border-s-gray-300">
+                                </div>
+                            }
+                            <div class="flex items-center justify-center shrink-0 rounded-full bg-gray-100 border border-gray-300 size-9 text-gray-600">
+                                @if (Model[i].created_by == Common.LoginID)
+                                {
+                                    <i class="ki-filled ki-arrow-up-right text-success"></i>
+                                }
+                                else
+                                {
+                                    <i class="ki-filled ki-arrow-down-right text-danger"></i>
+                                }
+                            </div>
+                            <div class="ps-2.5 @(i < Model.Count - 1 ? "mb-7" : "") text-md grow">
+                                <div class="flex flex-col pb-2.5">
+                                    <span class="text-sm text-gray-800">
+
+                                        @Model[i].created_by_name commented
+                                        "<span class="text-primary">@Model[i].message_text</span>"
+                                    </span>
+                                    <span class="text-xs text-gray-600">
+                                        @Model[i].created_at.SubText
+                                    </span>
+                                </div>
+
+                            </div>
+                        </div>
+                    }
+
+                </div>
+            </div>
+
+        </div>
+        <div class="modal-footer justify-end">
+            <div class="flex gap-3">
+                <button class="btn btn-light" type="button" data-modal-dismiss="true">
+                    Close
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

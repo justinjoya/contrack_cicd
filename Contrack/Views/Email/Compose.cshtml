@@ -1,0 +1,119 @@
+﻿@model Contrack.EmailDTO
+@using Contrack;
+@{
+    ViewBag.Title = "Compose Email";
+    ViewBag.MainManu = "Email";
+    ViewBag.SubManu = "Compose Email";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<style>
+    .ck-editor__editable {
+        min-height: 400px;
+    }
+</style>
+
+<div class="mb-5 lg:mb-7.5">
+    <div class="container-fluid flex items-center justify-between flex-wrap gap-5">
+        <div class="flex flex-col justify-center items-start flex-wrap gap-1 lg:gap-2">
+            <h1 class="font-medium text-lg text-gray-900">
+                @Html.Partial("_GoBack") Compose Email
+            </h1>
+        </div>
+    </div>
+</div>
+
+@using (Html.BeginForm("Compose", "Email", FormMethod.Post, new { @id = "frmEmailCompose" }))
+{
+    @Html.HiddenFor(m => m.RedirectUrl)
+    <div class="container-fluid w-full flex bottom-buffer">
+        <main class="flex flex-col grow" id="content" role="content">
+            <div class="card pb-2.5">
+                <div class="card-body grid gap-5">
+                    @if (Model?.result?.ResultId != 1 && !string.IsNullOrEmpty(Model?.result?.ResultMessage))
+                    {
+                        <div class="text-center border rounded-lg p-4 border-danger bg-danger-light">
+                            <p class="text text-2sm font-normal">@Model.result.ResultMessage</p>
+                        </div>
+                    }
+
+                    <div class="w-full">
+                        <div class="flex flex-col1 items-center flex-wrap lg:flex-nowrap gap-2.5">
+                            <label class="form-label flex items-center text-end gap-1 max-w-24">To :</label>
+                            @Html.ListBoxFor(m => m.EmailTo, new SelectList(ViewBag.EmailToDropdown, "Value", "Text"), new { @id = "ddlEmailTo", @class = "form-control searchableemail", @style = "width:100%;", @multiple = true })
+                        </div>
+                    </div>
+                    <div class="w-full">
+                        <div class="flex flex-col1 items-center flex-wrap lg:flex-nowrap gap-2.5">
+                            <label class="form-label flex items-center gap-1 max-w-24">CC :</label>
+                            @Html.ListBoxFor(m => m.CC, new SelectList(ViewBag.EmailCCDropdown, "Value", "Text"), new { @id = "ddlEmailCC", @class = "form-control searchableemail", @style = "width:100%;", @multiple = true })
+                        </div>
+                    </div>
+                    <div class="w-full">
+                        <div class="flex flex-col1 items-center flex-wrap lg:flex-nowrap gap-2.5">
+                            <label class="form-label flex items-center gap-1 max-w-24">BCC :</label>
+                            @Html.ListBoxFor(m => m.BCC, new SelectList(ViewBag.EmailBCCDropdown, "Value", "Text"), new { @id = "ddlEmailBCC", @class = "form-control searchableemail", @style = "width:100%;", @multiple = true })
+                        </div>
+                    </div>
+                    <div class="w-full">
+                        <div class="flex flex-col1 items-center flex-wrap lg:flex-nowrap gap-2.5">
+                            <label class="form-label flex items-center gap-1 max-w-24">Subject :</label>
+                            @Html.TextBoxFor(m => m.Subject, new { @id = "txtSubject", @class = "input", @datarequired = "yes", @datarequired_message = "Please select subject" })
+                        </div>
+                    </div>
+                    <div class="w-full">
+                        <div class="flex flex-col items-center1 flex-wrap lg:flex-nowrap gap-2.5">
+                            <label class="form-label flex items-center gap-1 max-w-24">Body</label>
+                            <div style="width:100%;">
+                                @Html.TextAreaFor(x => x.Body, new { @id = "editor1", @class = "textarea ckeditor-classic", @rows = "18" })
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Attachments (@Model.Attachments.Count)</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="grid lg:grid-cols-5 gap-2.5 lg:gap-5" id="attachments-docs">
+                                <input type="hidden" value="@Model.Attachments.Count" id="hdnattachcount" />
+                                <input type="hidden" value="@Model.EmailType" id="hdnEmailType" />
+                                <input type="hidden" value="@Model.ID" id="hdnID" />
+                                @for (int i = 0; i < Model.Attachments.Count; i++)
+                                {
+                                    <div class="flex items-center1 gap-3">
+                                        @Html.HiddenFor(x => x.Attachments[i].Name)
+                                        @Html.HiddenFor(x => x.Attachments[i].AttachmentPath)
+                                        @Html.HiddenFor(x => x.Attachments[i].PhysicalPath)
+                                        <div class="flex items-center grow gap-2.5">
+                                            <i class="ki-filled ki-files text-xl text-primary "></i>
+                                            <div class="flex flex-col">
+                                                <a href="@Model.Attachments[i].AttachmentPath" target="_blank" class="text-md font-medium text-gray-900 hover:text-primary mb-px">
+                                                    @Model.Attachments[i].Name
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flex justify-end pt-2.5 gap-2.5">
+                        @if (!string.IsNullOrEmpty(Model.RedirectUrl))
+                        {
+                            <a class="btn btn-light" href="@Model.RedirectUrl">Close</a>
+                        }
+                        <button class="btn btn-primary" id="btnSendEmail">Send Email</button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+}
+
+<div id="modalsection"></div>
+@section PageScripts
+{
+    <script src="~/assets/libs/ckeditor/ckeditor5-build-classic/build/ckeditor.js"></script>
+    <script src="~/js/email.js?v=1.0.4"></script>
+}

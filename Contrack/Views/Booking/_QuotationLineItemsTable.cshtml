@@ -1,0 +1,246 @@
+﻿@using Contrack
+@model BookingQuotation
+
+@if (Model.quotation.details != null && Model.quotation.details.Any())
+{
+    <div class="card-table1 w-full">
+        <table class="table table-border" id="quotation_detail_table">
+            <thead>
+                <tr>
+                    <th class="w-[30px] text-center">S.No</th>
+
+                    @*<th class="min-w-[150px] text-start !text-gray-700">
+                            Size & Type
+                        </th>*@
+
+                    @*<th class="w-[120px] text-center !text-gray-700">
+                            Empty / Full
+                        </th>*@
+
+                    <th class="text-start min-w-[150px] w-item !text-gray-700">
+                        Description
+                    </th>
+
+                    @if (ViewBag.ReadOnly != true)
+                    {
+                        <th class="w-[100px] text-center !text-gray-700">
+                            UOM
+                        </th>
+                    }
+
+                    <th class="w-[200px] text-end !text-gray-700">
+                        Qty
+                    </th>
+
+                    <th class="w-[200px] text-end !text-gray-700">
+                        Amount
+                    </th>
+
+                    <th class="w-[200px] text-end !text-gray-700">
+                        Tax (%)
+                    </th>
+
+                    <th class="w-[200px] text-end !text-gray-700">
+                        Total
+                    </th>
+
+                    @if (ViewBag.ReadOnly != true)
+                    {
+                        <th class="w-[100px] text-center !text-gray-700">
+                            Action
+                        </th>
+                    }
+                </tr>
+            </thead>
+
+            <tbody>
+                @{
+                    string combinedvalue = "-1";
+                    for (int i = 0; i < Model.quotation.details.Count; i++)
+                    {
+                        var qty = Model.quotation.details[i].qty;
+                        var amount = Model.quotation.details[i].amount;
+                        var tax = Model.quotation.details[i].tax;
+
+                        var subTotal = qty * amount;
+                        var taxAmount = subTotal * (tax / 100);
+                        var total = subTotal + taxAmount;
+
+                        if (combinedvalue == "-1" || combinedvalue != Model.quotation.details[i].TypeSizeCombinedValue)
+                        {
+                            <tr>
+                                <td class="bg-border-greenshadow p-3" colspan="8">
+                                    <span class="text-md text-gray-800 font-semibold ps-2">
+                                        @(string.IsNullOrEmpty(Model.quotation.details[i].TypeSizeCombinedText) ? "Common" : Model.quotation.details[i].TypeSizeCombinedText)
+                                    </span>
+                                </td>
+                            </tr>
+                        }
+                        combinedvalue = Model.quotation.details[i].TypeSizeCombinedValue;
+                        <tr class="mainrow @(Model.quotation.details[i].amount!=Model.quotation.details[i].templateprice?"bg-border-redshadow":"")">
+                            <td class="text-center">
+                                @(i + 1)
+                                @Html.HiddenFor(m => m.quotation.details[i].quotationdetailid.EncryptedValue)
+                                @Html.HiddenFor(m => m.quotation.details[i].quotationdetailuuid)
+                                @Html.HiddenFor(m => m.quotation.details[i].quotationid.EncryptedValue)
+                                @Html.HiddenFor(m => m.quotation.details[i].description)
+                                @Html.HiddenFor(m => m.quotation.details[i].uom)
+                                @Html.HiddenFor(m => m.quotation.details[i].remarks)
+                                @Html.HiddenFor(m => m.quotation.details[i].TypeSizeCombinedText)
+                                @Html.HiddenFor(m => m.quotation.details[i].TypeSizeCombinedValue)
+                                @Html.HiddenFor(m => m.quotation.details[i].fullempty)
+                                @Html.HiddenFor(m => m.quotation.details[i].jobtypedetailuuid)
+                                @Html.HiddenFor(m => m.quotation.details[i].templateprice)
+                                <input type="hidden" value="@i" class="hdn_count" />
+                            </td>
+
+                            @*<td class="text-start">
+                                    <span class="text-sm font-medium text-gray-900">
+                                        @(string.IsNullOrEmpty(Model.quotation.details[i].TypeSizeCombinedText) ? "Common" : Model.quotation.details[i].TypeSizeCombinedText)
+                                    </span>
+                                </td>*@
+
+                            @*<td class="text-center">
+                                    <span class="text-sm font-medium text-gray-900">
+                                        @(Model.quotation.details[i].fullempty == "F" ? "Full" :
+                                          Model.quotation.details[i].fullempty == "E" ? "Empty" : "")
+                                    </span>
+                                </td>*@
+
+                            <td>
+                                <div class="text-sm font-medium text-gray-900">
+                                    @Html.Raw(Common.ToString(Model.quotation.details[i].description).Replace("\n", "<br/>"))
+                                </div>
+
+                                @if (!string.IsNullOrEmpty(Model.quotation.details[i].remarks))
+                                {
+                                    <div class="mt-1 text-xs text-gray-500">
+                                        Remarks : @Html.Raw(Common.ToString(Model.quotation.details[i].remarks).Replace("\n", "<br/>"))
+                                    </div>
+                                }
+                            </td>
+
+                            @if (ViewBag.ReadOnly != true)
+                            {
+                                <td class="text-center">
+                                    <span class="text-sm font-medium text-gray-800">
+                                        @Model.quotation.details[i].uom
+                                    </span>
+                                </td>
+                            }
+
+                            <td class="text-end">
+                                @if (ViewBag.ReadOnly != true)
+                                {
+                                    <label class="input">
+                                        @Html.TextBoxFor(m => m.quotation.details[i].qty,
+                                             new
+                                             {
+                                                 @class = "text-gray-800 focus-input text-right qty",
+                                                 placeholder = "0",
+                                                 style = "width:50%;"
+                                             })
+                                    </label>
+                                }
+                                else
+                                {
+                                    <span class="flex flex-col">
+                                        <span class="text-md font-medium ellipsis-full text-gray-900">
+                                            @Model.quotation.details[i].qty.ToString("0.##")
+                                        </span>
+                                        <span class="text-2sm text-gray-700 font-normal">
+                                            @Model.quotation.details[i].uom
+                                        </span>
+                                    </span>
+                                }
+                            </td>
+
+                            <td class="text-end">
+                                @if (ViewBag.ReadOnly != true)
+                                {
+                                    <label class="input">
+                                        @Html.TextBoxFor(m => m.quotation.details[i].amount,
+                                             new
+                                             {
+                                                 @class = "text-gray-800 focus-input text-right amount",
+                                                 placeholder = "0",
+                                                 style = "width:50%;"
+                                             })
+                                    </label>
+                                }
+                                else
+                                {
+                                    <span class="text-md font-medium text-gray-900">
+                                        @Display.DisplayCurrency(amount)
+                                    </span>
+                                }
+                            </td>
+
+                            <td class="text-end">
+                                @if (ViewBag.ReadOnly != true)
+                                {
+                                    <label class="input">
+                                        @Html.TextBoxFor(m => m.quotation.details[i].tax,
+                                             new
+                                             {
+                                                 @class = "text-gray-800 focus-input text-right TAX",
+                                                 placeholder = "%",
+                                                 style = "width:50%;"
+                                             })
+                                    </label>
+                                }
+                                else
+                                {
+                                    <span class="text-md font-medium text-gray-900">
+                                        @tax.ToString("0.##") %
+                                    </span>
+                                }
+                            </td>
+
+                            <td class="text-end">
+                                <span class="flex flex-col">
+                                    <span class="text-md font-semibold ellipsis-full text-gray-900 line-total">
+                                        @Display.DisplayCurrency(total)
+                                    </span>
+                                    <span class="text-2sm font-normal ellipsis-full text-gray-700 line-tax"
+                                          style="@(tax>0?"opacity:1":"opacity:0.4")">
+                                        (Incl. Tax : @Display.DisplayCurrency(taxAmount))
+                                    </span>
+                                </span>
+                            </td>
+
+                            @if (ViewBag.ReadOnly != true)
+                            {
+                                <td class="text-center nowrap">
+                                    <a class="btn btn-sm btn-icon btn-clear btn-light"
+                                       href="javascript:void(0);"
+                                       onclick="OpenQuotationLineItemModal('@Model.quotation.details[i].quotationdetailuuid')">
+                                        <i class="ki-filled ki-notepad-edit"></i>
+                                    </a>
+                                    <span class="text-gray-300">|</span>
+                                    <a class="btn btn-sm btn-icon btn-clear btn-danger"
+                                       href="javascript:void(0);"
+                                       onclick="DeleteQuotationLineItem('@Model.quotation.details[i].quotationdetailuuid')">
+                                        <i class="ki-filled ki-trash"></i>
+                                    </a>
+                                </td>
+                            }
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+}
+else
+{
+    <div class="empty-card noshadow">
+        <div class="inner">
+            <i class="ki-filled ki-wallet text-5xl mb-5"></i>
+            <h2 class="heading">No Quotation Items found</h2>
+            <span class="subheading">
+                You don’t have any line items for this quotation
+            </span>
+        </div>
+    </div>
+}

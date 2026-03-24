@@ -1,0 +1,291 @@
+﻿@using Contrack;
+@model QuotationWrapper
+@using System.Globalization
+
+<!DOCTYPE html>
+<html class="light" lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Final Detailed Booking Summary View</title>
+    <link href="https://fonts.googleapis.com" rel="preconnect" />
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&amp;family=JetBrains+Mono:wght@400;500;600&amp;display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet" />
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <style type="text/tailwindcss">
+        :root {
+            --navy-deep: #0F172A;
+            --navy-accent: #1E293B;
+            --slate-pro: #64748B;
+            --border-subtle: #E2E8F0;
+            --bg-page: #F8FAFC;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-page);
+        }
+
+        .document-container {
+            width: 1000px;
+            margin: 2rem auto;
+            background: white;
+            padding: 40px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+            border-radius: 8px;
+        }
+
+        .label-text {
+            @@apply text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1 block;
+        }
+
+        .value-text {
+            @@apply text-sm font-semibold text-navy-900;
+        }
+
+        .table-header {
+            @@apply px-4 py-2 bg-slate-50 text-[10px] font-bold text-slate-500 uppercase tracking-wider text-left border-b border-slate-200;
+        }
+
+        .table-cell {
+            @@apply px-4 py-3 text-sm text-slate-700 border-b border-slate-100;
+        }
+
+        .description-block {
+            @@apply text-[11px] leading-relaxed text-slate-600;
+        }
+
+        .description-title {
+            @@apply font-bold text-navy-900 block mb-1;
+        }
+
+        @@media print {
+            body {
+                background: white;
+            }
+
+            .no-print {
+                display: none !important;
+            }
+
+            .document-container {
+                margin: 0;
+                box-shadow: none;
+                width: 100%;
+                padding: 20px;
+            }
+        }
+    </style>
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        navy: {
+                            DEFAULT: "#0F172A",
+                            800: "#1E293B",
+                            900: "#0F172A",
+                        },
+                        slate: {
+                            50: "#F8FAFC",
+                            100: "#F1F5F9",
+                            200: "#E2E8F0",
+                            300: "#CBD5E1",
+                            500: "#64748B",
+                            600: "#475569",
+                        }
+                    }
+                }
+            }
+        };
+    </script>
+</head>
+
+<body class="text-slate-900 antialiased">
+    <main class="document-container">
+        <div class="border-b border-slate-100 pb-8 mb-8">
+            <div class="flex justify-between items-start mb-4">
+                <div>
+                    <h1 class="text-2xl font-black text-navy tracking-tight">BOOKING SUMMARY</h1>
+                    <p class="text-[11px] text-slate-500 font-medium uppercase tracking-wide">
+                        @Model.Booking.booking.customer.client.clientname
+                    </p>
+                </div>
+                <div class="text-right">
+                    <div class="mb-4">
+                        <span class="label-text">REF.: @Model.Booking.booking.bookingno</span>
+                        <span class="label-text">Issue Date</span>
+                        <p class="value-text">
+                            @Model.Booking.booking.createdat.ToString("dd MMM yyyy", CultureInfo.InvariantCulture)
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="text-[11px] text-slate-500 leading-relaxed space-y-3 text-justify max-w-4xl">
+                @*<p>
+                        Booking created by <strong>@Model.Booking.booking.createdusername</strong>.
+                        All shipment information, routing and commercial terms are generated based on the booking request.
+                    </p>*@
+                <p>This is Booking Summary under the Terms and Conditions of Civitas Partners S.A. ("Carrier") Bill of Lading and the relevant Master Service Agreement. The Merchant warrants that all information provided is accurate and that the cargo is fit for transport under the requested conditions.</p>
+                <p>The Carrier's liability is strictly governed by the Terms and Conditions of the Bill of Lading, which include limitations on liability for loss of or damage to the Goods. No servant or agent of the Carrier has power to waive or vary any of the terms hereof unless such waiver or variation is in writing and is specifically authorized or ratified in writing by the Carrier.</p>
+            </div>
+        </div>
+
+        <!-- CARRIER -->
+        <div class="space-y-6 mb-8">
+            <div>
+                <span class="label-text">Carrier</span>
+                <div class="bg-slate-50 p-4 rounded border border-slate-100">
+                    <p class="text-base font-bold text-navy">@Model.Booking.booking.customer.client.clientname</p>
+                    <p class="text-xs text-slate-500">@Model.Booking.booking.customer.client.address</p>
+                </div>
+            </div>
+
+            <!-- SHIPPER / CONSIGNEE -->
+            <div class="grid grid-cols-2 gap-6">
+                <div>
+                    <span class="label-text">Shipper</span>
+                    <div class="p-4 border border-slate-100 rounded h-full">
+                        <p class="font-bold text-navy text-sm">@Model.Booking.booking.location.shippername</p>
+                        <p class="text-xs text-slate-500 mt-1">@Model.Booking.booking.location.shipperaddress , @Model.Booking.booking.location.shipperphone</p>
+                        @*<p class="text-xs text-slate-500 mt-0.5">@Model.Booking.booking.location.shipperphone</p>*@
+                        <p class="text-xs text-slate-500 mt-0.5">@Model.Booking.booking.location.shipperemail</p>
+                        @*<p class="text-xs text-navy font-medium mt-0.5">@Model.Booking.booking.location.shipperemail</p>*@
+                    </div>
+                </div>
+
+                <div>
+                    <span class="label-text">Consignee</span>
+                    <div class="p-4 border border-slate-100 rounded h-full">
+                        <p class="font-bold text-navy text-sm">@Model.Booking.booking.location.consigneename</p>
+                        <p class="text-xs text-slate-500 mt-1">@Model.Booking.booking.location.consigneeaddress , @Model.Booking.booking.location.consigneephone</p>
+                        <p class="text-xs text-slate-500 mt-0.5">@Model.Booking.booking.location.consigneeemail</p>
+                        @*<p class="text-xs text-navy font-medium mt-0.5">@Model.Booking.booking.location.consigneeemail</p>*@
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- VESSEL & VOYAGE -->
+        <div class="mb-8">
+            <span class="label-text">Vessel & Voyage Details</span>
+            <div class="bg-navy rounded-lg p-6 text-white shadow-md">
+                <div class="grid grid-cols-3 gap-8 items-center">
+                    <div class="flex items-center gap-4">
+                        <div class="bg-white/10 p-3 rounded">
+                            <span class="material-symbols-outlined text-2xl">sailing</span>
+                        </div>
+                        <div>
+                            <p class="text-[9px] font-bold text-slate-400 uppercase">Vessel / Voyage</p>
+                            <p class="text-lg font-black tracking-wide">@Model.Quotation.Voyage.Vesselname</p>
+                            <p class="text-xs font-mono text-slate-300">@Model.Quotation.Voyage.VoyageNumber</p>
+                        </div>
+                    </div>
+
+                    <div class="flex justify-between items-center px-8 border-x border-white/10">
+                        <div class="text-center">
+                            <p class="text-[9px] font-bold text-slate-400 uppercase">POL</p>
+                            <p class="text-base font-bold">@Model.Booking.booking.location.pol_portname</p>
+                            <p class="text-[10px] font-mono text-blue-300">
+                                @Model.Quotation.Voyage.VoyageDetails.FirstOrDefault().ETD
+                            </p>
+                        </div>
+
+                        <div class="text-slate-500">
+                            <span class="material-symbols-outlined">arrow_forward</span>
+                        </div>
+
+                        <div class="text-center">
+                            <p class="text-[9px] font-bold text-slate-400 uppercase">POD</p>
+                            <p class="text-base font-bold">@Model.Booking.booking.location.pod_portname</p>
+                            <p class="text-[10px] font-mono text-green-300">
+                                @Model.Quotation.Voyage.VoyageDetails.FirstOrDefault().ETA
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="text-right">
+                        <p class="text-[9px] font-bold text-slate-400 uppercase">Estimated Transit</p>
+                        <p class="text-2xl font-black">7 Days</p>
+                        <p class="text-[10px] text-slate-400 uppercase">Direct Service</p>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- RENTAL OF UNITS -->
+        <div class="mb-8">
+            <span class="label-text">Rental of Units & Cargo</span>
+            <div class="border border-slate-200 rounded overflow-hidden">
+                <table class="w-full">
+                    <thead>
+                        <tr>
+                            <th class="table-header">Unit Type</th>
+                            <th class="table-header">Quantity</th>
+                            <th class="table-header">Goods Description</th>
+                            <th class="table-header">POL Free Time</th>
+                            <th class="table-header">POD Free Time</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-100">
+
+                        @foreach (var item in Model.Booking.booking.details)
+                        {
+                            <tr>
+                                <td class="table-cell font-bold">@item.sizename</td>
+                                <td class="table-cell">@item.qty Units</td>
+                                <td class="table-cell italic text-navy">@item.commodity</td>
+                                <td class="table-cell text-xs">10 Days</td>
+                                <td class="table-cell text-xs">7 Days</td>
+                            </tr>
+                        }
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-10 mb-10 pb-10 border-b border-slate-100">
+            <div>
+                <span class="label-text">Freight &amp; Financial Summary</span>
+                <div class="mt-3 description-block space-y-2">
+                    <p><span class="description-title">Amount:</span> USD 2,000.00 per unit</p>
+                    <p><span class="description-title">Description:</span> Freight, handling at POL and transport and POL, handling at POD</p>
+                    <p><span class="description-title">Due Date:</span> Freight payable as per invoice at discharge of Goods from the Vessel at POD prior to delivery to the consignee</p>
+                </div>
+            </div>
+            <div>
+                <span class="label-text">Other Fees &amp; Surcharges</span>
+                <div class="mt-3 description-block text-justify">
+                    <p>
+                        <span class="font-bold text-navy-900">Demurrage Fee POL&amp;POD (Rented Units):</span> USD 70.00 per day per each 20ft Container; USD 140.00 per day per each 40ft Container. Payable in addition to any Port charges for late collection beyond free time granted at the POD (always at risk of Shipper and Consignee).
+                        <span class="font-bold text-navy-900">Demurrage for Intra-Modal Transport:</span> USD 250.00 per day pro rata per truck for any delays and waiting time.
+                        <span class="font-bold text-navy-900">Container Cleaning Fee:</span> USD 100.00 per Unit.
+                        <span class="font-bold text-navy-900">Booking Cancellation Fee (prior to pick up of rented Unit):</span> USD 50.00.
+                        <span class="font-bold text-navy-900">Booking Cancellation Fee (after pick up of rented Unit):</span> USD 100.00 (plus demurrage as applicable).
+                    </p>
+                </div>
+            </div>
+        </div>
+        <div>
+            <span class="label-text">Additional Terms &amp; Conditions</span>
+            <div class="text-[10px] text-slate-500 leading-relaxed text-justify mt-2 space-y-1">
+                <p>Carrier reserves the right to substitute vessels or change routing without prior notice for operational safety. All dates provided (ETD/ETA) are tentative and subject to change based on terminal berth availability. Equipment must be returned in "Cargo Ready" condition; residue removal will trigger cleaning surcharges. Freight is payable within 7 business days of bill of lading issuance unless credit terms are pre-approved. This booking is subject to the Civitas Partners S.A. Master Services Agreement and standard maritime regulations.</p>
+            </div>
+        </div>
+        <div class="mt-12 pt-4 border-t border-slate-50 flex justify-between items-center opacity-40">
+            <p class="text-[9px] font-bold uppercase tracking-widest text-slate-400">Refined Maritime Summary System v2.1</p>
+            <p class="text-[9px] font-bold text-navy">DOCUMENT NO: CPSM-25-0079</p>
+        </div>
+    </main>
+    <div class="fixed bottom-8 right-8 flex flex-col gap-3 no-print">
+        <button class="w-12 h-12 bg-white border border-slate-200 shadow-xl rounded-full flex items-center justify-center text-slate-600 hover:text-navy transition-all" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">
+            <span class="material-symbols-outlined">expand_less</span>
+        </button>
+    </div>
+</body>
+</html>

@@ -1,0 +1,28 @@
+﻿@using Contrack;
+@model ContainerBooking
+<div>
+    @Html.Partial("_BookingTab", Model)
+
+    <div class="customer-select-box notop">
+        <div class="holderdropdown">
+            <div class="search-wrapper customerselection">
+                <i class="ki-filled ki-magnifier"></i>
+                @Html.DropDownListFor(m => m.booking.customer.client.clientdetailid.EncryptedValue, new SelectList(ViewBag.ClientDropdown, "Value", "Text", ""), "Select Customer", new
+           {
+               @class = "form-control select2 customerselect2",
+               @id = "ddlCustomer",
+               @style = "width:100%;",
+               @datarequired = "yes",
+               @datarequired_message = "Please select Customer",
+               @data_append_parent = "no",
+               @dataid = Model.booking.customer.client.clientdetailid.NumericValue == 0 ? "" : Model.booking.customer.client.clientdetailid.EncryptedValue,
+               @dataname = Model.booking.customer.client.clientname,
+               @onchange = "LoadCustomerInfo(this);"
+           })
+            </div>
+        </div>
+        <div class="customers-card" id="customer-card">
+            @Html.Partial("_CustomerInfo", Model)
+        </div>
+    </div>
+</div>

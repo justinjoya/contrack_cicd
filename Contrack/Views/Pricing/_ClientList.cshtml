@@ -1,0 +1,35 @@
+﻿@using Contrack;
+@model Contrack.QuotationPricing
+<span class="ps-5 py-3 pb-0 border-b-21 text-md text-gray-800 font-semibold">
+    Assigned Clients (@Model.customers.Count)
+</span>
+<div class="p-5">
+
+
+    @if (Model.customers.Count == 0)
+    {
+        <div class="empty-card noshadow">
+            <div class="inner">
+                <div class="emptyicon">
+                    <i class="ki-filled ki-users text-3xl"></i>
+                </div>
+                <h2 class="heading">
+                    No Clients assigned
+                </h2>
+                <span class="subheading">
+                    Please select client from <br />above dropdown and add to list
+                </span>
+            </div>
+        </div>
+    }
+    else
+    {
+        foreach (var item in Model.customers)
+        {
+            <div class="flex gap-2 justify-between items-center rounded-md border border-dashed  gap-4 p-4 mb-3 border-primary bg-primary-light1 px-5 py-2">
+                <span class="text-sm font-semibold">@item.ClientName</span>
+                <a onclick="DeleteClientFromPricing('@Model.pricing.PricingID.EncryptedValue','')" class="btn btn-sm btn-icon btn-clear btn-danger " href="javascript:void(0);"><i class="ki-filled ki-trash"></i></a>
+            </div>
+        }
+    }
+</div>

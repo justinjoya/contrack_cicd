@@ -1,0 +1,290 @@
+﻿@using Contrack
+@using System.Globalization
+@model BookingQuotation
+
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Quotation</title>
+    <link rel="preconnect" href="//fonts.googleapis.com" />
+    <link rel="preconnect" href="//fonts.gstatic.com" crossorigin />
+    <link href="//fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;1,100;1,200;1,300;1,400;1,500;1,600;1,700&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet" />
+    <link href="~/assets/vendors/keenicons/styles.bundle.css" rel="stylesheet" />
+
+    <link rel="stylesheet" href="~/css/Download/DownloadQuote.css" />
+</head>
+
+@{
+
+    IAgencyRepository repo = new AgencyRepository();
+    AgencyService agency = new AgencyService(repo);
+    var agencyinfo = agency.GetAgencyByDetailID(Model.booking.customer.agencydetailid.NumericValue);
+
+    decimal subtotal = 0;
+}
+
+
+<body>
+    <div class="qtn-page">
+        <div class="qtn-header">
+            <div class="qtn-header__left">
+                <div class="qtn-logo">
+                    <img alt="" src="~/assets/img/quotation/cpg-logo.svg" />
+                </div>
+                <div>
+                    <h1>
+                        Quotation (#@Model.quotation.quotationno)
+                    </h1>
+                    <p>
+                        Valid till
+                        @Model.quotation.expirydate.Text
+                    </p>
+                </div>
+            </div>
+
+            <div class="qtn-header__right">
+                <span class="qtn-issue-label">ISSUE DATE</span>
+                <div class="qtn-issue-box">
+                    @{
+                        var issueDate = Model.quotation.quotedate.Value;
+                    }
+                    <div class="qtn-issue-day">@issueDate.Day</div>
+                    <div class="qtn-issue-month">
+                        @issueDate.ToString("MMM, yyyy").ToUpper()
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="qtn-meta-wrapper">
+            <div class="qtn-meta">
+                <div class="meta-label">
+                    <span>Carrier:</span> @agencyinfo.agencyname
+                </div>
+                <div class="meta-value">
+                    @Html.Raw(agencyinfo.address.Replace("\n", "<br/>"))
+                </div>
+            </div>
+
+            <div class="qtn-meta">
+                <div class="meta-label">
+                    <span>TO:</span>
+                    @Model.quotation.quotationforname
+                </div>
+                <div class="meta-value">
+                    @Html.Raw(Model.quotation.billto.Replace("\n", "<br/>"))
+                </div>
+            </div>
+            <div class="qtn-meta"></div>
+        </div>
+
+        <div class="qtn-cards">
+            <div class="qtn-card">
+                <div class="qtn-card-img">
+                    <img alt="" src="~/assets/img/quotation/box.svg" />
+                </div>
+                <div class="qtn-card-content">
+                    <h4>SHIPPER</h4>
+                    <p class="title">@Model.booking.location.shippername</p>
+                    <p>
+                        @Html.Raw(
+Model.booking.location.shipperaddress.Replace("\n", "<br/>")
+)
+                    </p>
+                    <p>
+                        <i class="ki-filled ki-user"></i>
+                        @Display.DisplayString(string.IsNullOrEmpty(Model.booking.location.shipperpic_name) ? Model.booking.location.shipperpiccustom : Model.booking.location.shipperpic_name)
+                    </p>
+                    <p>
+                        <i class="ki-filled ki-sms"></i>
+                        @Display.DisplayString(Model.booking.location.shipperemail)
+                    </p>
+                    <p>
+                        <i class="ki-filled ki-phone"></i>
+                        @Display.DisplayString(Model.booking.location.shipperphone)
+                    </p>
+                </div>
+            </div>
+
+            <div class="qtn-card">
+                <div class="qtn-card-img">
+                    <img alt="" src="~/assets/img/quotation/box.svg" />
+                </div>
+                <div class="qtn-card-content">
+                    <h4>CONSIGNEE</h4>
+                    <p class="title">@Model.booking.location.consigneename</p>
+                    <p>
+                        @Html.Raw(Model.booking.location.consigneeaddress.Replace("\n", "<br/>"))
+                    </p>
+                    <p>@Model.booking.location.consigneephone</p>
+                    <p><i class="ki-filled ki-user"></i>@Display.DisplayString(string.IsNullOrEmpty(Model.booking.location.consigneepic_name) ? Model.booking.location.consigneepiccustom : Model.booking.location.consigneepic_name)</p>
+                    <p><i class="ki-filled ki-sms"></i>@Display.DisplayString(Model.booking.location.consigneeemail)</p>
+                    <p>  <i class="ki-filled ki-phone"></i> @Display.DisplayString(Model.booking.location.consigneephone)</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="qtn-route-wrapper">
+            <div class="qtn-route">
+                <div class="qtn-route-left">
+                    <div class="qtn-route-left-icon">
+                        <img alt="" src="~/assets/img/quotation/ship-icon.svg" />
+                    </div>
+                    <div class="qtn-route-left-content">
+                        <div class="qtn-route__label">VESSEL</div>
+                        <div class="qtn-route__value">
+                            @Model.voyage.Vesselname
+                        </div>
+                        <div class="qtn-route__sub">
+                            @Model.voyage.VoyageNumber
+                        </div>
+                    </div>
+                </div>
+
+                <div class="qtn-route-center">
+                    <div>
+                        <div class="qtn-route__label">POL</div>
+                        <div class="qtn-route__value">
+                            @Model.booking.location.pol_portname
+                        </div>
+                        <div class="qtn-route__sub">
+                            @Model.voyage.minDate.Text
+                        </div>
+                    </div>
+                    <div class="qtn-route__arrow">
+                        <img alt="" src="~/assets/img/quotation/right-chevron.svg" />
+                    </div>
+                    <div>
+                        <div class="qtn-route__label">POD</div>
+                        <div class="qtn-route__value">
+                            @Model.booking.location.pod_portname
+                        </div>
+                        <div class="qtn-route__sub sub-green">
+                            @Model.voyage.maxDate.Text
+                        </div>
+                    </div>
+                </div>
+
+                <div class="qtn-route-right">
+                    <div class="qtn-route__label">ESTD. TRANSIT</div>
+                    <div class="qtn-route__value qtn-green">
+                        @Model.voyage.NoOfDays Days
+                    </div>
+                    <div class="qtn-route__service">
+                        Direct Service
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="qtn-section-title">RENTAL OF UNITS & CARGO</div>
+        <div class="qtn-table-wrapper">
+            <table class="qtn-table">
+                <thead>
+                    <tr>
+                        <th style="width:30px;">S.NO</th>
+                        <th>DESCRIPTION</th>
+                        <th style="text-align:right;">QTY</th>
+                        <th style="text-align:right;">UNIT PRICE</th>
+                        <th style="text-align:right;">TAX</th>
+                        <th style="text-align:right;">SUB TOTAL</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @{
+                        string combinedvalue = "-1";
+                        for (int i = 0; i < Model.quotation.details.Count; i++)
+                        {
+                            var qty = Model.quotation.details[i].qty;
+                            var amount = Model.quotation.details[i].amount;
+                            var tax = Model.quotation.details[i].tax;
+
+                            var subTotal = qty * amount;
+                            var taxAmount = subTotal * (tax / 100);
+                            var total = subTotal + taxAmount;
+
+                            if (combinedvalue == "-1" || combinedvalue != Model.quotation.details[i].TypeSizeCombinedValue)
+                            {
+                                <tr>
+                                    <td class="type" colspan="6">
+
+                                        @(string.IsNullOrEmpty(Model.quotation.details[i].TypeSizeCombinedText) ? "Common" : Model.quotation.details[i].TypeSizeCombinedText)
+
+                                    </td>
+                                </tr>
+                            }
+                            combinedvalue = Model.quotation.details[i].TypeSizeCombinedValue;
+                            <tr>
+                                <td>@(i+1)</td>
+                                <td class="desc">
+                                    @Html.Raw(Common.ToString(Model.quotation.details[i].description).Replace("\n", "<br/>"))
+                                    @if (!string.IsNullOrEmpty(Model.quotation.details[i].remarks))
+                                    {
+                                        <div class="mt-1 text-xs text-gray-500">
+                                            Remarks : @Html.Raw(Common.ToString(Model.quotation.details[i].remarks).Replace("\n", "<br/>"))
+                                        </div>
+                                    }
+                                </td>
+                                <td style="text-align:right;" class="desc">
+                                    <span class="flex flex-col">
+                                        <span class="text-md font-medium ellipsis-full text-gray-900">
+                                            @Model.quotation.details[i].qty.ToString("0.##")
+                                        </span>
+                                        <span class="text-2sm text-gray-700 font-normal">
+                                            @Model.quotation.details[i].uom
+                                        </span>
+                                    </span>
+                                </td>
+                                <td style="text-align:right;" class="type">
+                                    @Display.DisplayCurrency(amount)
+                                </td>
+
+
+                                <td style="text-align:right;"> @tax.ToString("0.##")%</td>
+                                <td style="text-align:right;">
+                                    <span class="tworow">
+                                        <span>
+                                            @Display.DisplayCurrency(total)
+                                        </span>
+                                        <span class="small">
+                                            (Incl. Tax : @Display.DisplayCurrency(taxAmount))
+                                        </span>
+
+                                    </span>
+                                </td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+        @{
+            var quoteamount = Model.quotation.details.Sum(x => x.qty * x.amount);
+            var taxamount = Model.quotation.details.Sum(x => (x.qty * x.amount * x.tax / 100));
+        }
+        <div class="qtn-amount-wrapper">
+            <div class="qtn-amount">
+                <span>AMOUNT :</span>
+                <div>
+                    <p class="total">
+                        @Model.quotation.currency
+                        @Display.DisplayCurrency(quoteamount + taxamount) @*here i put the total we may have to change this*@
+                    </p>
+                    @*<p class="per-unit">(PER UNIT)</p>*@
+                </div>
+            </div>
+        </div>
+
+        <div class="terms-wrapper">
+            <div class="qtn-terms">
+                <h3>Terms & Conditions</h3>
+                <div style="font-size: 8px !important;">
+                    @Html.Raw(Model.quotation.termsandconditions)
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

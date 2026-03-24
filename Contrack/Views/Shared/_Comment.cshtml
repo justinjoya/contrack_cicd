@@ -1,0 +1,44 @@
+﻿@using Contrack;
+@model List<ChatDTO>
+@if (Model.Count > 0)
+{
+    string cssclass = "";
+    cssclass = Model[0].created_by == Common.LoginID ? "primary" : "primary";
+
+
+    <div class="flex commentoverride grow rounded-md border border-dashed gap-4 p-4 mb-3 border-primary bg-primary-light">
+        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+             class="lucide lucide-quote">
+            <path d="M16 3a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2 1 1 0 0 1 1 1v1a2 2 0 0 1-2 2 1 1 0 0 0-1 1v2a1 1 0 0 0 1 1 6 6 0 0 0 6-6V5a2 2 0 0 0-2-2z"></path>
+            <path d="M5 3a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2 1 1 0 0 1 1 1v1a2 2 0 0 1-2 2 1 1 0 0 0-1 1v2a1 1 0 0 0 1 1 6 6 0 0 0 6-6V5a2 2 0 0 0-2-2z"></path>
+        </svg>
+        <div class="flex flex-col gap-0.5">
+            <p class="text text-md flex flex-col gap-3">
+                <div class="flex gap-2 items-center">
+                    <span class="text-primary font-semibold">
+                        @(Model[0].created_by == Common.LoginID?"You" : Model[0].created_by_name)
+
+                    </span>
+                    <span>•</span>
+                    <span class="text-sm">@Model[0].created_at.Text</span>
+                    @if (Model[0].created_by == Common.LoginID)
+                    {
+                        <i class="ki-filled ki-arrow-up-right text-success"></i>
+                    }
+                    else
+                    {
+                        <i class="ki-filled ki-arrow-down-right text-danger"></i>
+                    }
+
+                </div>
+                <span class="font-medium">
+                    @*<i class="ki-filled ki-arrow-down-left text-danger"></i>*@
+                    "@Model[0].message_text.Trim()"
+                    <a class="btn btn-link text-sm pb-0" href="javascript:void(0);" onclick="OpenCommentModal();">
+                        Show More
+                    </a>
+                </span>
+            </p>
+        </div>
+    </div>
+}

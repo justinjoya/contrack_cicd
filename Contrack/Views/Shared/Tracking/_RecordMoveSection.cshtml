@@ -1,0 +1,285 @@
+﻿@model Contrack.Tracking
+@using Contrack;
+@{
+    var movesList = ViewBag.NewMovesDropdown;
+    var notavailablelist = Model.AvailList.Where(x => !x.is_available).ToList();
+    bool isrequired = Model.Moves.Where(x => x.Movesmodel.MovesId.NumericValue == Model.Trackingmodel.Moves.MovesId.NumericValue).FirstOrDefault()?.Movesmodel.InOut == "OUT";
+}
+<div class="box">
+    @if (notavailablelist.Count > 0)
+    {
+        <div class="mb-5 flex flex-row items-center justify-between gap-3 rounded-sm  border border-dashed border-danger bg-danger-light p-3">
+            <div class="flex flex-col">
+                <span class="text-danger text-md">
+                    Container movement cannot be proceed. Moving the selected container(s) will affect the existing blocked quantity at the selected location and model.
+                    The movement would cause the blocked count to be exceeded for the following combinations:
+                </span>
+                <ul class="pt-3">
+                    @foreach (var item in notavailablelist)
+                    {
+                        <li class="text-sm text-gray-700 font-semibold"> - @item.locationname (@item.iso_code)</li>
+                    }
+                </ul>
+            </div>
+
+        </div>
+    }
+    <form id="formrecordmove">
+        <div class="grid grid-cols-3 column-grid">
+            <div class="w-full grid-3">
+                <div class="flex flex-col items-baseline flex-wrap lg:flex-nowrap gap-2.5">
+                    <label class="form-label flex items-center max-w-56">
+                        Move Type <span class="text-danger ps-2">*</span>
+                    </label>
+                    <div class="square-radios">
+                        @Html.HiddenFor(m => m.Trackingmodel.ContainerBooking.bookingid.EncryptedValue, new { @id = "hdnbookingid" })
+                        @Html.HiddenFor(m => m.Trackingmodel.Container.containerid.EncryptedValue, new { @id = "hdncontainerid" })
+                        @Html.HiddenFor(m => m.Trackingmodel.TrackingId.EncryptedValue, new { @id = "hdntrackingid" })
+                        @Html.HiddenFor(m => m.Trackingmodel.TrackingUuid, new { @id = "hdntrackinguuid" })
+                        @Html.HiddenFor(m => m.Trackingmodel.PickSelectionUuid, new { @id = "hdnpickselectionuuid" })
+                        @for (int i = 0; i < Model.Moves.Count; i++)
+                        {
+                            var move = Model.Moves[i];
+
+                            <div class="checkbox-item">
+                                @Html.RadioButtonFor(
+             m => m.Trackingmodel.Moves.MovesId.EncryptedValue,
+             move.Movesmodel.MovesId.EncryptedValue,
+             new
+             {
+                 @class = "movestype",
+                 @id = "MoveType_" + i,
+                 @data_showvoyage = move.Movesmodel.ShowVoyage ? "true" : "false",
+                 @data_inout = move.Movesmodel.InOut,
+                 datarequired = "yes",
+                 datarequired_message = "Please select move type",
+                 data_append_parent = "yes"
+             }
+         )
+
+                                <label for="MoveType_@i">
+                                    <img class="default" src="@Common.GetIconPath(move.Movesmodel.IconId, true)" />
+                                    <img class="selected" src="@Common.GetSelectedIconPath(move.Movesmodel.IconId, true)" />
+                                    <span>@move.Movesmodel.MovesName</span>
+                                </label>
+                            </div>
+
+                        }
+
+                    </div>
+                </div>
+            </div>
+            <div class="w-full" id="locationSection" style="@(Common.Decrypt(Model.Trackingmodel.CurrentVoyageId.EncryptedValue) == 0 ? "" : "display:none;")">
+                <div class="flex flex-col items-baseline flex-wrap lg:flex-nowrap gap-2.5">
+                    <label class="form-label flex items-center max-w-56">
+                        Current location <span class="text-danger ps-2">*</span>
+                    </label>
+                    @Html.DropDownListFor(m => m.Trackingmodel.LocationDetailId.EncryptedValue, new SelectList(ViewBag.LocationDropdown, "Value", "Text", "") { },
+     new
+     {
+         @class = "form-control select2",
+         @placeholder = "Select Current Location",
+         datarequired = "yes",
+         datarequired_message = "Please select current location",
+         data_append_parent = "yes",
+         @style = "width:100%;"
+     })
+                </div>
+            </div>
+            <div class="w-full" id="voyageSection" style="@(Common.Decrypt(Model.Trackingmodel.CurrentVoyageId.EncryptedValue) > 0 ? "" : "display:none;")">
+                <div class="flex flex-col items-baseline flex-wrap lg:flex-nowrap gap-2.5">
+                    <label class="form-label flex items-center max-w-56">
+                        Current Voyage <span class="text-danger ps-2">*</span>
+                    </label>
+                    @Html.DropDownListFor(m => m.Trackingmodel.CurrentVoyageId.EncryptedValue, new SelectList(Common.AlterDropdown(ViewBag.VoyageDropdown, Model.Trackingmodel.CurrentVoyageId.EncryptedValue, Model.Trackingmodel.CurrentVoyageName), "Value", "Text"), "Search Voyage",
+      new
+      {
+          @class = "form-control select2",
+          @id = "ddlVoyage",
+          datarequired = "yes",
+          datarequired_message = "Please select current voyage",
+          data_append_parent = "yes",
+          @style = "width:100%;"
+      })
+                </div>
+            </div>
+            <div class="w-full">
+                <div class="flex flex-col items-baseline flex-wrap lg:flex-nowrap gap-2.5">
+                    <label class="form-label flex items-center max-w-56">
+                        Current Date &amp; Time <span class="text-danger ps-2">*</span>
+                    </label>
+                    <div class="input-group w-full">
+                        @Html.TextBoxFor(m => m.Trackingmodel.RecordDateTime, new
+                   {
+                       @data_trigger = "btnDateTime",
+                       @data_clear = "btnClearDateTime",
+                       @class = "datetimepicker-here input",
+                       @data_min_date_field = "ddlNextDateTime",
+                       datavalidate = "yes",
+                       @placeholder = "dd/mm/yyyy hh:mm",
+                       @datarequired = "yes",
+                       @datarequired_message = "Please enter date & time",
+                       data_append_parent = "yes",
+                       @id = "txt_DateTime",
+                       @data_provider = "flatpickr1"
+                   })
+                        <button type="button" id="btnDateTime" class="btn btn-icon btn-outline btn-icon-lg btn-light">
+                            <i class="ki-filled ki-calendar-2"></i>
+                        </button>
+                        <button type="button" id="btnClearDateTime" class="btn btn-icon btn-outline btn-icon-lg btn-light">
+                            <i class="ki-filled ki-cross"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <img class="dottedline w-full grid-3" src="~/assets/img/dottedline.svg" />
+            <div class="w-full">
+                <div class="flex flex-col items-baseline flex-wrap lg:flex-nowrap gap-2.5">
+                    <label class="form-label flex items-center max-w-56 nextmove">
+                        Next Move
+                        <span class="nextreq">
+                            @if (isrequired)
+                            {
+                                <span class="text-danger ps-2 required-star">*</span>
+                            }
+                            else
+                            {
+                                <span class="ps-2 text-gray-500">(Optional)</span>
+                            }
+                        </span>
+                    </label>
+                    <select id="ddlNextMoves" name="Trackingmodel.NextMoves.MovesId.EncryptedValue" class="form-control select2 nextmovestype" style="width:100%;"
+                            datarequired="@(isrequired ? "yes" : "no")" datarequired-message="Please select Next Moves" data-append-parent="yes">
+                        @foreach (var move in movesList)
+                        {
+                            <option value="@move.MovesId.EncryptedValue" data-shownextvoyage="@(move.ShowVoyage ? "true" : "false")"
+                                    @(Model.Trackingmodel.NextMoves.MovesId.EncryptedValue == move.MovesId.EncryptedValue ? "selected" : "")>
+                                @move.MovesName
+                            </option>
+                        }
+                    </select>
+                </div>
+            </div>
+            <div class="w-full" id="nextLocationSection" style="@(Common.Decrypt(Model.Trackingmodel.NextVoyageId.EncryptedValue) == 0 ? "" : "display:none;")">
+                <div class="flex flex-col items-baseline flex-wrap lg:flex-nowrap gap-2.5">
+                    <label class="form-label flex items-center max-w-56 nextmove">
+                        Next Location <span class="nextreq">
+                            @if (isrequired)
+                            {
+                                <span class="text-danger ps-2 required-star">*</span>
+                            }
+                            else
+                            {
+                                <span class="ps-2 text-gray-500">(Optional)</span>
+                            }
+                        </span>
+                    </label>
+                    @Html.DropDownListFor(m => m.Trackingmodel.NextLocationDetailId.EncryptedValue, new SelectList(ViewBag.LocationDropdown, "Value", "Text", "") { },
+                    new
+                    {
+                        @id = "ddlNextLocation",
+                        @class = "form-control select2",
+                        @placeholder = "Select Next Location",
+                        datarequired = isrequired ? "yes" : "no",
+                        datarequired_message = "Please select next location",
+                        data_append_parent = "yes",
+                        @style = "width:100%;"
+                    })
+                </div>
+            </div>
+            <div class="w-full" id="nextVoyageSection" style="@(Common.Decrypt(Model.Trackingmodel.NextVoyageId.EncryptedValue) > 0 ? "" : "display:none;")">
+                <div class="flex flex-col items-baseline flex-wrap lg:flex-nowrap gap-2.5">
+                    <label class="form-label flex items-center max-w-56 nextmove">
+                        Next Voyage <span class="nextreq">
+                            @if (isrequired)
+                            {
+                                <span class="text-danger ps-2 required-star">*</span>
+                            }
+                            else
+                            {
+                                <span class="ps-2 text-gray-500">(Optional)</span>
+                            }
+                        </span>
+                    </label>
+                    @Html.DropDownListFor(m => m.Trackingmodel.NextVoyageId.EncryptedValue, new SelectList(Common.AlterDropdown(ViewBag.VoyageDropdown, Model.Trackingmodel.NextVoyageId.EncryptedValue, Model.Trackingmodel.NextVoyageName), "Value", "Text"), "Search Voyage",
+                     new
+                     {
+                         @class = "form-control select2",
+                         @id = "ddlNextVoyage",
+                         datarequired = isrequired ? "yes" : "no",
+                         datarequired_message = "Please select next voyage",
+                         data_append_parent = "yes",
+                         @style = "width:100%;"
+                     })
+                </div>
+            </div>
+            <div class="w-full">
+                <div class="flex flex-col items-baseline flex-wrap lg:flex-nowrap gap-2.5" id="lblNextDate">
+                    <label class="form-label flex items-center max-w-56 nextmove">
+                        Next Date &amp; Time <span class="nextreq">
+                            @if (isrequired)
+                            {
+                                <span class="text-danger ps-2 required-star">*</span>
+                            }
+                            else
+                            {
+                                <span class="ps-2 text-gray-500">(Optional)</span>
+                            }
+                        </span>
+                    </label>
+                    <div class="input-group w-full">
+                        @Html.TextBoxFor(m => m.Trackingmodel.NextDateTime, new
+                   {
+                       @id = "ddlNextDateTime",
+                       @data_trigger = "btnNextDateTime",
+                       @data_clear = "btnClearNextDateTime",
+                       @class = "datetimepicker-here input",
+                       @placeholder = "dd/mm/yyyy hh:mm",
+                       @datavalidate = isrequired ? "yes" : "no",
+                       @datarequired = isrequired ? "yes" : "no",
+                       @datarequired_message = "Please enter next date & time",
+                       data_append_parent = "yes",
+                       @data_provider = "flatpickr1",
+                       @readonly = true
+                   })
+                        <button type="button" id="btnNextDateTime" class="btn btn-icon btn-outline btn-icon-lg btn-light">
+                            <i class="ki-filled ki-calendar-2"></i>
+                        </button>
+                        <button type="button" id="btnClearNextDateTime" class="btn btn-icon btn-outline btn-icon-lg btn-light">
+                            <i class="ki-filled ki-cross"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="damage-container w-full grid-3">
+                <div class="damage-text">
+                    <span class="maintext">Is there any damage present?</span>
+                    <span class="subtext">If yes, inspect and add the damages below.</span>
+                </div>
+                <div class="double-switch">
+                    @Html.CheckBoxFor(m => m.Trackingmodel.IsDamaged, new { @id = "Damage", onchange = "ShowHideDamage(this)" })
+                    <label for="Damage">
+                        <span class="pill"></span>
+                        <span class="unchecked">No</span>
+                        <span class="checked">Yes</span>
+                    </label>
+                </div>
+            </div>
+            <div class="w-full grid-3 flex gap-2.5 justify-end SaveRecord">
+                <img class="dottedline w-full grid-3" src="~/assets/img/dottedline.svg" />
+                <button type="button" class="btn btn-gray actionbutton">
+                    Close
+                </button>
+                @if (notavailablelist.Count == 0)
+                {
+                    <button type="button" class="btn btn-primary actionbutton">
+                        Save Move
+                    </button>
+                }
+            </div>
+
+        </div>
+    </form>
+</div>

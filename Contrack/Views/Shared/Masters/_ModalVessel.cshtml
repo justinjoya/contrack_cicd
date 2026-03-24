@@ -1,0 +1,391 @@
+﻿@model Contrack.VesselDTO
+@using Contrack;
+<div class="modal" data-modal="true" data-modal-backdrop-static="true" data-modal-autofocus="true" id="ModalAddVessel">
+    <div class="modal-content modal-center-y max-w-[600px] max-h-[95%]">
+        <div class="modal-header">
+            <h3 class="modal-title">
+                @if (Model.vassignment.vesselassignmentid.NumericValue == 0)
+                {
+                    @Html.Raw("Add Vessel")
+                }
+                else
+                {
+                    @Html.Raw("Edit Vessel" )
+                }
+            </h3>
+            <button class="btn btn-xs btn-icon btn-light" data-modal-dismiss="true">
+                <i class="ki-outline ki-cross">
+                </i>
+            </button>
+        </div>
+        <div class="modal-body scrollable-y">
+            <div class="model-req flex items-center grow rounded-xl border border-dashed gap-4 p-2 mb-3 border-primary bg-primary-light">
+                <i class="ki-outline ki-information-1 text-3xl text-primary">
+                </i>
+                <div class="flex flex-col gap-0.5">
+                    <p class="text text-2sm font-normal">
+                        Fields marked with <span class="text-danger"> * </span> are mandatory.
+                    </p>
+                </div>
+            </div>
+            <form id="formVessel">
+                <div>
+                    @*<div class="card shadow-none mb-3">
+                        <div class="card-header p-3">
+                            <h3 class="card-title">
+                                Agency Info
+                            </h3>
+                        </div>
+                        <div class="card-body p-3">*@
+                    <div class="grid lg:grid-cols-1 items-stretch gap-5">
+                        <div class="flex flex-col1 items-baseline flex-wrap lg:flex-nowrap gap-1.5">
+                            <label class="form-label max-w-32 text-right">
+                                @Common.VesselName <span class="text-danger ps-2">*</span>
+                            </label>
+                            @Html.HiddenFor(m => m.vesselid.EncryptedValue)
+                            @Html.HiddenFor(m => m.vassignment.vesselassignmentid.EncryptedValue)
+                            @Html.HiddenFor(m => m.vassignment.assignmentuuid)
+                            @Html.HiddenFor(m => m.vesseluuid)
+
+                            <div class="flex flex-col w-full">
+                                @Html.TextBoxFor(m => m.vesselname, new { @id = "txt_vesselname", @class = "input", @placeholder = "Enter Vessel Name", @datarequired = "yes", @datarequired_message = "Please enter Vessel Name", @maxlength = "75" })
+                            </div>
+                        </div>
+
+                        <div class="flex flex-col1 items-baseline flex-wrap lg:flex-nowrap gap-1.5">
+                            <label class="form-label max-w-32">
+                                IMO No <span class="text-danger ps-2">*</span>
+                            </label>
+                            <div class="flex flex-col w-full">
+                                @if (string.IsNullOrEmpty(Model.imono))
+                                {
+                                    @Html.TextBoxFor(m => m.imono, new { @id = "txt_IMOno", @class = "input", @placeholder = "Enter IMO No", @datarequired = "no", @datarequired_message = "Please enter IMO No", @maxlength = "20", @datatype = "number" })
+                                }
+                                else
+                                {
+                                    <span class="y-2 text-gray-800 font-semibold text-sm">
+                                        @Model.imono
+                                    </span>
+                                    @Html.HiddenFor(m => m.imono)
+                                }
+
+                            </div>
+                        </div>
+                        <div class="flex flex-col1 items-baseline flex-wrap lg:flex-nowrap gap-1.5">
+                            <label class="form-label max-w-32">
+                                MMSI No <span class="text-danger ps-2">*</span>
+                            </label>
+                            <div class="flex flex-col w-full gap-3">
+                                @if (string.IsNullOrEmpty(Model.mmsino))
+                                {
+                                    @Html.TextBoxFor(m => m.mmsino, new { @id = "txt_mmsino", @class = "input", @placeholder = "Enter MMSI No", @datarequired = "no", @datarequired_message = "Please enter MMSI No", @maxlength = "20", @datatype = "number" })
+                                }
+                                else
+                                {
+                                    <span class="y-2 text-gray-800 font-semibold text-sm">
+                                        @Model.mmsino
+                                    </span>
+                                    @Html.HiddenFor(m => m.mmsino)
+                                }
+                                @if (Common.Decrypt(Model.vassignment.vesselassignmentid.EncryptedValue) == 0)
+                                {
+                                    <div>
+                                        <button id="btn_reset" style="display:none;" type="button" class="mx-2 pull-right btn btn-xs btn-sm btn-light" onclick="ResetVessel();">
+                                            Reset
+                                        </button>
+
+                                        <button type="button" class="pull-right btn btn-xs btn-sm btn-light" onclick="ValidateVessel();">
+                                            <i class="ki-filled ki-magnifier">
+                                            </i>
+                                            Check Availability
+                                        </button>
+
+                                    </div>
+                                }
+                            </div>
+
+                        </div>
+                        @{
+                            string showclass = Common.Decrypt(Model.vassignment.vesselassignmentid.EncryptedValue) == 0 ? "display:none;" : "";
+                        }
+
+                        @if (Common.Decrypt(Model.vassignment.vesselassignmentid.EncryptedValue) == 0)
+                        {
+                            <div class="" id="div_existingvessels">
+                            </div>
+                        }
+                        <div style="@showclass" class="assignment flex flex-col1 items-baseline flex-wrap lg:flex-nowrap gap-1.5 ">
+                            <label class="form-label max-w-32">
+                                Created For <span class="text-danger ps-2">*</span>
+                            </label>
+                            <div class="flex flex-col w-full">
+                                @if (Common.UserType == 1) // Hub
+                                {
+                                    <div class="grid grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-5">
+                                        <label for="radio1" class="form-label flex items-center gap-2.5 text-nowrap" onclick="ShowHideEntity('1');">
+                                            <input datarequired="yes" datarequired-message="Please select Created for" data-append-parent="yes" id="radio1" class="radio" name="TypeEncrypted" type="radio" value="@Common.Encrypt(1)" @(Common.Decrypt(Model.vassignment.agencyid.EncryptedValue) == 0 ? "checked" : "")>
+                                            Hub
+                                        </label>
+                                        <label for="radio2" class="form-label flex items-center gap-2.5 text-nowrap" onclick="ShowHideEntity('2');">
+                                            <input datarequired="yes" datarequired-message="Please select Created for" data-append-parent="yes" id="radio2" class="radio" name="TypeEncrypted" type="radio" value="@Common.Encrypt(2)" @(Common.Decrypt(Model.vassignment.agencyid.EncryptedValue) > 0 ? "checked" : "")>
+                                            Agency
+                                        </label>
+                                    </div>
+                                    @*<div class="entity" id="Entiry_1" style="@(Common.Decrypt(Model.agency.agencyidenc) == 0 ? "" : "display:none;")">
+                                            <div class="flex items-center gap-4">
+                                                <div class="leading-none w-5 shrink-0">
+
+                                                    <i class="ki-filled ki-people text-primary text-2xl"></i>
+
+                                                </div>
+                                                <div class="flex flex-col gap-0.5">
+                                                    <span class="leading-none font-medium text-sm text-gray-900">Hub</span>
+                                                    <span class="text-2sm text-gray-700 font-normal">@Common.HubName</span>
+                                                </div>
+                                            </div>
+                                        </div>*@
+                                    <div class="entity" id="Entiry_2" style="@(Common.Decrypt(Model.vassignment.agencyid.EncryptedValue) > 0 ? "" : "display:none;")">
+                                        <div class="flex flex-col w-full pt-5">
+                                            @Html.DropDownListFor(m => m.vassignment.agencyid.EncryptedValue, new SelectList(@ViewBag.AgenciesDropdown, "Value", "Text", "") { }, new { @id = "ddlAgencies", @placeholder = "Select agencies", @class = "form-control select2", @datarequired = "yes", @datarequired_message = "Please select Agency", @data_append_parent = "yes" })
+                                        </div>
+                                    </div>
+                                }
+                                else
+                                {
+                                    @Html.Hidden("TypeEncrypted", Common.Decrypt(Model.vassignment.agencyid.EncryptedValue) == 0 ? Common.Encrypt(1) : Common.Encrypt(2))
+                                    @Html.HiddenFor(m => m.vassignment.agencyid.EncryptedValue)
+                                    <div class="flex items-center gap-4">
+                                        <div class="leading-none w-5 shrink-0">
+                                            @if (Common.Decrypt(Model.vassignment.agencyid.EncryptedValue) == 0)
+                                            {
+                                                <i class="ki-filled ki-people text-primary text-2xl"></i>
+                                            }
+                                            else
+                                            {
+                                                <i class="ki-filled ki-users text-warning text-2xl"></i>
+                                            }
+                                        </div>
+                                        <div class="flex flex-col gap-0.5">
+                                            @if (Common.Decrypt(Model.vassignment.agencyid.EncryptedValue) == 0)
+                                            {
+                                                <span class="leading-none font-medium text-sm text-gray-900">Hub</span>
+                                                <span class="text-2sm text-gray-700 font-normal">@Common.HubName</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="leading-none font-medium text-sm text-gray-900">Agency</span>
+                                                <span class="text-2sm text-gray-700 font-normal">@Model.vassignment.agencyname</span>
+                                            }
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                        <div style="@showclass" class="assignment flex flex-col1 items-baseline flex-wrap lg:flex-nowrap gap-1.5">
+                            <label class="form-label max-w-32">
+                                Type
+                            </label>
+                            <div class="flex flex-col w-full">
+                                @Html.DropDownListFor(m => m.vesseltypeid, new SelectList(@ViewBag.VesselTypeDropdown, "Value", "Text", "") { }, new { @id = "ddlVesselType", @placeholder = "Select ", @class = "form-control select2" })
+                            </div>
+                        </div>
+                        <div style="@showclass" class="assignment flex flex-col1 items-baseline flex-wrap lg:flex-nowrap gap-1.5">
+                            <label class="form-label max-w-32">
+                                Sub Type
+                            </label>
+                            <div class="flex flex-col w-full">
+                                @Html.DropDownListFor(m => m.subtypeid, new SelectList(@ViewBag.VesselSubTypeDropdown, "Value", "Text", "") { }, new { @id = "ddlVesselSubType", @placeholder = "Select ", @class = "form-control select2" })
+                            </div>
+                        </div>
+                        <div style="@showclass" class="assignment flex flex-col1 items-baseline flex-wrap lg:flex-nowrap gap-1.5">
+                            <label class="form-label max-w-32">
+                                Flag
+                            </label>
+                            <div class="flex flex-col w-full">
+                                @Html.DropDownListFor(m => m.flagcountryid, new SelectList(@ViewBag.CountryDropdown, "Value", "Text", "") { }, new { @id = "ddlCountryVessel", @placeholder = "Select ", @class = "form-control select2" })
+                            </div>
+                        </div>
+                        <div style="@showclass" class="assignment flex flex-col1 items-baseline flex-wrap lg:flex-nowrap gap-1.5">
+                            <label class="form-label max-w-32">
+                                Port of Registry
+                            </label>
+                            <div class="flex flex-col w-full">
+                                @Html.DropDownListFor(m => m.portofregistryid, new SelectList(@ViewBag.PortDropdown, "Value", "Text", "") { }, new { @id = "ddlPortVessel", @placeholder = "Select ", @class = "form-control select2" })
+                            </div>
+                        </div>
+                        <h3 style="@showclass" class="assignment card-title">
+                            Dimensions
+                        </h3>
+                        <div style="@showclass" class="assignment flex flex-row gap-4">
+                            <div class="flex grow flex-col items-baseline gap-1.5">
+                                <label class="form-label max-w-32 text-right">
+                                    Gross Tonnage
+                                </label>
+
+                                <div class="flex flex-col w-full">
+                                    @Html.TextBoxFor(m => m.grosstonnage, new { @class = "input", @placeholder = "0.00", @datarequired = "no", @datarequired_message = "Please enter value", @datatype = "number" })
+                                </div>
+                            </div>
+                            <div class="flex grow flex-col items-baseline gap-1.5">
+                                <label class="form-label text-right">
+                                    Net Tonnage
+                                </label>
+
+                                <div class="flex flex-col w-full">
+                                    @Html.TextBoxFor(m => m.nettonnage, new { @class = "input", @placeholder = "0.00", @datarequired = "no", @datarequired_message = "Please enter value", @datatype = "number" })
+                                </div>
+                            </div>
+                            <div class="flex grow flex-col items-baseline gap-1.5">
+                                <label class="form-label text-right">
+                                    Dead Weight
+                                </label>
+
+                                <div class="flex flex-col w-full">
+                                    @Html.TextBoxFor(m => m.deadweight, new { @class = "input", @placeholder = "0.00", @datarequired = "no", @datarequired_message = "Please enter value", @datatype = "number" })
+                                </div>
+                            </div>
+                        </div>
+                        <div style="@showclass" class="assignment flex flex-row gap-4">
+                            <div class="flex grow flex-col items-baseline  gap-1.5">
+                                <label class="form-label max-w-32 text-right">
+                                    Length Overall (M)
+                                </label>
+
+                                <div class="flex flex-col w-full">
+                                    @Html.TextBoxFor(m => m.lengthoverall, new { @class = "input", @placeholder = "0.00", @datarequired = "no", @datarequired_message = "Please enter value", @datatype = "number" })
+                                </div>
+                            </div>
+                            <div class="flex grow flex-col items-baseline gap-1.5">
+                                <label class="form-label max-w-32 text-right">
+                                    Length BP (M)
+                                </label>
+
+                                <div class="flex flex-col w-full">
+                                    @Html.TextBoxFor(m => m.lengthbp, new { @class = "input", @placeholder = "0.00", @datarequired = "no", @datarequired_message = "Please enter value", @datatype = "number" })
+                                </div>
+                            </div>
+                            <div class="flex grow flex-col items-baseline  gap-1.5">
+                                <label class="form-label max-w-32 text-right">
+                                    Breadth (M)
+                                </label>
+
+                                <div class="flex flex-col w-full">
+                                    @Html.TextBoxFor(m => m.breadth, new { @class = "input", @placeholder = "0.00", @datarequired = "no", @datarequired_message = "Please enter value", @datatype = "number" })
+                                </div>
+                            </div>
+                        </div>
+                        <div style="@showclass" class="assignment flex flex-row gap-4">
+
+                            <div class="flex grow flex-col items-baseline gap-1.5">
+                                <label class="form-label max-w-32 text-right">
+                                    Depth (M)
+                                </label>
+
+                                <div class="flex flex-col w-full">
+                                    @Html.TextBoxFor(m => m.depth, new { @class = "input", @placeholder = "0.00", @datarequired = "no", @datarequired_message = "Please enter value", @datatype = "number" })
+                                </div>
+                            </div>
+                            <div class="flex grow flex-col items-baseline  gap-1.5">
+                                <label class="form-label max-w-32 text-right">
+                                    Summer Draft (M)
+                                </label>
+
+                                <div class="flex flex-col w-full">
+                                    @Html.TextBoxFor(m => m.summerdraft, new { @class = "input", @placeholder = "0.00", @datarequired = "no", @datarequired_message = "Please enter value", @datatype = "number" })
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <div style="@showclass" class="assignment flex flex-row gap-4">
+                            <div class="flex grow flex-col items-baseline gap-1.5">
+                                <label class="form-label max-w-32 text-right">
+                                    Engine Power (KW)
+                                </label>
+
+                                <div class="flex flex-col w-full">
+                                    @Html.TextBoxFor(m => m.enginepowerkw, new { @class = "input", @placeholder = "0.00", @datarequired = "no", @datarequired_message = "Please enter value", @datatype = "number" })
+                                </div>
+                            </div>
+                            <div class="flex grow flex-col items-baseline gap-1.5">
+                                <label class="form-label text-right">
+                                    Total Aux Enginer Power (KW)
+                                </label>
+
+                                <div class="flex flex-col w-full">
+                                    @Html.TextBoxFor(m => m.totalauxenginepowerkw, new { @class = "input", @placeholder = "0.00", @datarequired = "no", @datarequired_message = "Please enter value", @datatype = "number" })
+                                </div>
+                            </div>
+                        </div>
+                        <div style="@showclass" class="assignment flex flex-row gap-4">
+                            <div class="flex flex-col w-full">
+                                <label class="switch">
+                                    @Html.CheckBoxFor(m => m.bowthrusters)
+                                    <span class="switch-label">
+                                        Bow Thrusters
+                                    </span>
+                                </label>
+                            </div>
+                            <div class="flex flex-col w-full">
+                                <label class="switch">
+                                    @Html.CheckBoxFor(m => m.sternthrusters)
+                                    <span class="switch-label">
+                                        Stren Thrusters
+                                    </span>
+                                </label>
+                            </div>
+                        </div>
+                        <div style="@showclass" class="assignment flex flex-row gap-4">
+                            <div class="flex flex-col w-full">
+                                <label class="switch">
+                                    @Html.CheckBoxFor(m => m.scrubberinstalled)
+                                    <span class="switch-label">
+                                        Scrubber
+                                    </span>
+                                </label>
+                            </div>
+                            <div class="flex flex-col w-full">
+                                <label class="switch">
+                                    @Html.CheckBoxFor(m => m.soxcompliant)
+                                    <span class="switch-label">
+                                        SoX Control
+                                    </span>
+                                </label>
+                            </div>
+                        </div>
+                        <div style="@showclass" class="assignment flex flex-col items-baseline flex-wrap lg:flex-nowrap gap-1.5">
+                            <label class="form-label max-w-32">
+                                Special Instructions
+                            </label>
+                            <div class="flex flex-col w-full">
+                                @Html.TextAreaFor(m => m.specialinstructions, new { @class = "textarea", @rows = "6", @placeholder = "Enter Special Instructions", @datarequired = "no", @datarequired_message = "Please enter Phone" })
+                            </div>
+                        </div>
+
+
+                        <div></div>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer justify-end">
+            <div class="flex gap-4">
+                <button class="btn btn-light" data-modal-dismiss="true">
+                    Close
+                </button>
+                @if (Common.Decrypt(Model.vassignment.vesselassignmentid.EncryptedValue) == 0)
+                {
+                    <button class="btn btn-primary" id="btn_Vessel" onclick="SaveVessel();" disabled>
+                        Save Vessel
+                    </button>
+                }
+                else
+                {
+                    <button class="btn btn-primary" id="btn_Vessel" onclick="SaveVessel();">
+                        Save Vessel
+                    </button>
+                }
+            </div>
+        </div>
+    </div>
+</div>

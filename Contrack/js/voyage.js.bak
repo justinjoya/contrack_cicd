@@ -1,0 +1,356 @@
+﻿if ($("#ddlPOL").length > 0) {
+    var $ddlPOL = $("#ddlPOL");
+    var placeholder = $ddlPOL.data("placeholder-main");
+    var subplaceholder = $ddlPOL.data("placeholder-sub");
+    $("#ddlPOL").portSelect2({
+        multiline: true,
+        placeholder: placeholder,
+        subtextplaceholder: subplaceholder,
+        icon: flagpath + 'pol.png',
+        /*  minLength: 0,*/
+    });
+}
+if ($("#ddlPOD").length > 0) {
+    var $ddlPOD = $("#ddlPOD");
+    var placeholder = $ddlPOD.data("placeholder-main");
+    var subplaceholder = $ddlPOD.data("placeholder-sub");
+    $("#ddlPOD").portSelect2({
+        multiline: true,
+        placeholder: placeholder,
+        subtextplaceholder: subplaceholder
+    });
+}
+
+
+const dataTableOptionsVoyage = {
+    apiEndpoint: domain + '/TableDisplay/Voyage',
+    pageSize: 10,
+    stateSave: false,
+
+    columns: {
+        expand: {
+            title: "",
+            class: "w-10 text-center",
+<<<<<<< .mine
+            render: (d, row, idx) => {
+||||||| .r432
+            render: (d, row, idx) => {
+                const payload = encodeURIComponent(JSON.stringify(row));
+=======
+            render: () => {
+>>>>>>> .r433
+                return `
+<<<<<<< .mine
+            <button class="btn btn-sm btn-light-primary toggle-row" data-row="1">
+||||||| .r432
+            <button class="btn btn-sm btn-light-primary toggle-row" data-row="${payload}">
+=======
+            <button class="btn btn-sm btn-light-primary toggle-row">
+>>>>>>> .r433
+                <i class="ki-filled ki-down"></i>
+            </button>
+        `;
+            }
+        },
+
+        voyagenumber: {
+            title: "Voyage Number",
+            render: (d, row) => `
+                <span class="font-semibold text-primary">
+                    ${row.VoyageNumber ?? "—"}
+                </span>
+            `
+        },
+
+        vesselname: {
+            title: "Vessel Name",
+            render: (d, row) => `
+                <span>${row.Vesselname?.trim() || "—"}</span>
+            `
+        },
+
+        originport: {
+            title: "Origin",
+            render: (d, row) => {
+                const flag = row.Origincountryflag ? flagpath + row.Origincountryflag : '';
+
+                return `
+            <div class="selected-port multiline flex gap-2 items-center">
+                ${flag ? `<img src="${flag}" class="flag w-6 h-4 rounded object-cover" />` : ''}
+
+                <span class="flex flex-col content leading-tight">
+                    <span class="fw-semibold">${row.OriginPortName || ''}</span>
+                    <small class="text-muted">${row.OriginCountryName || ''}</small>
+                </span>
+            </div>
+        `;
+            }
+        },
+
+        destinationport: {
+            title: "Destination",
+            render: (d, row) => {
+                const flag = row.Destcountryflag ? flagpath + row.Destcountryflag : '';
+
+                return `
+            <div class="selected-port multiline flex gap-2 items-center">
+                ${flag ? `<img src="${flag}" class="flag w-6 h-4 rounded object-cover" />` : ''}
+
+                <span class="flex flex-col content leading-tight">
+                    <span class="fw-semibold">${row.DestPortName || ''}</span>
+                    <small class="text-muted">${row.DestCountryName || ''}</small>
+                </span>
+            </div>
+        `;
+            }
+        },
+
+
+    }
+};
+const dataTableVoyage = new KTDataTable(
+    document.querySelector("#TableVessels"),
+    dataTableOptionsVoyage
+);
+
+(function () {
+
+    const TABLE = "#TableVessels";
+    let expandedOnce = false;
+
+    function getColCount() {
+        return document.querySelectorAll(`${TABLE} thead th`).length || 5;
+    }
+
+    function buildExpandRowHtml(details) {
+        return `
+        <tr class="expand-row">
+            <td colspan="${getColCount()}" class="p-0">
+                <div class="voyage-details-container">
+                    ${buildVoyageDetails(details)}
+                </div>
+            </td>
+        </tr>`;
+    }
+
+    $(TABLE).on("click", ".toggle-row", function () {
+
+        const $btn = $(this);
+        const $row = $btn.closest("tr");
+        const $next = $row.next();
+
+        if ($next.hasClass("expand-row")) {
+            $next.remove();
+            $btn.html('<i class="ki-filled ki-down"></i>');
+            return;
+        }
+<<<<<<< .mine
+
+        let data = {};
+        try {
+            //data = JSON.parse(decodeURIComponent($btn.attr("data-row")));
+            data = dataTableVoyage._data[$btn.attr("data-row")];
+
+        } catch { }
+
+        $row.after(buildExpandRowHtml(data?.VoyageDetails || []));
+||||||| .r432
+
+        let data = {};
+        try {
+            data = JSON.parse(decodeURIComponent($btn.attr("data-row")));
+        } catch { }
+
+        $row.after(buildExpandRowHtml(data?.VoyageDetails || []));
+=======
+        const $dataRows = $row
+            .closest("tbody")
+            .children("tr:not(.expand-row)");
+        const rowIndex = $dataRows.index($row);
+        console.log(" rowIndex:", rowIndex);
+        const data = dataTableVoyage._data?.[rowIndex];
+        console.log(" data from _data:", data);
+        $row.after(buildExpandRowHtml(data.VoyageDetails || []));
+>>>>>>> .r433
+        $btn.html('<i class="ki-filled ki-up"></i>');
+    });
+
+    function autoExpandAll() {
+        if (expandedOnce) return;
+
+        const $buttons = $(`${TABLE} .toggle-row`);
+        if (!$buttons.length) return;
+
+        expandedOnce = true;
+        $buttons.each(function () {
+            $(this).trigger("click");
+        });
+    }
+
+    const observer = new MutationObserver(() => {
+        autoExpandAll();
+    });
+
+    observer.observe(document.querySelector(TABLE), {
+        childList: true,
+        subtree: true
+    });
+
+})();
+
+
+function buildVoyageDetails(details) {
+    if (!details || details.length === 0) {
+        return `<div class="p-4 text-gray-500">No voyage details found.</div>`;
+    }
+
+    let html = `
+        <table class="table table-bordered table-striped voyage-details-table w-100 mt-3 ">
+            <thead class="bg-light fw-bold">
+                <tr>
+                    <th>Port</th>
+                    <th>Terminal</th>
+                    <th>ETA</th>
+                    <th>ETD</th>
+                    <th>ATA</th>
+                    <th>ATD</th>
+                </tr>
+            </thead>
+            <tbody>
+    `;
+
+    const fDate = (val) => {
+        if (!val) return "-";
+
+        const match = val.match(/\d+/);
+        if (!match) return "-";
+
+        const timestamp = parseInt(match[0]);
+        const dt = new Date(timestamp);
+
+        return typeof formatDateOnly === "function"
+            ? formatDateOnly(dt)
+            : dt.toLocaleDateString();
+    };
+
+    details.forEach(d => {
+
+        const flag = d.CountryFlag
+            ? `${flagpath}${d.CountryFlag}`
+            : ``;
+
+        html += `
+            <tr>
+                <td>
+                    <div class="selected-port multiline flex gap-2">
+                       ${flag ? `<img src="${flag}" class="flag w-6 h-4 rounded object-cover" />` : ''}
+
+                        <span class="flex flex-col content">
+                            <span>${d.portname}</span>
+                            <small class="text-muted">${d.CountryName || ""}</small>
+                        </span>
+                    </div>
+                </td>
+
+                <td>${d.Terminal || "-"}</td>
+                <td>${fDate(d.ETA)}</td>
+                <td>${fDate(d.ETD)}</td>
+                <td>${fDate(d.ATA)}</td>
+                <td>${fDate(d.ATD)}</td>
+            </tr>
+        `;
+    });
+
+    html += `
+            </tbody>
+        </table>
+    `;
+
+    return html;
+}
+
+
+
+function OpenVesselModal(refid, agencyid) {
+    blockui();
+    $.ajax({
+        url: '/Voyage/Create',
+        type: 'GET',
+        //contentType: "application/json",
+        success: function (data) {
+            unblockui();
+            $("#modalsection").html(data);
+            $("#modalsection .select2").select2();
+            $("#ddlVesselDetailID").select2();
+
+            if ($("#ddlPOL").length > 0) {
+                var $ddlPOL = $("#ddlPOL");
+                var placeholder = $ddlPOL.data("placeholder-main");
+                var subplaceholder = $ddlPOL.data("placeholder-sub");
+                $("#ddlPOL").portSelect2({
+                    multiline: true,
+                    placeholder: placeholder,
+                    subtextplaceholder: subplaceholder,
+                    icon: flagpath + 'pol.png',
+                    /*  minLength: 0,*/
+                });
+            }
+            if ($("#ddlPOD").length > 0) {
+                var $ddlPOD = $("#ddlPOD");
+                var placeholder = $ddlPOD.data("placeholder-main");
+                var subplaceholder = $ddlPOD.data("placeholder-sub");
+                $("#ddlPOD").portSelect2({
+                    multiline: true,
+                    placeholder: placeholder,
+                    subtextplaceholder: subplaceholder
+                });
+            }
+
+            OpenModal("ModalAddVessel");
+        },
+        error: function (data) {
+            unblockui();
+            ErrorMessage("Error in Getting Vessel")
+        }
+    });
+}
+function SaveVoyage() {
+    var validated = $("#formVessel").Validate();
+    if (validated) {
+        blockui();
+        var formdata = $("#formVessel").serializeArray();
+        $.ajax({
+            url: '/Voyage/SaveVoyage',
+            data: formdata,
+            type: 'POST',
+            dataType: "json",
+            success: function (data) {
+                if (data.ResultId == "1") {
+                    unblockui();
+                    SuccessMessage("Vessel updated successfully!");
+                    CloseModal("ModalAddVessel");
+
+                    setTimeout(
+                        function () {
+                            window.location.href = window.location;
+                        }, 500);
+
+                }
+                else {
+                    unblockui();
+                    ErrorMessage(data.ResultMessage);
+
+                }
+            },
+            error: function (data) {
+                unblockui();
+                ErrorMessage("Cannot Save Vessel!");
+            }
+        });
+    }
+}
+
+
+function ExpandRow(current) {
+    console.log(current);
+}

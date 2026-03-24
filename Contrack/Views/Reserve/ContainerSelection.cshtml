@@ -1,0 +1,293 @@
+﻿@model Contrack.ContainerSelection
+@using Contrack;
+@{
+    ViewBag.Title = "Container Selection";
+    ViewBag.MainManu = "Booking";
+    ViewBag.SubManu = "UnitSelection";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<link href="~/css/Booking/booking.css?v=1.0.2" rel="stylesheet" />
+<link href="~/css/Booking/allocation.css?v=1.0.0" rel="stylesheet" />
+
+@Html.Partial("_BookingHeader", Model.Booking.bookinguuid)
+@using (Html.BeginForm("ContainerSelection", "Reserve", FormMethod.Post, new { @id = "frmContainerSelection" }))
+{
+    @Html.HiddenFor(m => m.UniqueKey)
+    @Html.HiddenFor(m => m.Booking.bookinguuid, new { @id = "hdn_bookinguuid" })
+    @Html.HiddenFor(m => m.Booking.bookingid.EncryptedValue, new { @id = "hdn_bookingid" })
+    <div class="container-fluid nobottom">
+        <div class="booking-section  flex flex-col">
+            <div class="booking-info">
+                <div class="booking-max-width">
+                    <div class="booking-content">
+                        <div class="page-header-holder">
+                            <span class="head">Unit Assignment</span>
+                            <span class="subhead">Assign actual container units to this order</span>
+                        </div>
+                        <div class="left-section">
+                            <div class="allocation-section">
+                                @if (Model.Selections.Count == 0)
+                                {
+                                    <div class="w-full">
+                                        @Html.Partial("_EmptyTable", new EmptyTable
+                                   {
+                                       Heading = "No containers available to allocate",
+                                       SubHead = "Add a container for the required model in required location.",
+                                       Icon = "<img src='/assets/img/container-empty.svg'/>",
+                                   })
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div class="allocation-cards">
+                                        @for (int i = 0; i < Model.Selections.Count; i++)
+                                        {
+                                            <div class="allocation-card location">
+                                                @Html.HiddenFor(m => m.Selections[i].LocationId.EncryptedValue, new { @class = "LocationId" })
+                                                @Html.HiddenFor(m => m.Selections[i].LocationUuid, new { @class = "LocationUuid" })
+                                                <div class="allocation-card-header">
+
+                                                    <img src="~/assets/Flags/@Model.Selections[i].CountryFlag" />
+                                                    <span class="flex justify-between w-full">
+                                                        <span class="port-group">
+
+                                                            <span class="port-name">
+                                                                @Model.Selections[i].LocationName (@Model.Selections[i].LocationType)
+                                                            </span>
+                                                            <span class="port-country">
+                                                                <span class="port-country-name">
+                                                                    @Model.Selections[i].PortName
+                                                                </span>
+                                                                <span class="dot"></span>
+                                                                <span class="port-terminal">
+                                                                    @Model.Selections[i].CountryName
+                                                                </span>
+                                                            </span>
+
+                                                        </span>
+                                                        <button type="button" class="btn btn-sm original  btn-light" onclick="ExpandCollapseAll(this);">
+                                                            Expand/Collapse
+                                                        </button>
+                                                    </span>
+
+                                                </div>
+                                                <div class="selection-line">
+                                                    <img src="~/assets/icons/line-combined.svg" />
+                                                </div>
+                                                <div class="allocation-card-body selection">
+                                                    @for (int j = 0; j < Model.Selections[i].Details.Count; j++)
+                                                    {
+                                                        var selectedcount = Model.Selections[i].Details[j].Containers.Count(x => x.Allotted);
+                                                        var requiredcount = Model.Selections[i].Details[j].RequiredCount;
+                                                        <div class="selection-model-group contmodel model-group-@Model.Selections[i].Details[j].ContainerModelId.EncryptedValue">
+                                                            @Html.HiddenFor(m => m.Selections[i].Details[j].ContainerModelUuid, new { @class = "ContainerModelUuid" })
+                                                            @Html.HiddenFor(m => m.Selections[i].Details[j].RequiredCount, new { @class = "RequiredCount" })
+                                                            <div class="cont-model-header">
+                                                                <div class="name">
+                                                                    <button type="button" class="btn btn-sm btn-icon original expandcollapse btn-light" onclick="ExpandCollapseHeader(this)">
+                                                                        <i class="ki-filled ki-minus iconmain"></i>
+                                                                    </button>
+                                                                    <div class="cont-model-text">
+                                                                        @Model.Selections[i].Details[j].ContainerSizeName @Model.Selections[i].Details[j].ContainerTypeName (@Model.Selections[i].Details[j].ContainerModelIso)
+                                                                    </div>
+                                                                    <span class="dot"></span>
+                                                                    <div class="cont-model-required">
+                                                                        <span class="selected">@Model.Selections[i].Details[j].Containers.Count(x => x.Allotted)</span> of @Model.Selections[i].Details[j].RequiredCount Selected
+                                                                    </div>
+                                                                </div>
+                                                                <div class="">
+                                                                    <label class="input input-md">
+                                                                        <i class="ki-filled ki-magnifier"></i>
+                                                                        <input class="searchcontainer" placeholder="Search Container" type="text" />
+                                                                    </label>
+                                                                </div>
+                                                            </div>
+                                                            <div class="grid lg:grid-cols-4 xl:grid-cols-5 gap-3 pb-7">
+                                                                @for (int k = 0; k < Model.Selections[i].Details[j].Containers.Count; k++)
+                                                                {
+                                                                    string css = "";
+                                                                    string cssbooked = "";
+                                                                    bool checked_item = false;
+                                                                    bool disabled_item = false;
+                                                                    int absolutedays = Math.Abs(Model.Selections[i].Details[j].Containers[k].LastBookingDate.NumericValue);
+                                                                    if (absolutedays > 90)
+                                                                    {
+                                                                        css = "red";
+                                                                    }
+                                                                    else if (absolutedays > 30)
+                                                                    {
+                                                                        css = "yellow";
+                                                                    }
+                                                                    if (Model.Selections[i].Details[j].Containers[k].Allotted)
+                                                                    {
+                                                                        cssbooked = "allotted";
+                                                                        checked_item = true;
+                                                                    }
+                                                                    else if (Model.Selections[i].Details[j].Containers[k].Locked)
+                                                                    {
+                                                                        cssbooked = "locked";
+                                                                        disabled_item = true;
+                                                                    }
+                                                                    else if (selectedcount >= requiredcount)
+                                                                    {
+                                                                        disabled_item = true;
+                                                                    }
+
+                                                                    <label class="custom-selection-check">
+                                                                        @Html.HiddenFor(m => m.Selections[i].Details[j].Containers[k].ContainerID.EncryptedValue, new { @class = "ContainerID" })
+                                                                        <input @(checked_item ? "checked" : "") @(disabled_item ? "disabled" : "") id="chk_@Model.Selections[i].Details[j].Containers[k].ContainerID.EncryptedValue" name="Selections[@i].Details[@j].Containers[@k].Selected" class="selectioncheckbox" data-model="@Model.Selections[i].Details[j].ContainerModelId.EncryptedValue" type="checkbox" value="true" />
+                                                                        <span class="equipname @cssbooked">
+                                                                            <input name="Selections[@i].Details[@j].Containers[@k].Selected" type="hidden" value="false" />
+                                                                            <img src="~/assets/img/tick-circle-green.svg" class="icons checked">
+                                                                            <img src="~/assets/img/tick-circle-wh.svg" class="icons empty">
+                                                                            <img src="~/assets/img/tick-circle-inter.svg" class="icons inter">
+                                                                            <img src="~/assets/img/tick-circle-locked.svg" class="icons lock">
+
+                                                                            <span class="selection-text-group">
+                                                                                <span class="inner">@Model.Selections[i].Details[j].Containers[k].EquipmentNo @*<span class="remaining">(@Model.Selections[i].Details[j].RequiredCount)</span>*@</span>
+                                                                                <span class="time @css">@Model.Selections[i].Details[j].Containers[k].LastBookingDate.SubText</span>
+                                                                            </span>
+                                                                        </span>
+                                                                    </label>
+
+                                                                }
+                                                            </div>
+                                                        </div>
+                                                    }
+
+
+                                                </div>
+                                            </div>
+                                        }
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            @{
+                var totalselected = Model.Selections.Sum(x => x.Details.Sum(y => y.Containers.Sum(z => z.Allotted ? 1 : 0)));
+                var totalrequiredcount = Model.Selections.Sum(x => x.Details.Sum(y => y.RequiredCount));
+                var percentageall = totalrequiredcount == 0 ? 0 : ((decimal)totalselected / totalrequiredcount) * 100;
+                string cssclassall = "";
+                if (percentageall >= 75)
+                {
+                    cssclassall = "progress-success";
+                }
+                else if (percentageall >= 50)
+                {
+                    cssclassall = "progress-warning";
+                }
+                else
+                {
+                    cssclassall = "progress-danger";
+                }
+            }
+
+            <div class="booking-summary">
+                <div class="summary-content">
+                    <div class="selection-group-summary">
+                        <div class="gobal-progress">
+                            <div class="selection-progress-text">
+                                <span class="text">Progress</span>
+                                <span class="counts">
+                                    <span class="selected" id="selectedall">@totalselected</span>
+                                    <span class="total">/</span>
+                                    <span class="total" id="requiredall">@Model.Selections.Sum(x => x.Details.Sum(y => y.RequiredCount))</span>
+
+                                </span>
+                            </div>
+                            <div class="selection-progress">
+                                <div class="progress @cssclassall">
+                                    <div class="progress-bar" id="progressall" style="width: @percentageall%"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="location-summary">
+                            @for (int i = 0; i < Model.Selections.Count; i++)
+                            {
+                                <div class="location">
+                                    <div class="name">@Model.Selections[i].LocationName</div>
+                                    @for (int j = 0; j < Model.Selections[i].Details.Count; j++)
+                                    {
+                                        string cssclass = "";
+                                        var selectedcount = Model.Selections[i].Details[j].Containers.Count(x => x.Allotted);
+                                        var totalcount = Model.Selections[i].Details[j].RequiredCount;
+                                        var percentage = ((decimal)selectedcount / totalcount) * 100;
+
+                                        if (percentage >= 75)
+                                        {
+                                            cssclass = "progress-success";
+                                        }
+                                        else if (percentage >= 50)
+                                        {
+                                            cssclass = "progress-warning";
+                                        }
+                                        else
+                                        {
+                                            cssclass = "progress-danger";
+                                        }
+
+                                        <div class="model">
+                                            <div class="model-text">
+                                                <div class="model-name">@Model.Selections[i].Details[j].ContainerSizeName @Model.Selections[i].Details[j].ContainerTypeName (@Model.Selections[i].Details[j].ContainerModelIso)</div>
+                                                <span class="counts">
+                                                    <span class="selected" id="selected_@Model.Selections[i].Details[j].ContainerModelId.EncryptedValue">@selectedcount</span>
+                                                    <span class="total">/</span>
+                                                    <span class="total" id="required_@Model.Selections[i].Details[j].ContainerModelId.EncryptedValue">@Model.Selections[i].Details[j].RequiredCount</span>
+
+                                                </span>
+                                            </div>
+                                            <div class="progress @cssclass">
+                                                <div class="progress-bar" id="progress_@Model.Selections[i].Details[j].ContainerModelId.EncryptedValue" style="width: @percentage%"></div>
+                                            </div>
+                                        </div>
+                                    }
+
+
+
+                                </div>
+                            }
+
+
+                        </div>
+                    </div>
+                </div>
+                <div class="summary-footer">
+                    <div class="flex flex-col justify-center gap-3">
+                        @*<div class="warning-box">
+                                <img src="~/assets/img/info-circle.svg" class="warn-icon" />
+                                <p class="warn-text">
+                                    This customer has <strong>5 unpaid invoices</strong> with Low
+                                    <strong>conversion Rate of 20%</strong>
+                                </p>
+                            </div>*@
+                        <button type="button" class="btn btn-gray actionbutton">
+                            Close
+                        </button>
+                        @*<button type="submit" class="btn btn-primary actionbutton">
+                                Next: Location
+                            </button>*@
+                        <div class="flex gap-2 justify-between">
+                            <button type="submit" name="saveaction" value="Confirm" class="btn btn-dark actionbutton" id="btnCustomerSelection" style="flex:1;">
+                                Confirm
+                            </button>
+                            <button type="submit" class="btn btn-primary actionbutton" id="btnCustomerSelection" style="flex:1;">
+                                Save Draft
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+}
+@section PageScripts {
+    <script src="~/Scripts/jquery.signalR-2.4.3.min.js"></script>
+    <!-- 3. AUTO-GENERATED HUB PROXIES -->
+    <script src="/signalr/hubs"></script>
+    <script src="~/js/ContainerBooking/selection.js?v=1.0.2"></script>
+    <script src="~/js/ContainerBooking/signalRcontainerallocation.js?v=1.0.0"></script>
+}

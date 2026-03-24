@@ -1,0 +1,571 @@
+﻿@using Contrack;
+@model Contrack.VoyageDetailDTO
+@{
+    ViewBag.Title = "Container List";
+    ViewBag.MainManu = "Container";
+    ViewBag.SubManu = "";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    //var allPorts = Contrack.Dropdowns.GetPortDropdown();
+
+    //string selPort = ViewBag.FilterPort as string ?? "";
+
+    //var mainGrouping = Model
+    //    .GroupBy(x => x.location.CountryID.EncryptedValue)
+    //    .ToList();
+
+    //// Helper to get selected ports from filter string
+    //var selectedPortsList = selPort.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries).ToList();
+
+    // Helper to get selected location types from filter string
+}
+
+<link href="~/css/Booking/booking.css?v=1.0.2" rel="stylesheet" />
+<link href="~/css/Container/containerBooking.css?v=2.0.1" rel="stylesheet" />
+<link href="~/css/Voyage/voyage.css?v=2.0.1" rel="stylesheet" />
+
+
+
+<div class="breadscrumb-holder">
+    <!-- Container -->
+    <div class="container-fluid flex items-center justify-between flex-wrap gap-5">
+        <div class="flex flex-col justify-center items-start flex-wrap gap-1.5">
+            <div class="flex items-center gap-1 text-sm font-normal">
+                <span class="text-gray-700">
+                    Home
+                </span>
+                <span class="text-gray-400 text-sm">
+                    /
+                </span>
+                <span class="text-gray-700">
+                    Container
+                </span>
+                <span class="text-gray-400 text-sm">
+                    /
+                </span>
+                <span class="text-gray-900">
+                    Create  Voyage
+                </span>
+            </div>
+            <h1 class="page-header">
+                Create New Voyage
+            </h1>
+
+        </div>
+
+    </div>
+    <!-- End of Container -->
+</div>
+<div class="container-fluid">
+    <img class="special-line no-bottom" src="~/assets/icons/line-combined.svg" />
+</div>
+<div class="container-fluid">
+    <div class="booking-section">
+        <div class="booking-info">
+
+            <div class="booking-content">
+                <div class="left-section1">
+                    <div class="shipper-select-box mt-5">
+                        <div class="grid grid-cols-2 gap-6 column-grid">
+                            <div class="flex flex-col gap-1.5 page-customer">
+                                <label class="form-label max-w-32">
+                                    Port <span class="text-danger ps-2">*</span>
+                                </label>
+
+                                <div class="flex flex-col w-full">
+                                    @Html.DropDownListFor(m => m.PortId.EncryptedValue, (IEnumerable<SelectListItem>)ViewBag.PortDropdown, "Select Port", new
+                                    {
+                                        @class = "select2",
+                                        @id = "ddlPort",
+                                        @datarequired = "yes",
+                                        @datarequired_message = "Please select Port",
+                                        @data_dropdown_parent = "#ModalAddLocation",
+                                        @data_placeholder_main = "Port of Discharge",
+                                        @data_placeholder_sub = "Select POD",
+                                        @data_placeholder_icon = "ki-outline ki-check-circle"
+                                    })
+                                </div>
+                            </div>
+                        </div>
+                        @*<div class="filter-section">
+                                <div class="filter-label">Port</div>
+                                <div class="controls">
+                                    <select id="ddlFilterPort" class="select select-md w-full" multiple="multiple">
+                                        <option value="">All Ports</option>
+                                        @foreach (var countryGroup in mainGrouping)
+                                        {
+                                            var countryId = countryGroup.Key;
+                                            var countryItem = allCountries.FirstOrDefault(c => c.Value == countryId);
+                                            string optGroupLabel = countryItem != null ? countryItem.Text : "null##Unknown Country";
+
+                                            <optgroup label="@optGroupLabel">
+                                                @foreach (var portGroup in countryGroup.GroupBy(x => x.location.PortID.EncryptedValue).ToList())
+                                                {
+                                                    var portId = portGroup.Key;
+                                                    var portItem = allPorts.FirstOrDefault(p => p.Value == portId);
+
+                                                    if (portItem != null)
+                                                    {
+                                                        <option value="@portItem.Value" @(selectedPortsList.Contains(portItem.Value) ? "selected" : "")>@portItem.Text</option>
+                                                    }
+                                                }
+                                            </optgroup>
+                                        }
+                                    </select>
+                                </div>
+                            </div>*@
+
+
+                        <div class="grid grid-cols-2 gap-6 column-grid">
+                            <div class="flex flex-col gap-1.5 page-customer">
+                                <label class="form-label max-w-32">
+                                    Voyage Number <span class="text-danger ps-2">*</span>
+                                </label>
+
+                                <div class="relative w-full">
+                                    <span class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 icon-space">
+                                        <i class="ki-filled ki-user text-gray-500"></i>
+                                    </span>
+                                    <input type="text" class="input customer-input" placeholder="e.g.acb-XYT" maxlength="75">
+                                </div>
+                            </div>
+
+                            <div class="flex flex-col gap-1.5 page-customer">
+                                <label class="form-label max-w-32">
+                                    Vessel Name <span class="text-danger ps-2">*</span>
+                                </label>
+
+                                <div class="relative w-full">
+                                    <span class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 icon-space">
+                                        <i class="ki-filled ki-user text-gray-500"></i>
+                                    </span>
+                                    <input type="text" class="input customer-input" placeholder="e.g.Titanic" maxlength="75">
+                                </div>
+                            </div>
+
+
+
+                        </div>
+
+                        <div class="column-grid">
+                            <div class="flex flex-col items-baseline lg:flex-nowrap page-customer">
+
+                                <label class="form-label max-w-32">
+                                    Comment <span class="text-danger ps-2">*</span>
+                                </label>
+
+                                <div class="relative w-full">
+                                    <i class="ki-outline ki-geolocation absolute left-4 top-3 text-gray-500 textarea-space"></i>
+                                    <textarea class="textarea customer-input pl-10" rows="3" placeholder="Enter comment"></textarea>
+                                </div>
+
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="shipper-select-box mt-5 ">
+
+                        <div class="search-wrapper">
+                            @*<i class="ki-filled ki-magnifier"></i>*@
+                            <input type="text" placeholder="Intermediate Port" class="search-input" />
+                        </div>
+                        <div class="w-full max-w-5xl mx-auto bg-white cargo-cards">
+
+                            <div class="grid grid-cols-2 gap-6">
+                                <div class="flex flex-col gap-1.5 page-customer">
+                                    <label class="form-label max-w-32">Port/Country Name </label>
+
+                                    <div class="relative w-full">
+                                        <span class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 icon-space">
+                                            <i class="ki-outline ki-geolocation text-gray-500"></i>
+
+                                        </span>
+                                        <input type="text" class="input customer-input pl-12" placeholder="e.g. Chennai Airport" maxlength="75" />
+                                    </div>
+                                </div>
+
+                                <div class="flex flex-col gap-1.5 page-customer">
+                                    <label class="form-label max-w-32">Terminal</label>
+
+                                    <div class="relative w-full">
+                                        <span class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 icon-space">
+                                            <i class="ki-filled ki-lock text-gray-500"></i>
+                                        </span>
+                                        <input type="text" class="input customer-input pl-12" placeholder="e.g.Chennai airport" maxlength="75" />
+                                    </div>
+                                </div>
+
+                                <div class="w-full">
+                                    <div class="flex flex-col items-baseline flex-wrap lg:flex-nowrap gap-2.5">
+                                        <label class="form-label flex items-center gap-1 max-w-56">ETA</label>
+
+                                        <div class="input-group w-full">
+                                            <input type="text" id="ExpectedStuffingDate"
+                                                   class="datepicker-here input"
+                                                   placeholder="e.g. 10/25/2025"
+                                                   data_clear="btnClearStuffingDate"
+                                                   data_trigger="btnStuffingDate"
+                                                   datarequired="yes"
+                                                   datarequired_message="Please enter ETA"
+                                                   readonly />
+
+                                            <button type="button" id="btnStuffingDate" class="btn btn-icon btn-outline btn-icon-lg btn-light">
+                                                <i class="ki-filled ki-calendar-2"></i>
+                                            </button>
+
+                                            <button type="button" id="btnClearStuffingDate" class="btn btn-danger1 btn-icon btn-outline btn-icon-lg btn-light">
+                                                <i class="ki-filled ki-cross"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="w-full">
+                                    <div class="flex flex-col items-baseline flex-wrap lg:flex-nowrap gap-2.5">
+                                        <label class="form-label flex items-center gap-1 max-w-56">ETD </label>
+
+                                        <div class="input-group w-full">
+                                            <input type="text" id="ExpectedStuffingDate"
+                                                   class="datepicker-here input"
+                                                   placeholder="e.g. 10/25/2025"
+                                                   data_clear="btnClearStuffingDate"
+                                                   data_trigger="btnStuffingDate"
+                                                   datarequired="yes"
+                                                   datarequired_message="Please enter ETD"
+                                                   readonly />
+
+                                            <button type="button" id="btnStuffingDate" class="btn btn-icon btn-outline btn-icon-lg btn-light">
+                                                <i class="ki-filled ki-calendar-2"></i>
+                                            </button>
+
+                                            <button type="button" id="btnClearStuffingDate" class="btn btn-danger1 btn-icon btn-outline btn-icon-lg btn-light">
+                                                <i class="ki-filled ki-cross"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="w-full">
+                                    <div class="flex flex-col items-baseline flex-wrap lg:flex-nowrap gap-2.5">
+                                        <label class="form-label flex items-center gap-1 max-w-56">Cutoff Deadline </label>
+
+                                        <div class="input-group w-full">
+                                            <input type="text" id="ExpectedStuffingDate"
+                                                   class="datepicker-here input"
+                                                   placeholder="e.g. 10/25/2025"
+                                                   data_clear="btnClearStuffingDate"
+                                                   data_trigger="btnStuffingDate"
+                                                   datarequired="yes"
+                                                   datarequired_message="Please enter Cutoff Deadline"
+                                                   readonly />
+
+                                            <button type="button" id="btnStuffingDate" class="btn btn-icon btn-outline btn-icon-lg btn-light">
+                                                <i class="ki-filled ki-calendar-2"></i>
+                                            </button>
+
+                                            <button type="button" id="btnClearStuffingDate" class="btn btn-danger1 btn-icon btn-outline btn-icon-lg btn-light">
+                                                <i class="ki-filled ki-cross"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="w-full">
+                                    <div class="flex flex-col items-baseline flex-wrap lg:flex-nowrap gap-2.5">
+                                        <label class="form-label flex items-center gap-1 max-w-56">ATA </label>
+
+                                        <div class="input-group w-full">
+                                            <input type="text" id="ExpectedStuffingDate"
+                                                   class="datepicker-here input"
+                                                   placeholder="e.g. 10/25/2025"
+                                                   data_clear="btnClearStuffingDate"
+                                                   data_trigger="btnStuffingDate"
+                                                   datarequired="yes"
+                                                   datarequired_message="Please enter ATA"
+                                                   readonly />
+
+                                            <button type="button" id="btnStuffingDate" class="btn btn-icon btn-outline btn-icon-lg btn-light">
+                                                <i class="ki-filled ki-calendar-2"></i>
+                                            </button>
+
+                                            <button type="button" id="btnClearStuffingDate" class="btn btn-danger1 btn-icon btn-outline btn-icon-lg btn-light">
+                                                <i class="ki-filled ki-cross"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="w-full">
+                                    <div class="flex flex-col items-baseline flex-wrap lg:flex-nowrap gap-2.5">
+                                        <label class="form-label flex items-center gap-1 max-w-56">ATD </label>
+
+                                        <div class="input-group w-full">
+                                            <input type="text" id="ExpectedStuffingDate"
+                                                   class="datepicker-here input"
+                                                   placeholder="e.g. 10/25/2025"
+                                                   data_clear="btnClearStuffingDate"
+                                                   data_trigger="btnStuffingDate"
+                                                   datarequired="yes"
+                                                   datarequired_message="Please enter ATD"
+                                                   readonly />
+
+                                            <button type="button" id="btnStuffingDate" class="btn btn-icon btn-outline btn-icon-lg btn-light">
+                                                <i class="ki-filled ki-calendar-2"></i>
+                                            </button>
+
+                                            <button type="button" id="btnClearStuffingDate" class="btn btn-danger1 btn-icon btn-outline btn-icon-lg btn-light">
+                                                <i class="ki-filled ki-cross"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="flex flex-col gap-1.5 page-customer">
+                                    <label class="form-label max-w-32">Departure Captain </label>
+
+                                    <div class="relative w-full">
+                                        <span class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 icon-space">
+                                            <i class="ki-outline ki-geolocation text-gray-500"></i>
+                                        </span>
+                                        <input type="text" class="input customer-input pl-12" placeholder="Enter Departure Captain" maxlength="75" />
+                                    </div>
+                                </div>
+
+                                <div class="flex flex-col gap-1.5 page-customer">
+                                    <label class="form-label max-w-32">Arrival Captain </label>
+
+                                    <div class="relative w-full">
+                                        <span class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 icon-space">
+                                            <i class="ki-outline ki-geolocation text-gray-500"></i>
+                                        </span>
+                                        <input type="text" class="input customer-input pl-12" placeholder="Enter Arrival Captain" maxlength="75" />
+                                    </div>
+                                </div>
+
+                            </div>
+                            <div class="mb-6 mt-2">
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Status</label>
+
+                                <div class="ownership flex items-center gap-3">
+                                    <label class="type-option">
+                                        <input type="radio" name="ownType" checked />
+                                        <span class="chip">Expected</span>
+                                        <i class="ki-filled ki-check-circle fs-5 tick-icon"></i>
+                                    </label>
+
+                                    <label class="type-option">
+                                        <input type="radio" name="ownType" />
+                                        <span class="chip">Arrived</span>
+                                        <i class="ki-filled ki-check-circle fs-5 tick-icon"></i>
+                                    </label>
+
+                                    <label class="type-option">
+                                        <input type="radio" name="ownType" />
+                                        <span class="chip">Sailed</span>
+                                        <i class="ki-filled ki-check-circle fs-5 tick-icon"></i>
+                                    </label>
+
+                                    <label class="type-option">
+                                        <input type="radio" name="ownType" />
+                                        <span class="chip">Cancelled</span>
+                                        <i class="ki-filled ki-check-circle fs-5 tick-icon"></i>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <img class="bord-img mt-5" src="~/assets/img/Vector 197.svg" />
+                            <div class="mt-6 flex justify-end">
+                                <button class="save-btn flex items-center gap-2">
+                                    <i class="ki-filled ki-check-circle fs-5"></i>
+                                    Save
+                                </button>
+                            </div>
+
+
+                        </div>
+                    </div>
+
+
+
+                </div>
+
+            </div>
+
+        </div>
+        <!-- Persistent Booking Summary on the side -->
+        <div class="right-booking-summary">
+            <div class="summary-content">
+                <div class="right-summary">
+                    <div class="details-section">
+                        <span class="summary-title">Details:</span>
+
+                        <div class="details-row">
+                            <div class="details-col pol-line">
+                                <label class="details-label">POL</label>
+                                <div class="details-title">Shanghai, China</div>
+                            </div>
+                            <div class="route-arrow"></div>
+
+                            <div class="details-col">
+                                <label class="details-label">POD</label>
+                                <div class="details-title">Los Angeles, USA</div>
+                            </div>
+                        </div>
+                        <div class="voyage-box">
+                            <div class="voyage-left">CPG - VOY - 01</div>
+                            <div class="voyage-left">My Sea Wanderer</div>
+                        </div>
+
+                        <img class="border-img" src="~/assets/img/Vector 197.svg" />
+
+                        <div class="intermediate-title">Intermediate Ports</div>
+
+
+                        <div class="timeline-item">
+                            <div class="timeline-line"></div>
+                            <div class="timeline-icon">
+                                <i class="ki-outline ki-geolocation text-gray-500 icon-circle"></i>
+
+                            </div>
+
+                            <div class="timeline-content">
+                                <div class="port-header">
+                                    <div class="port-name">Chennai Port</div>
+                                    <div class="port-terminal">Terminal A</div>
+                                </div>
+
+                                <div class="port-sub-row">
+                                    <div class="port-sub">John Wick • Tony Stark</div>
+
+                                    <div class="status-row arrived">
+                                        <span class="status-dot"></span>
+                                        Arrived
+                                    </div>
+                                </div>
+
+
+                                <div class="date-box-container">
+                                    <div class="date-box">
+                                        <span class="date-label">ETD:</span>
+                                        <span>15 Oct 2024</span>
+                                        <span class="separator">–</span>
+                                        <span class="date-label">ETA:</span>
+                                        <span>5 Nov 2024</span>
+                                    </div>
+
+                                    <div class="date-box">
+                                        <span class="date-label">ATD:</span>
+                                        <span>15 Oct 2024</span>
+                                        <span class="separator">–</span>
+                                        <span class="date-label">ATA:</span>
+                                        <span>5 Nov 2024</span>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-line"></div>
+                            <div class="timeline-icon">
+                                <i class="ki-outline ki-geolocation text-gray-500 icon-circle"></i>
+
+                            </div>
+
+                            <div class="timeline-content">
+                                <div class="port-header">
+                                    <div class="port-name">Chennai Port</div>
+                                    <div class="port-terminal">Terminal A</div>
+                                </div>
+
+                                <div class="port-sub-row">
+                                    <div class="port-sub">John Wick • Tony Stark</div>
+
+                                    <div class="status-row expected">
+                                        <span class="status-dot"></span>
+                                        Expected
+                                    </div>
+                                </div>
+
+
+                                <div class="date-box-container">
+                                    <div class="date-box">
+                                        <span class="date-label">ETD:</span>
+                                        <span>15 Oct 2024</span>
+                                        <span class="separator">–</span>
+                                        <span class="date-label">ETA:</span>
+                                        <span>5 Nov 2024</span>
+                                    </div>
+
+                                    <div class="date-box">
+                                        <span class="date-label">ATD:</span>
+                                        <span>15 Oct 2024</span>
+                                        <span class="separator">–</span>
+                                        <span class="date-label">ATA:</span>
+                                        <span>5 Nov 2024</span>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+
+                        <div class="timeline-item">
+                            <div class="timeline-line"></div>
+                            <div class="timeline-icon">
+                                <i class="ki-outline ki-geolocation text-gray-500 icon-circle"></i>
+
+                            </div>
+
+                            <div class="timeline-content">
+                                <div class="port-header">
+                                    <div class="port-name">Chennai Port</div>
+                                    <div class="port-terminal">Terminal A</div>
+                                </div>
+
+                                <div class="port-sub-row">
+                                    <div class="port-sub">John Wick • Tony Stark</div>
+
+                                    <div class="status-row cancelled">
+                                        <span class="status-dot"></span>
+                                        Cancelled
+                                    </div>
+                                </div>
+
+
+                                <div class="date-box-container">
+                                    <div class="date-box">
+                                        <span class="date-label">ETD:</span>
+                                        <span>15 Oct 2024</span>
+                                        <span class="separator">–</span>
+                                        <span class="date-label">ETA:</span>
+                                        <span>5 Nov 2024</span>
+                                    </div>
+
+                                    <div class="date-box">
+                                        <span class="date-label">ATD:</span>
+                                        <span>15 Oct 2024</span>
+                                        <span class="separator">–</span>
+                                        <span class="date-label">ATA:</span>
+                                        <span>5 Nov 2024</span>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <img class="border-img" src="~/assets/img/Vector 197.svg" />
+                </div>
+            </div>
+            <div class="summary-footer">
+                <div class="flex flex-col justify-center">
+
+                    <button class="btn btn-md btn-primary text-md text-center">
+                        Finish & Save
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+@section PageScripts
+{
+
+}

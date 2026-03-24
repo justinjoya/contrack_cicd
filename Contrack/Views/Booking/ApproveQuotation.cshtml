@@ -1,0 +1,270 @@
+﻿@using Contrack
+@model BookingQuotation
+@{
+    ViewBag.Title = "Booking Quotation";
+    ViewBag.MainManu = "Booking";
+    ViewBag.SubManu = "Quote";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<style>
+    .ck-editor__editable {
+        min-height: 300px;
+    }
+
+    .bottom-buffer {
+        padding-bottom: 50px;
+    }
+
+    .input:not(input) input {
+        color: var(--tw-gray-800);
+    }
+</style>
+<link href="~/css/Booking/booking.css?v=1.0.2" rel="stylesheet" />
+<link href="~/css/Container/containerBooking.css?v=2.0.1" rel="stylesheet" />
+@using (Html.BeginForm("Create", "Booking", FormMethod.Post, new { id = "frmCreateQuotation" }))
+{
+    @Html.Partial("_BookingHeader", Model.booking.bookinguuid)
+
+    <div class="container-fluid nobottom">
+        <div class="booking-section full-width flex flex-col">
+            <div class="booking-info">
+                @*@Html.Partial("_Stepper", 3)*@
+                <div class="booking-max-width">
+                    <div class="booking-content">
+                        <div class="flex justify-between items-center pb-6">
+                            <div class="page-header-holder" style="padding-bottom:0">
+                                <span class="head">Approve Quotation</span>
+                                <span class="subhead">
+                                    Review and approve submitted quotation.
+                                </span>
+
+                            </div>
+
+                        </div>
+                        <div class="left-section page-header-holder">
+                            <div id="cargo_placeholder">
+                                @Html.Partial("_Comment", Model.comments)
+                                @Html.Partial("_ModalConversations", Model.comments)
+                                <div class="w-full flex flex-col bottom-buffer">
+                                    <main class="flex flex-col grow" id="content">
+                                        @Html.Partial("_BookingInfo", Model.booking)
+                                        @Html.HiddenFor(m => m.quotation.quotationid.EncryptedValue)
+                                        @Html.HiddenFor(m => m.quotation.quotationuuid, new { id = "hdn_quotationuuid" })
+                                        @Html.HiddenFor(m => m.quotation.bookinguuid)
+                                        @Html.HiddenFor(m => m.quotation.quotationno)
+                                        <div class="card mt-4 cardoverride overflow-hidden min-w-full">
+                                            <div class="card-header grey-small-header px-5 flex" id="basic_settings">
+                                                <h3 class="card-title text-md flex gap-3 align-items-center">
+                                                    Quotation Details
+                                                </h3>
+                                            </div>
+                                            <div class="card-body px-5 flex flex-col gap-4">
+                                                @*bg-border-greenshadow*@
+                                                <div class=" grid lg:grid-cols-5 gap-4">
+                                                    <div class="w-full">
+                                                        <div class="flex flex-col gap-0.5">
+                                                            <span class="text-xs font-normal text-gray-700">
+                                                                Quotation No
+                                                            </span>
+                                                            <span data-tooltip='#tooltip_AgencyName' class="ellipsis-full text-sm font-medium text-primary hover:text-primary-actives">
+                                                                @Model.quotation.quotationno
+                                                            </span>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="w-full">
+                                                        <div class="flex flex-col gap-0.5">
+                                                            <span class="text-xs font-normal text-gray-700">
+                                                                Quotation Date
+                                                            </span>
+                                                            <span class="text-md font-medium text-gray-900 hover:text-primary-actives">
+                                                                @Model.quotation.quotedate.Text
+                                                            </span>
+
+                                                        </div>
+                                                    </div>
+                                                    <div class="w-full">
+                                                        <div class="flex flex-col gap-0.5">
+                                                            <span class="text-xs font-normal text-gray-700">
+                                                                Expiry Date
+                                                            </span>
+                                                            <span class="text-md font-medium text-gray-900 hover:text-primary-actives">
+                                                                @Model.quotation.expirydate.Text
+                                                            </span>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="w-full">
+                                                        <div class="flex flex-col gap-0.5">
+                                                            <span class="text-xs font-normal text-gray-700">
+                                                                Currency
+                                                            </span>
+                                                            <span class="ellipsis-full text-md font-medium text-gray-900 hover:text-primary-actives">
+                                                                @Model.quotation.currency
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                    <div class="w-full">
+                                                        <div class="flex flex-col gap-0.5">
+                                                            <span class="text-xs font-normal text-gray-700">
+                                                                Status
+                                                            </span>
+                                                            <span>
+                                                                <span data-tooltip='#tooltip_Status'>
+                                                                    <span>
+                                                                        @Html.Raw(Model.quotation.status.SubText)
+                                                                    </span>
+                                                                </span>
+
+                                                                @Html.Partial("_ToolTip", new Tooltip() { ID = "tooltip_Status", Message = Model.quotation.status.Text })
+                                                            </span>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="w-full">
+                                                        <div class="flex flex-col gap-0.5">
+                                                            <span class="text-xs font-normal text-gray-700">
+                                                                Bill To
+                                                            </span>
+                                                            <span data-tooltip='#tooltip_Requester' class="ellipsis-full text-md font-medium text-gray-900 hover:text-primary-actives">
+                                                                @Model.quotation.billto
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                    <div class="w-full">
+                                                        <div class="flex flex-col gap-0.5">
+                                                            <span class="text-xs font-normal text-gray-700">
+                                                                Remarks
+                                                            </span>
+                                                            <span data-tooltip='#tooltip_Requester' class="ellipsis-full text-md font-medium text-gray-900 hover:text-primary-actives">
+                                                                @Display.DisplayString(Model.quotation.remarks)
+                                                            </span>
+                                                        </div>
+                                                    </div>
+
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="card cardoverride mt-4">
+                                            @*<div class="card-header py-2 px-5 flex justify-between items-center">
+                                                    <div class="card-title">
+                                                        Quotation Line Items
+                                                    </div>
+                                                </div>*@
+                                            <div class="card-header grey-small-header px-5 flex" id="basic_settings">
+                                                <h3 class="card-title text-md flex gap-3 align-items-center">
+                                                    Quotation Line Items
+                                                </h3>
+                                            </div>
+
+                                            <div id="quotationLineItemsTable">
+                                                @Html.Partial("_QuotationLineItemsTable", Model)
+                                            </div>
+
+                                        </div>
+                                        <div class="card cardoverride mt-4">
+                                            <div class="card-body px-5 flex flex-col gap-4">
+                                                <div class="w-full" @*style="grid-column: span 4;"*@>
+                                                    <div class="flex flex-col items-baseline flex-wrap lg:flex-nowrap gap-2.5">
+                                                        <label class="form-label flex items-center gap-1 max-w-56">
+                                                            Terms & Conditions
+                                                        </label>
+                                                        <div style="width:100%;">
+                                                            @Html.Raw(Display.DisplayString(Model.quotation.termsandconditions))
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </main>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div style="position:relative;">
+        <div class="floating-action">
+            @{
+                var quoteamount = Model.quotation.details.Sum(x => x.qty * x.amount);
+                var taxamount = Model.quotation.details.Sum(x => (x.qty * x.amount * x.tax / 100));
+
+            }
+            <div class="card1">
+                <div class="card-body flex flex-row justify-between items-center py-2 lg:gap-2 gap-1">
+                    <div class="flex items-center justify-end gap-2.5">
+                        <div class="grid grid-cols-1 text-center1 content-between gap-1.5 border1 border-dashed border-gray-400 shrink-0 rounded-md px-3.5 py-2 min-w-24 max-w-auto">
+                            <div class="flex flex-col gap-2">
+                                <span class="text-xs font-normal text-gray-700">
+                                    Sub Total Amount
+                                </span>
+                                <div class="text-2xl text-gray-900 font-semibold leading-none">
+                                    <span class="text-xl">@Model.quotation.currency</span> @Display.DisplayCurrency(quoteamount)
+
+                                </div>
+
+                            </div>
+                        </div>
+                        <div class="text-2xl">+</div>
+                        <div class="grid grid-cols-1 text-center1 content-between gap-1.5 border1 border-dashed border-gray-400 shrink-0 rounded-md px-3.5 py-2 min-w-24 max-w-auto">
+                            <div class="flex flex-col gap-2">
+                                <span class="text-xs font-normal text-gray-700">
+                                    Tax Charges
+                                </span>
+                                <div class="text-2xl text-gray-900 font-semibold leading-none">
+                                    <span class="text-xl">@Model.quotation.currency</span> @Display.DisplayCurrency(taxamount)
+
+                                </div>
+
+                            </div>
+                        </div>
+                        <div class="text-2xl">=</div>
+                        <div class="grid grid-cols-1  text-center1 content-between gap-1.5 border1 border-dashed border-gray-400 shrink-0 rounded-md px-3.5 py-2 min-w-24 max-w-auto">
+                            <div class="flex flex-col gap-2">
+                                <span class="text-xs font-normal text-gray-700">
+                                    Total Amount
+                                </span>
+                                <div class="text-2xl text-primary font-semibold leading-none flex justify-between gap-3">
+                                    <span>
+                                        <span class="text-xl">@Model.quotation.currency</span> @Display.DisplayCurrency(quoteamount + taxamount)
+                                    </span>
+
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                    @if (Model.quotation.status.Value == QuoteStatus.Awaiting_HOD_approval && Common.RoleID == UserRols.Approver_HOD)
+                    {
+                        <div class="flex justify-end gap-2.5">
+                            <button class="btn btn-md btn-outline btn-danger" type="button" onclick="OpenApproveReject('@Model.quotation.quotationuuid',2);">
+                                <i class="ki-filled ki-cross-square"></i>
+                                Reject
+                            </button>
+                            <button class="btn btn-md btn-primary" type="button" onclick="OpenApproveReject('@Model.quotation.quotationuuid',1);">
+                                <i class="ki-filled ki-check-circle"></i>
+                                Approve
+                            </button>
+
+
+                        </div>
+                    }
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+}
+
+<div id="modalsection"></div>
+
+@section PageScripts {
+    <script src="~/js/ContainerBooking/Booking.js?v=1.0.0"></script>
+}

@@ -1,0 +1,119 @@
+﻿@using Contrack;
+@model ContainerBooking
+
+@{
+    var consigneePicList = ViewBag.ConsigneePICDropdown as List<System.Web.UI.WebControls.ListItem>;
+    bool ConsigneePicData = consigneePicList != null && consigneePicList.Any();
+    bool SelectedPic = Model.booking.location.consigneepic.NumericValue > 0;
+}
+
+<input type="hidden"
+       id="hdnConsigneeDetailId"
+       value="@Model.booking.location.consigneedetailid.EncryptedValue" />
+
+<input type="hidden"
+       id="hdnConsigneePIC"
+       value="@Model.booking.location.consigneepic.EncryptedValue" />
+
+<input type="hidden"
+       id="hdnConsigneePICCustom"
+       value="@Model.booking.location.consigneepiccustom" />
+
+
+<div class="w-full">
+    <div class="flex flex-col items-baseline flex-wrap lg:flex-nowrap gap-2.5">
+        <label class="form-label flex items-center gap-1 max-w-56">
+            Consignee Name <span class="text-danger ps-2">*</span>
+        </label>
+        @Html.TextBoxFor(m => m.booking.location.consigneename, new { @class = "input", @placeholder = "Consignee Name", @datarequired = "yes", @datarequired_message = "Please enter Consignee Name", @id = "txt_ConsigneeName" })
+    </div>
+</div>
+@*<div class="w-full" id="consignee_pic_textbox" style="@(Model.booking.location.consigneedetailid.NumericValue> 0 ? "display:none;":"")">
+        <div class="flex flex-col items-baseline flex-wrap lg:flex-nowrap gap-2.5">
+            <label class="form-label flex items-center gap-1 max-w-56">
+                Consignee PIC <span class="text-danger ps-2">*</span>
+            </label>
+            @Html.TextBoxFor(m => m.booking.location.consigneepiccustom, new { @class = "input", @placeholder = "Consignee PIC", @datarequired = "yes", @datarequired_message = "Please enter Consignee PIC", @id = "txt_ConsigneePIC" })
+        </div>
+    </div>
+
+    <div id="consignee_pic_container" class="flex flex-col items-baseline flex-wrap lg:flex-nowrap gap-2.5" style="@(Model.booking.location.consigneedetailid.NumericValue> 0 ? "":"display:none")">
+        @Html.Partial("~/Views/Booking/_ConsigneePIC.cshtml", Model)
+    </div>*@
+
+<div class="w-full" id="consignee_pic_textbox" style="@(ConsigneePicData || SelectedPic ? "display:none;" : "")">
+    <div class="flex flex-col items-baseline gap-2.5">
+        <label class="form-label flex items-center gap-1">
+            Consignee PIC <span class="text-danger">*</span>
+        </label>
+        @Html.TextBoxFor(m => m.booking.location.consigneepiccustom, new { @class = "input", @id = "txt_ConsigneePIC", @placeholder = "Consignee PIC", @datarequired = "yes", @datarequired_message = "Please enter Consignee PIC" })
+    </div>
+</div>
+
+<div id="consignee_pic_container" class="flex flex-col items-baseline gap-2.5" style="@(ConsigneePicData || SelectedPic ? "" : "display:none;")">
+    @if (ConsigneePicData || SelectedPic)
+    {
+        @Html.Partial("~/Views/Booking/_ConsigneePIC.cshtml", Model)
+    }
+</div>
+
+<div class="flex flex-col items-baseline flex-wrap lg:flex-nowrap gap-2.5">
+    <label class="form-label">
+        Consignee Email <span class="text-danger ps-2">*</span>
+    </label>
+    <div class="flex flex-col w-full">
+        <div class="input-group relative">
+            @Html.TextBoxFor(m => m.booking.location.consigneeemailtemp, new { @id = "txt_Consigneeemailtemp", @class = "input right-padding-input", @placeholder = "Enter Email", @datarequired = "no", @datarequired_message = "Please enter Email" })
+            <a onclick="AddBulkItemByType('consignee_email');" href="javascript:void();" class="add-inside">
+                + Add
+            </a>
+        </div>
+        @Html.HiddenFor(m => m.booking.location.consigneeemail, new { id = "hdn_consignee_Email", datavalidate = "yes", @datarequired = "yes", @datarequired_message = "Please enter Phone" })
+    </div>
+    <ul class="bulksummary" style="@(string.IsNullOrEmpty(Model.booking.location.consigneeemail)?"display:none;":"")" id="email_bulksummary_consignee">
+        @foreach (var email in Model.booking.location.consigneeemail.Split(';').Where(x => x != "").ToList())
+        {
+            <li>
+                <span classs='emailtext'>@email</span>
+                <a class="btn btn-sm btn-icon btn-clear" href="javascript:void(0);" onclick="RemoveBulkItemByType(this, 'consignee_email');">
+                    <i class="ki-filled ki-cross"></i>
+                </a>
+            </li>
+        }
+    </ul>
+</div>
+
+<div class="flex flex-col items-baseline flex-wrap lg:flex-nowrap gap-2.5">
+    <label class="form-label">
+        Consignee Phone <span class="text-danger ps-2">*</span>
+    </label>
+    <div class="flex flex-col w-full">
+        <div class="input-group relative">
+            @Html.TextBoxFor(m => m.booking.location.consigneephonetemp, new { @id = "txt_Consigneephonetemp", @class = "input right-padding-input", @placeholder = "Enter Phone", @datarequired = "no", @datarequired_message = "Please enter Phone" })
+            <a onclick="AddBulkItemByType('consignee_phone');" href="javascript:void();" class="add-inside">
+                + Add
+            </a>
+        </div>
+        @Html.HiddenFor(m => m.booking.location.consigneephone, new { id = "hdn_consignee_Phone", datavalidate = "yes", @datarequired = "yes", @datarequired_message = "Please enter Phone" })
+    </div>
+    <ul class="bulksummary" style="@(string.IsNullOrEmpty(Model.booking.location.consigneephone) ? "display:none;" : "")" id="phone_bulksummary_consignee">
+        @foreach (var phone in Model.booking.location.consigneephone.Split(';').Where(x => x != "").ToList())
+        {
+            <li>
+                <span classs='phonetext'>@phone</span>
+                <a class="btn btn-sm btn-icon btn-clear" href="javascript:void(0);" onclick="RemoveBulkItemByType(this, 'consignee_phone');">
+                    <i class="ki-filled ki-cross"></i>
+                </a>
+            </li>
+        }
+    </ul>
+</div>
+
+<div class="w-full grid-2">
+    <div class="flex flex-col items-baseline flex-wrap lg:flex-nowrap gap-2.5">
+        <label class="form-label flex items-center gap-1 max-w-56">
+            Consignee Address <span class="text-danger ps-2">*</span>
+        </label>
+        @Html.TextAreaFor(m => m.booking.location.consigneeaddress, new { @rows = "3", @class = "textarea", @placeholder = "Consignee Address", @datarequired = "yes", @datarequired_message = "Please enter Shipper Address", @id = "txt_ConsigneeAddress" })
+    </div>
+</div>

@@ -1,0 +1,21 @@
+﻿@using Contrack;
+@model FormatDisplay
+@{
+    List<string> list = Contrack.Common.ToString(Model.Text).Split(new[] { Model.Delimiter }, StringSplitOptions.None).Select(s => s.Trim()).ToList();
+}
+
+@if (list.Count == 0)
+{
+    @Html.Raw("No " + Model.Name)
+}
+else if (list.Count == 1)
+{
+    <span data-tooltip='#tooltip_@Model.Name'>
+        @Html.Raw(Model.Text)
+    </span>
+}
+else
+{
+    <span data-tooltip='#tooltip_@Model.Name'>@list[0] <span class='text-primary'>+@(list.Count - 1)</span></span>
+}
+@Html.Partial("_ToolTip", new Tooltip() { ID = "tooltip_" + Model.Name, Message = Model.Text })

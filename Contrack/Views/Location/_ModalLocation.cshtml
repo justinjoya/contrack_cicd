@@ -1,0 +1,135 @@
+﻿@model Contrack.Location
+<div class="modal" data-modal="true" data-modal-backdrop-static="true" data-modal-autofocus="true" id="ModalAddLocation">
+    <div class="modal-content modal-center-y max-w-[600px] max-h-[95%]">
+        <div class="modal-header">
+            <h3 class="modal-title">
+                @if (Model.location.LocationID.NumericValue == 0)
+                {
+                    @Html.Raw("Add Location")
+                }
+                else
+                {
+                    @Html.Raw("Edit Location")
+                }
+            </h3>
+            <button class="btn btn-xs btn-icon btn-light" data-modal-dismiss="true">
+                <i class="ki-outline ki-cross"></i>
+            </button>
+        </div>
+        <div class="modal-body scrollable-y h-[300px] max-h-[95%]">
+            <input type="hidden" id="hdnPortMap" value='@ViewBag.PortToCountryMap' />
+            <div class="model-req flex items-center grow rounded-xl border border-dashed gap-4 p-2 mb-5 border-primary bg-primary-light">
+                <i class="ki-outline ki-information-1 text-3xl text-primary"></i>
+                <div class="flex flex-col gap-0.5">
+                    <p class="text">Fields marked with <span class="text-danger ps-2"> * </span> are mandatory.</p>
+                </div>
+            </div>
+            <form id="formLocation">
+                @Html.HiddenFor(m => m.location.LocationID.EncryptedValue)
+                @Html.HiddenFor(m => m.location.LocationUUID)
+                @Html.HiddenFor(m => m.location.CountryID.EncryptedValue, new { @id = "hdnCountryId" })
+
+                <div class="grid lg:grid-cols-1 items-stretch gap-5">
+
+                    <div class="flex flex-col1 items-center flex-wrap lg:flex-nowrap gap-1.5">
+                        <label class="form-label max-w-32 text-right">
+                            Port <span class="text-danger ps-2">*</span>
+                        </label>
+                        <div class="flex flex-col w-full">
+                            @Html.DropDownListFor(m => m.location.PortID.EncryptedValue, new SelectList(ViewBag.PortDropdown, "Value", "Text", ""), "-Select-", new
+                       {
+                           @class = "form-control select2",
+                           @id = "ddlPort",
+                           @datarequired = "yes",
+                           @datarequired_message = "Please select Port",
+                           @dataportid = Model.location.PortID.EncryptedValue,
+                           @dataportname = Model.location.PortName,
+                           @dataportcode = Model.location.PortCode,
+                           @datacountryname = Model.location.CountryName,
+                           @dataflag = Contrack.Common.FlagFolder + Model.location.CountryFlag,
+                       })
+                        </div>
+                    </div>
+
+                    <!-- Location Name -->
+                    <div class="flex flex-col1 items-baseline flex-wrap lg:flex-nowrap gap-1.5">
+                        <label class="form-label max-w-32 text-right">
+                            Location Name <span class="text-danger ps-2">*</span>
+                        </label>
+                        <div class="flex flex-col w-full">
+                            @Html.TextBoxFor(m => m.location.LocationName, new { @class = "input", @placeholder = "Enter Location Name", @datarequired = "yes", @datarequired_message = "Please enter Location Name" })
+                        </div>
+                    </div>
+
+                    <!-- Location Code -->
+                    <div class="flex flex-col1 items-baseline flex-wrap lg:flex-nowrap gap-1.5">
+                        <label class="form-label max-w-32 text-right">
+                            Location Code <span class="text-danger ps-2">*</span>
+                        </label>
+                        <div class="flex flex-col w-full">
+                            @Html.TextBoxFor(m => m.location.LocationCode, new { @class = "input", @placeholder = "Enter Location Code", @datarequired = "yes", @datarequired_message = "Please enter Location Code" })
+                        </div>
+                    </div>
+
+                    <!-- Location Type -->
+                    <div class="flex flex-col1 items-baseline flex-wrap lg:flex-nowrap gap-1.5">
+                        <label class="form-label max-w-32 text-right">
+                            Location Type <span class="text-danger ps-2">*</span>
+                        </label>
+                        <div class="flex flex-col w-full">
+                            @Html.DropDownListFor(m => m.location.LocationType.LocationTypeID.EncryptedValue, new SelectList(ViewBag.LocationTypeDropdown, "Value", "Text", ""), new { @class = "form-control select2", @datarequired = "yes", @datarequired_message = "Please select Location Type" })
+                        </div>
+                    </div>
+                    <!-- Phone -->
+                    <div class="flex flex-col1 items-baseline flex-wrap lg:flex-nowrap gap-1.5">
+                        <label class="form-label max-w-32 text-right">
+                            Phone <span class="text-danger ps-2">*</span>
+                        </label>
+                        <div class="flex flex-col w-full">
+                            @Html.TextBoxFor(m => m.location.Phone, new
+                       {
+                           @class = "input",
+                           @placeholder = "Enter Phone",
+                           @datatype = "phone",
+                           @datarequired = "yes",
+                           @datarequired_message = "Please enter Phone"
+                       })
+                        </div>
+                    </div>
+                    <!-- Email -->
+                    <div class="flex flex-col1 items-baseline flex-wrap lg:flex-nowrap gap-1.5">
+                        <label class="form-label max-w-32 text-right">
+                            Email <span class="text-danger ps-2">*</span>
+                        </label>
+                        <div class="flex flex-col w-full">
+                            @Html.TextBoxFor(m => m.location.Email, new
+                            {
+                                @class = "input",
+                                @placeholder = "Enter Email",
+                                @datatype = "email",
+                                @datarequired = "yes",
+                                @datarequired_message = "Please enter Email"
+                            })
+                        </div>
+                    </div>
+                    <!-- Address -->
+                    <div class="flex flex-col1 items-baseline flex-wrap lg:flex-nowrap gap-1.5">
+                        <label class="form-label max-w-32 text-right">Address</label>
+                        <div class="flex flex-col w-full">
+                            @Html.TextAreaFor(m => m.location.Address, new { @class = "textarea", @rows = "4", @placeholder = "Enter Address" })
+                        </div>
+                    </div>
+
+                </div>
+            </form>
+            <!-- FORM END -->
+        </div>
+
+        <div class="modal-footer justify-end">
+            <div class="flex gap-4">
+                <button class="btn btn-light" data-modal-dismiss="true">Close</button>
+                <button class="btn btn-primary" onclick="SaveLocation();">Save Location</button>
+            </div>
+        </div>
+    </div>
+</div>

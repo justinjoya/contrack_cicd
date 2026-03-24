@@ -1,0 +1,439 @@
+﻿@model Contrack.BookingListFilter
+@using Contrack
+
+@{
+    ViewBag.Title = "Container Booking";
+    ViewBag.MainManu = "Booking";
+    ViewBag.SubManu = "Container Booking";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="breadscrumb-holder">
+    <div class="container-fluid flex items-center justify-between flex-wrap gap-5">
+
+        <div class="flex flex-col justify-center items-start flex-wrap gap-1 lg:gap-2">
+
+            <h1 class="page-header">Container Bookings</h1>
+            <div class="flex items-center gap-1 text-sm font-normal">
+                <span class="text-gray-700">Manage all container bookings with customer, vessel, route, and schedule details.</span>
+            </div>
+        </div>
+
+        <div class="flex items-center flex-wrap gap-1.5 lg:gap-2">
+
+            <div class="">
+                <label class="input input-md">
+                    <i class="ki-filled ki-magnifier"></i>
+                    <input data-datatable-search="#TableContainerBooking" placeholder="Search Booking No..." type="text" id="txtSearchDisplay" />
+                </label>
+            </div>
+
+            <button class="btn btn-md text-md btn-outline original btn-light dropdown-toggle" data-drawer-toggle="#drawer_4">
+                <i class="ki-filled ki-setting-4">
+                </i>
+                Filters
+                @{
+                    int count = Model.GetFilterCount();
+                    if (count > 0)
+                    {
+                        <span class="badge text-2xs badge-xs batch-new badge-primary">
+                            @count
+                        </span>
+                    }
+                }
+
+            </button>
+            @Html.Partial("_CustomizeColumn", 7)
+            <a href="@Url.Action("CustomerSelection", "Booking")" class="btn btn-md text-md btn-primary">
+                <i class="ki-filled ki-plus"></i>
+                Create Booking
+            </a>
+        </div>
+
+    </div>
+</div>
+@{
+    var ActiveTab = PageSessionManager.GetAttribute<int>(PageKeys.Booking, "ActiveTab", 0);
+}
+<div class="container-fluid">
+    <div class="grid">
+        <div class="card-summary-flat">
+
+            <a data-tooltip='#tooltip_B_0' class="card-stat @(ActiveTab == 0 ? "active" : "")"
+               href="@Url.Action("BookingListStatus", "Booking", new { status = 0 })">
+                <span class="header">All Bookings</span>
+                <span class="stat-count">@Common.FormatNumberInteger(Model.StatusCount.Sum(x => x.StatusCount))</span>
+                @Html.Partial("_ToolTip", new Tooltip()
+                {
+                    ID = "tooltip_B_0",
+                    Message = "All bookings : " + Model.StatusCount.Sum(x => x.StatusCount)
+                })
+            </a>
+
+            <a data-tooltip='#tooltip_B_1' class="card-stat @(ActiveTab == 1 ? "active" : "")"
+               href="@Url.Action("BookingListStatus", "Booking", new { status = 1 })">
+                <span class="header">Drafts</span>
+                <span class="stat-count">@Common.FormatNumberInteger(Model.StatusCount.Where(x => x.StatusId == 1).Sum(x => x.StatusCount))</span>
+                @Html.Partial("_ToolTip", new Tooltip()
+                {
+                    ID = "tooltip_B_1",
+                    Message = "Draft : " + Model.StatusCount.Where(x => x.StatusId == 1).Sum(x => x.StatusCount)
+                })
+            </a>
+            @*<a data-tooltip='#tooltip_B_2' class="card-stat @(ActiveTab == 2 ? "active" : "")"
+                   href="@Url.Action("BookingListStatus", "Booking", new { status = 2 })">
+                    <span class="header">JobCreated</span>
+                    <span class="stat-count">@Common.FormatNumberInteger(Model.StatusCount.Where(x => x.StatusId == 2).Sum(x => x.StatusCount))</span>
+                    @Html.Partial("_ToolTip", new Tooltip()
+                    {
+                        ID = "tooltip_B_2",
+                        Message = "Job Created : " + Model.StatusCount.Where(x => x.StatusId == 2).Sum(x => x.StatusCount)
+                    })
+                </a>
+                <a data-tooltip='#tooltip_B_3' class="card-stat @(ActiveTab == 3 ? "active" : "")"
+                   href="@Url.Action("BookingListStatus", "Booking", new { status = 3 })">
+                    <span class="header">InQuote</span>
+                    <span class="stat-count">@Common.FormatNumberInteger(Model.StatusCount.Where(x => x.StatusId == 3).Sum(x => x.StatusCount))</span>
+                    @Html.Partial("_ToolTip", new Tooltip()
+                    {
+                        ID = "tooltip_B_3",
+                        Message = "In Quote : " + Model.StatusCount.Where(x => x.StatusId == 3).Sum(x => x.StatusCount)
+                    })
+                </a>
+                <a data-tooltip='#tooltip_B_3' class="card-stat @(ActiveTab == 4 ? "active" : "")"
+                   href="@Url.Action("BookingListStatus", "Booking", new { status = 4 })">
+                    <span class="header">Awaiting Approval</span>
+                    <span class="stat-count">@Common.FormatNumberInteger(Model.StatusCount.Where(x => x.StatusId == 4).Sum(x => x.StatusCount))</span>
+                    @Html.Partial("_ToolTip", new Tooltip()
+                    {
+                        ID = "tooltip_B_4",
+                        Message = "Awaiting Approval : " + Model.StatusCount.Where(x => x.StatusId == 4).Sum(x => x.StatusCount)
+                    })
+                </a>
+                <a data-tooltip='#tooltip_B_5' class="card-stat @(ActiveTab == 5 ? "active" : "")"
+                   href="@Url.Action("BookingListStatus", "Booking", new { status = 5})">
+                    <span class="header">Approved</span>
+                    <span class="stat-count">@Common.FormatNumberInteger(Model.StatusCount.Where(x => x.StatusId == 5).Sum(x => x.StatusCount))</span>
+                    @Html.Partial("_ToolTip", new Tooltip()
+                    {
+                        ID = "tooltip_B_5",
+                        Message = " Approved : " + Model.StatusCount.Where(x => x.StatusId == 5).Sum(x => x.StatusCount)
+                    })
+                </a>
+                <a data-tooltip='#tooltip_B_6' class="card-stat @(ActiveTab == 6 ? "active" : "")"
+                   href="@Url.Action("BookingListStatus", "Booking", new { status = 6})">
+                    <span class="header">Rejected</span>
+                    <span class="stat-count">@Common.FormatNumberInteger(Model.StatusCount.Where(x => x.StatusId == 6).Sum(x => x.StatusCount))</span>
+                    @Html.Partial("_ToolTip", new Tooltip()
+                    {
+                        ID = "tooltip_B_6",
+                        Message = " Rejected : " + Model.StatusCount.Where(x => x.StatusId == 6).Sum(x => x.StatusCount)
+                    })
+                </a>
+                <a data-tooltip='#tooltip_B_7' class="card-stat @(ActiveTab == 7 ? "active" : "")"
+                   href="@Url.Action("BookingListStatus", "Booking", new { status = 7})">
+                    <span class="header">Selection</span>
+                    <span class="stat-count">@Common.FormatNumberInteger(Model.StatusCount.Where(x => x.StatusId == 7).Sum(x => x.StatusCount))</span>
+                    @Html.Partial("_ToolTip", new Tooltip()
+                    {
+                        ID = "tooltip_B_7",
+                        Message = " Selection : " + Model.StatusCount.Where(x => x.StatusId == 7).Sum(x => x.StatusCount)
+                    })
+                </a>
+                <a data-tooltip='#tooltip_B_8' class="card-stat @(ActiveTab == 8 ? "active" : "")"
+                   href="@Url.Action("BookingListStatus", "Booking", new { status = 8})">
+                    <span class="header">Confrimed</span>
+                    <span class="stat-count">@Common.FormatNumberInteger(Model.StatusCount.Where(x => x.StatusId == 8).Sum(x => x.StatusCount))</span>
+                    @Html.Partial("_ToolTip", new Tooltip()
+                    {
+                        ID = "tooltip_B_8",
+                        Message = " Confrimed : " + Model.StatusCount.Where(x => x.StatusId == 8).Sum(x => x.StatusCount)
+                    })
+                </a>
+                <a data-tooltip='#tooltip_B_9' class="card-stat @(ActiveTab == 9 ? "active" : "")"
+                   href="@Url.Action("BookingListStatus", "Booking", new { status = 9})">
+                    <span class="header">InTransist</span>
+                    <span class="stat-count">@Common.FormatNumberInteger(Model.StatusCount.Where(x => x.StatusId == 9).Sum(x => x.StatusCount))</span>
+                    @Html.Partial("_ToolTip", new Tooltip()
+                    {
+                        ID = "tooltip_B_9",
+                        Message = " In Transist : " + Model.StatusCount.Where(x => x.StatusId == 9).Sum(x => x.StatusCount)
+                    })
+                </a>
+                <a data-tooltip='#tooltip_B_10' class="card-stat @(ActiveTab == 10 ? "active" : "")"
+                   href="@Url.Action("BookingListStatus", "Booking", new { status = 10})">
+                    <span class="header">Completed</span>
+                    <span class="stat-count">@Common.FormatNumberInteger(Model.StatusCount.Where(x => x.StatusId == 10).Sum(x => x.StatusCount))</span>
+                    @Html.Partial("_ToolTip", new Tooltip()
+                    {
+                        ID = "tooltip_B_10",
+                        Message = " Completed : " + Model.StatusCount.Where(x => x.StatusId == 10).Sum(x => x.StatusCount)
+                    })
+                </a>*@
+        </div>
+        <div class="card card-grid min-w-full">
+            <div class="card-body">
+                <div id="TableContainerBooking" class="custom-dt">
+                    <div class="scrollable-x-auto">
+                        <table class="table table-auto table-border align-middle"
+                               data-datatable-table="true">
+                            <thead>
+                                <tr>
+                                    <th class="min-w-[220px]" data-datatable-column="bookingno">
+                                        <span class="sort">
+                                            <span class="sort-label">
+                                                Booking No
+                                            </span>
+                                            <span class="sort-icon">
+                                            </span>
+                                        </span>
+                                    </th>
+                                    <th class="min-w-[220px]" data-datatable-column="customername">
+                                        <span class="sort">
+                                            <span class="sort-label">
+                                                Customer Name
+                                            </span>
+                                            <span class="sort-icon">
+                                            </span>
+                                        </span>
+                                    </th>
+                                    <th class="min-w-[150px]" data-datatable-column="pol">
+                                        <span class="sort">
+                                            <span class="sort-label">
+                                                POL
+                                            </span>
+                                            <span class="sort-icon">
+                                            </span>
+                                        </span>
+                                    </th>
+                                    <th class="min-w-[150px]" data-datatable-column="pod">
+                                        <span class="sort">
+                                            <span class="sort-label">
+                                                POD
+                                            </span>
+                                            <span class="sort-icon">
+                                            </span>
+                                        </span>
+                                    </th>
+                                    <th class="min-w-[185px]" data-datatable-column="voyageno">
+                                        <span class="sort">
+                                            <span class="sort-label">
+                                                Voyage Number
+                                            </span>
+                                            <span class="sort-icon">
+                                            </span>
+                                        </span>
+                                    </th>
+                                    <th class="min-w-[180px]" data-datatable-column="bookingdetails">
+                                        <span class="sort">
+                                            <span class="sort-label">
+                                                Booking Details
+                                            </span>
+                                            <span class="sort-icon">
+                                            </span>
+                                        </span>
+                                    </th>
+                                    <th class="min-w-[185px]" data-datatable-column="createdat">
+                                        <span class="sort">
+                                            <span class="sort-label">
+                                                Created At
+                                            </span>
+                                            <span class="sort-icon">
+                                            </span>
+                                        </span>
+                                    </th>
+                                    <th class="text-center min-w-[80px]" data-datatable-column="status">
+                                        <span class="sort">
+                                            <span class="sort-label">
+                                                Status
+                                            </span>
+                                            <span class="sort-icon">
+                                            </span>
+                                        </span>
+                                    </th>
+                                    <th data-datatable-column="action" class="text-center w-[80px]">Action</th>
+                                </tr>
+                            </thead>
+                        </table>
+                    </div>
+                    <div class="card-footer justify-center md:justify-between flex-col md:flex-row gap-3 text-gray-600 text-2sm font-medium">
+                        <div class="flex items-center gap-2">
+                            Show
+                            <select class="select select-sm w-16" data-datatable-size="true" name="perpage">
+                            </select>
+                            per page
+                        </div>
+                        <div class="flex items-center gap-4">
+                            <span data-datatable-info="true"></span>
+                            <div class="pagination" data-datatable-pagination="true"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    @using (Html.BeginForm("List", "Booking", FormMethod.Post, new { @id = "frmBookingList" }))
+    {
+        <div class="drawer drawer-end flex flex-col gap-4 filter-width" data-drawer="true" id="drawer_4">
+            <div class="flex items-center justify-between p-5 border-b">
+                <h3 class="text-base font-semibold text-gray-900">
+                    Filters
+                </h3>
+                <button class="btn btn-xs btn-icon btn-light" data-drawer-dismiss="true">
+                    <i class="ki-outline ki-cross">
+                    </i>
+                </button>
+            </div>
+            <div class="scrollable-y py-0 px-5">
+                <div class=" grid lg:grid-cols-2 gap-5">
+                    <div class="w-full">
+                        <div class="flex flex-col items-baseline flex-wrap lg:flex-nowrap gap-2.5">
+                            <label class="form-label flex items-center gap-1 max-w-56">
+                                From
+                            </label>
+                            <div class="input-group w-full">
+                                @Html.TextBoxFor(m => m.filters.startdate, new { @data_clear = "btnClearFromDate", @data_trigger = "btnTarget_From", @class = "datepicker-here input", @placeholder = "dd/mm/yyyy", @datarequired = "no", @datarequired_message = "", @id = "txt_Filter_Datefrom", @data_provider = "flatpickr1", @readonly = true })
+                                <button type="button" id="btnTarget_From" class="btn btn-icon btn-outline btn-icon-lg btn-light">
+                                    <i class="ki-filled ki-calendar-2"></i>
+                                </button>
+                                <button type="button" id="btnClearFromDate" class="btn btn-danger1 btn-icon btn-outline btn-icon-lg btn-light">
+                                    <i class="ki-filled ki-cross"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="w-full">
+                        <div class="flex flex-col items-baseline flex-wrap lg:flex-nowrap gap-2.5">
+                            <label class="form-label flex items-center gap-1 max-w-56">
+                                To
+                            </label>
+                            <div class="input-group w-full">
+                                @Html.TextBoxFor(m => m.filters.enddate, new { @data_clear = "btnClearToDate", @data_trigger = "btnTarget_enddate", @class = "datepicker-here input", @placeholder = "dd/mm/yyyy", @datarequired = "no", @datarequired_message = "", @id = "txt_Filter_enddate", @data_provider = "flatpickr1", @readonly = true })
+                                <button type="button" id="btnTarget_enddate" class="btn btn-icon btn-outline btn-icon-lg btn-light">
+                                    <i class="ki-filled ki-calendar-2"></i>
+                                </button>
+                                <button type="button" id="btnClearToDate" class="btn btn-danger1 btn-icon btn-outline btn-icon-lg btn-light">
+                                    <i class="ki-filled ki-cross"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="w-full grid-2">
+                        <div class="flex flex-col items-baseline flex-wrap lg:flex-nowrap gap-2.5">
+                            <label class="form-label flex items-center gap-1 max-w-56">
+                                Booking Number
+                            </label>
+                            <div class="input-group w-full">
+                                @Html.TextBoxFor(m => m.filters.bookingno, new { @id = "txtponumber", @placeholder = "Enter Booking Number", @class = "form-control input", @datarequired = "no" })
+                            </div>
+                        </div>
+                    </div>
+                    <div class="w-full grid-2">
+                        <div class="flex flex-col items-baseline flex-wrap lg:flex-nowrap gap-2.5">
+                            <label class="form-label flex items-center gap-1 max-w-56">
+                                Voyage Number
+                            </label>
+                            <div class="input-group w-full">
+                                @Html.TextBoxFor(m => m.filters.voyageno, new { @id = "txtponumber", @placeholder = "Enter Voyage Number", @class = "form-control input", @datarequired = "no" })
+                            </div>
+                        </div>
+                    </div>
+                    <div class="w-full grid-2">
+                        <div class="flex flex-col items-baseline flex-wrap lg:flex-nowrap gap-2.5">
+                            <label class="form-label flex items-center gap-1 max-w-56">
+                                Company
+                            </label>
+                            <div class="input-group w-full">
+                                @Html.DropDownListFor(m => m.filters.agencyuuids, new SelectList(@ViewBag.AgenciesUUIDDropdown, "Value", "Text", "") { }, new { @id = "ddlAgencyIDs", @placeholder = "Enter Company to search", @class = "form-control select2", @datarequired = "no", @datarequired_message = "Please select Port", @data_append_parent = "yes", @style = "width:100%;", @multiple = true })
+                            </div>
+                        </div>
+                    </div>
+                    <div class="w-full grid-2">
+                        <div class="flex flex-col items-baseline flex-wrap lg:flex-nowrap gap-2.5">
+                            <label class="form-label flex items-center gap-1 max-w-56">
+                                Client
+                            </label>
+                            <div class="input-group w-full">
+                                @Html.DropDownListFor(m => m.filters.clientuuids, new SelectList(@ViewBag.ClientUUIDDropdown, "Value", "Text", "") { }, new { @id = "ddlClientIDs", @placeholder = "Enter Vessel Name to search", @class = "form-control select2", @datarequired = "no", @datarequired_message = "Please select Port", @data_append_parent = "yes", @style = "width:100%;", @multiple = true })
+                            </div>
+                        </div>
+                    </div>
+                    <div class="w-full grid-2">
+                        <div class="flex flex-col items-baseline flex-wrap lg:flex-nowrap gap-2.5">
+                            <label class="form-label flex items-center gap-1 max-w-56">
+                                POL
+                            </label>
+                            <div class="input-group w-full">
+                                @Html.DropDownListFor(m => m.filters.polencrypt, new SelectList(@ViewBag.PortDropdown, "Value", "Text", "") { }, new { @id = "ddlPortIDs", @placeholder = "Enter Port Name to search", @class = "form-control select2", @datarequired = "no", @datarequired_message = "Please select Port", @data_append_parent = "yes", @style = "width:100%;", @multiple = true })
+                            </div>
+                        </div>
+                    </div>
+                    <div class="w-full grid-2">
+                        <div class="flex flex-col items-baseline flex-wrap lg:flex-nowrap gap-2.5">
+                            <label class="form-label flex items-center gap-1 max-w-56">
+                                POD
+                            </label>
+                            <div class="input-group w-full">
+                                @Html.DropDownListFor(m => m.filters.podencrypt, new SelectList(@ViewBag.PortDropdown, "Value", "Text", "") { }, new { @class = "form-control select2", @datarequired = "no", @datarequired_message = "Please select Port", @data_append_parent = "yes", @style = "width:100%;", @multiple = true })
+                            </div>
+                        </div>
+                    </div>
+                    <div class="w-full grid-2">
+                        <div class="flex flex-col items-baseline flex-wrap lg:flex-nowrap gap-2.5">
+                            <label class="form-label flex items-center gap-1 max-w-56">
+                                Vessel
+                            </label>
+                            <div class="input-group w-full">
+                                @Html.ListBoxFor(m => m.filters.vesseldetailid, new SelectList(@ViewBag.VesselDropdown, "Value", "Text", "") { }, new { @data_agencyid = "", @id = "ddlVesselAssignmentID", @placeholder = "Enter Vessel Name to search", @class = "form-control searchablevessel", @datarequired = "no", @datarequired_message = "Please select Port", @data_append_parent = "yes", @style = "width:100%;", @multiple = true })
+                            </div>
+                        </div>
+                    </div>
+                    <div class="w-full grid-2">
+                        <div class="flex flex-col items-baseline flex-wrap lg:flex-nowrap gap-2.5">
+                            <label class="form-label flex items-center gap-1 max-w-56">
+                                Created By
+                            </label>
+                            <div class="input-group w-full">
+                                @Html.DropDownListFor(m => m.filters.createdby, new SelectList(@ViewBag.CreatedByDropdown, "Value", "Text", "") { }, new { @id = "ddlcreatedby", @placeholder = "Enter User to search", @class = "form-control select2", @datarequired = "no", @datarequired_message = "Please select Port", @data_append_parent = "yes", @style = "width:100%;", @multiple = true })
+                            </div>
+                        </div>
+                    </div>
+                    <div class="w-full grid-2">
+                        <div class="flex flex-col items-baseline flex-wrap lg:flex-nowrap gap-2.5">
+                            <label class="form-label flex items-center gap-1 max-w-56">
+                                Status
+                            </label>
+                            <div class="input-group w-full">
+                                @Html.ListBoxFor(m => m.filters.status, new SelectList(@ViewBag.StatusDropdown, "Value", "Text", "") { }, new { @id = "ddlstatuslist", @placeholder = "Enter User to search", @class = "form-control select2", @datarequired = "no", @datarequired_message = "Please select Port", @data_append_parent = "yes", @style = "width:100%;", @multiple = true })
+                            </div>
+
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            <div class="flex justify-between">
+                <div class="flex justify-end gap-4 border-t p-5">
+                    <button type="button" class="btn btn-light" data-drawer-dismiss="true">
+                        Cancel
+                    </button>
+                </div>
+                <div class="flex justify-end gap-4 border-t p-5">
+                    <button type="submit" name="action" value="Reset" class="btn btn-light" data-drawer-dismiss="true">
+                        Reset Filter
+                    </button>
+                    <button type="submit" name="action" value="filter" class="btn btn-dark">
+                        Apply Filter
+                    </button>
+                </div>
+            </div>
+        </div>
+
+    }
+</div>
+<div id="modalsection"></div>
+@section PageScripts {
+    <script src="~/js/ContainerBooking/container-booking.js?v=1.0.1"></script>
+    <script src="~/js/port.js"></script>
+    <script src="~/js/customizecolumn.js?v=1.0.0"></script>
+    <script src="~/assets/libs/ckeditor/ckeditor5-build-classic/build/ckeditor.js"></script>
+}

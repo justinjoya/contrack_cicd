@@ -1,0 +1,165 @@
+﻿@model Contrack.ContainerModelFilter
+@using Contrack
+
+@{
+    ViewBag.Title = "Container Models";
+    ViewBag.MainManu = "Container";
+    ViewBag.SubManu = "Container Models";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<link href="~/css/Masters/containermodel.css?v=1.0.0" rel="stylesheet" />
+
+<div class="breadscrumb-holder">
+    <div class="container-fluid flex items-center justify-between flex-wrap gap-5">
+        <div class="flex flex-col justify-center items-start flex-wrap gap-1.5">
+
+            <h1 class="page-header">Container Models</h1>
+            <div class="flex items-center gap-1 text-sm font-normal">
+                <span class="text-gray-700">Manage and monitor all container models in single place.</span>
+            </div>
+        </div>
+        <div class="flex items-center flex-wrap gap-1.5 lg:gap-2">
+            <div class="">
+                <label class="input input-md">
+                    <i class="ki-filled ki-magnifier"></i>
+                    <input data-datatable-search="#TableContainerModels" placeholder="Search Type, Size, Model..." type="text" id="txtSearchDisplay" />
+                </label>
+            </div>
+            <button class="btn btn-md btn-primary text-md"
+                    onclick="OpenContainerModelModal('','','')">
+                <i class="ki-filled ki-plus"></i> Add Container Model
+            </button>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid">
+    <div class="grid">
+        <div class="card card-grid min-w-full">
+            @*<div class="card-header flex-wrap gap-2">
+                    <h3 class="card-title font-medium text-md">
+                        Container Models List
+                    </h3>
+                    <div class="flex flex-wrap gap-2">
+                        <div class="flex">
+                            <label class="input input-sm">
+                                <i class="ki-filled ki-magnifier"></i>
+                                <input data-datatable-search="#TableContainerModels" placeholder="Search Type, Size, Model..." type="text" id="txtSearchDisplay" />
+                            </label>
+                        </div>
+                    </div>
+                </div>*@
+
+            <div class="card-body">
+                <div id="TableContainerModels" class="custom-dt">
+                    <div class="scrollable-x-auto">
+                        <table class="table table-auto table-border align-middle"
+                               data-datatable-table="true">
+                            <thead>
+                                <tr>
+
+                                    <th data-datatable-column="typename">
+                                        <span class="sort">
+                                            <span class="sort-label">
+                                                Type
+                                            </span>
+                                            <span class="sort-icon"></span>
+                                        </span>
+                                    </th>
+                                    <th class="text-center" data-datatable-column="sizename">
+                                        <span class="sort">
+                                            <span class="sort-label">
+                                                Size
+                                            </span>
+                                            <span class="sort-icon"></span>
+                                        </span>
+                                    </th>
+                                    <th data-datatable-column="iso_code">
+                                        <span class="sort">
+                                            <span class="sort-label">
+                                                ISO Code
+                                            </span>
+                                            <span class="sort-icon"></span>
+                                        </span>
+                                    </th>
+                                    <th data-datatable-column="total" class="text-center">
+                                        <span class="sort">
+                                            <span class="sort-label">
+                                                Total
+                                            </span>
+                                            <span class="sort-icon"></span>
+                                        </span>
+                                    </th>
+                                    <th data-datatable-column="available" class="text-end">
+                                        <span class="sort">
+                                            <span class="sort-label">
+                                                Available
+                                            </span>
+                                            <span class="sort-icon"></span>
+                                        </span>
+                                    </th>
+                                    <th data-datatable-column="available" class="text-end">
+                                        <span class="sort">
+                                            <span class="sort-label">
+                                                Blocked
+                                            </span>
+                                            <span class="sort-icon"></span>
+                                        </span>
+                                    </th>
+                                    <th data-datatable-column="booked" class="text-end">
+                                        <span class="sort">
+                                            <span class="sort-label">
+                                                Booked
+                                            </span>
+                                            <span class="sort-icon"></span>
+                                        </span>
+                                    </th>
+                                    <th data-datatable-column="repair" class="text-end">
+                                        <span class="sort">
+                                            <span class="sort-label">
+                                                Repair
+                                            </span>
+                                            <span class="sort-icon"></span>
+                                        </span>
+                                    </th>
+                                    <th data-datatable-column="action" class="text-center w-[80px]">Action</th>
+                                </tr>
+                            </thead>
+                        </table>
+                    </div>
+
+                    <div class="card-footer justify-center md:justify-between flex-col md:flex-row gap-3 text-gray-600 text-2sm font-medium">
+                        <div class="flex items-center gap-2">
+                            Show
+                            <select class="select select-sm w-16" data-datatable-size="true" name="perpage">
+                            </select>
+                            per page
+                        </div>
+                        <div class="flex items-center gap-4">
+                            <span data-datatable-info="true"></span>
+                            <div class="pagination" data-datatable-pagination="true"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="emptydatatable hidden">
+                @Html.Partial("_EmptyTable", new EmptyTable()
+               {
+                   Heading = "No Container models found",
+                   SubHead = "Try adjusting your search or add a new container to get started",
+                   Icon = "<img src='/assets/img/container-empty.svg'/>",
+
+               })
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="modalsection"></div>
+
+@section PageScripts {
+    <script src="~/js/Masters/ContainerModelTable.js?v=5.0"></script>
+    <script src="~/js/Masters/ContainerModel.js?v=1.0"></script>
+}

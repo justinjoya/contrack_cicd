@@ -1,0 +1,110 @@
+﻿@model Contrack.ClientDTO
+@using Contrack;
+
+<div class="card h-full">
+    <div class="card-header p-3 flex items-between">
+        <h3 class="card-title">
+            Contacts (@Model.Contacts.Count)
+        </h3>
+        @if (Model.Contacts.Count < 5)
+        {
+            <button type="button"
+                    onclick="OpenClientContactModal('','@Model.clientid.EncryptedValue');"
+                    class="btn btn-xs btn-sm btn-outline btn-light">
+                <i class="ki-filled ki-plus"></i>
+                Add Contact
+            </button>
+        }
+    </div>
+
+    <div class="card-body flex flex-col gap-5">
+        @if (Model.Contacts.Count > 0)
+        {
+            <div class="flex flex-col gap-5">
+                @for (int i = 0; i < Model.Contacts.Count; i++)
+                {
+                    var contact = Model.Contacts[i];
+                    <div class="flex items-center justify-between gap-2.5">
+                        <div class="flex items-center gap-2.5">
+                            <div class="size-10 rounded-full inline-flex items-center justify-center text-1xl font-semibold border border-primary-clarity bg-primary-light text-secondary">
+                                @Common.GetShortcode(contact.fullname)
+                            </div>
+
+                            <div class="flex flex-col gap-0.5">
+                                <a class="flex items-center gap-1.5 leading-none font-medium text-sm text-gray-900 hover:text-primary"
+                                   href="javascript:void(0);">
+                                    @contact.fullname
+                                    @if (contact.isprimary)
+                                    {
+                                        <span class="mx-1 py-1 badge badge-outline badge-primary badge-sm">
+                                            Primary
+                                        </span>
+                                    }
+                                </a>
+
+                                <span class="text-2sm text-gray-700">
+                                    @contact.position
+                                    @if (!string.IsNullOrEmpty(contact.email))
+                                    {
+                                        <span class="badge badge-dot size-1.5 bg-gray-500"
+                                              style="margin-bottom: 1px; margin-left: 3px; margin-right: 3px; width: 5px; height: 5px;">
+                                        </span>
+                                        @contact.email
+                                    }
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center gap-1.5">
+                            <div class="menu inline-flex" data-menu="true">
+                                <div class="menu-item menu-item-dropdown"
+                                     data-menu-item-offset="0, 10px"
+                                     data-menu-item-placement="bottom-end"
+                                     data-menu-item-placement-rtl="bottom-start"
+                                     data-menu-item-toggle="dropdown"
+                                     data-menu-item-trigger="click|lg:click">
+                                    <button class="menu-toggle btn btn-sm btn-icon btn-light btn-clear">
+                                        <i class="ki-filled ki-dots-vertical"></i>
+                                    </button>
+
+                                    <div class="menu-dropdown menu-default w-full max-w-[175px]" data-menu-dismiss="true">
+                                        <!-- Edit Contact -->
+                                        <div class="menu-item">
+                                            <a class="menu-link" href="javascript:void(0);"
+                                               onclick="OpenClientContactModal('@contact.picid.EncryptedValue', '@Model.clientid.EncryptedValue');">
+                                                <span class="menu-icon"><i class="ki-filled ki-notepad-edit"></i></span>
+                                                <span class="menu-title">Edit</span>
+                                            </a>
+                                        </div>
+
+                                        <!-- Make Primary -->
+                                        <div class="menu-item">
+                                            <a class="menu-link" href="javascript:void(0);"
+                                               onclick="MakePrimary('@contact.picid.EncryptedValue', '@Model.clientid.EncryptedValue');">
+                                                <span class="menu-icon"><i class="ki-filled ki-toggle-on-circle"></i></span>
+                                                <span class="menu-title">Make Primary</span>
+                                            </a>
+                                        </div>
+
+                                        <!-- Delete -->
+                                        <div class="menu-item">
+                                            <a class="menu-link" href="javascript:void(0);"
+                                               onclick="DeleteContact('@contact.picid.EncryptedValue', '@Model.clientid.EncryptedValue');">
+                                                <span class="menu-icon"><i class="ki-filled ki-trash"></i></span>
+                                                <span class="menu-title">Delete</span>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+        else
+        {
+            <span class="text-sm text-gray-500">No contacts added</span>
+        }
+    </div>
+</div>

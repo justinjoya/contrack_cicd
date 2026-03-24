@@ -1,0 +1,2 @@
+﻿@model Contrack.DropdownModal
+@Html.DropDownList(Model.Name, new SelectList(@ViewBag.PortDropdown, "Value", "Text", "") { }, new { @id = "ddlPortID", @placeholder = "Select Port", @class = "form-control select2", @datarequired = "yes", @datarequired_message = "Please select Port", @data_append_parent = "yes", @style = "width:100%;" })
