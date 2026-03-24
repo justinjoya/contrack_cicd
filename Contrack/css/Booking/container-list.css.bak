@@ -1,0 +1,154 @@
+﻿.container-box {
+    border-radius: 6px;
+    border: 1px solid #B8B5AB;
+    background: #FFF;
+    box-shadow: 0 3px 0 0 #EEECE6;
+    padding: 25px 40px 25px 25px;
+    position: relative;
+}
+
+.container-heading-1 {
+    color: #241D1A;
+    font-family: Inter;
+    font-size: 16px;
+    font-weight: 600;
+    line-height: 16px;
+}
+
+.container-heading-2,
+.container-heading-3 {
+    color: #7F7C75;
+    font-family: Inter;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 14px;
+}
+
+.container-size,
+.container-owner {
+    border: 1px solid #D5CCC0;
+    border-radius: 4px;
+    padding: 4px 8px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.size-text {
+    color: #241D1A;
+    font-family: Inter;
+    font-size: 12px;
+}
+
+.owner-text {
+    color: #241D1A;
+    font-family: Inter;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.note-text {
+    color: #55534D;
+    font-family: Inter;
+    font-size: 12px;
+    font-style: italic;
+    padding: 10px 20px;
+}
+
+.container-note-section {
+    background: #F7F5F2;
+    border-radius: 6px;
+}
+
+.container-status-box {
+    background: #F4F2E8;
+    border-radius: 6px;
+    padding: 8px 12px;
+}
+
+.content-empty {
+    color: #9A8301;
+    font-family: Inter;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.image-wrapper {
+    position: relative;
+    width: 46px;
+    height: 46px;
+    flex-shrink: 0;
+    aspect-ratio: 1/1;
+}
+
+.inner-img {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 18px;
+    height: 18px;
+    transform: translate(-50%, -50%);
+}
+
+.container-location-section {
+    border-radius: 6px;
+    border: 1px dashed rgba(117, 123, 127, 0.41);
+    padding: 16px 20px 16px 20px;
+}
+
+.loading {
+    color: #665702;
+    font-family: Inter;
+    font-size: 14px;
+    font-style: italic;
+    font-weight: 500;
+    line-height: 16px;
+}
+
+.vessel {
+    color: #7F7C75;
+    text-align: right;
+    font-family: Inter;
+    font-size: 10px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 10px;
+    text-transform: uppercase;
+}
+
+.vessel-data {
+    color: #241D1A;
+    font-family: Inter;
+    font-size: 12px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 12px;
+}
+
+.origin-data {
+    color: #241D1A;
+    font-family: "Google Sans Code";
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 14px;
+}
+
+.origin {
+    color: #7F7C75;
+    font-family: Inter;
+    font-size: 10px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 10px;
+}
+
+.container-status-ribbon {
+    position: absolute;
+    top: -4px;
+    right: -6px;
+    width: 48px;
+    height: auto;
+    z-index: 10;
+    pointer-events: none;
+}

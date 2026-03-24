@@ -1,0 +1,127 @@
+﻿using Contrack;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.Mvc;
+using System.Web.UI.WebControls;
+namespace Contrack.Controllers
+{
+    [IsUserLoggedIn(Order = 1)]
+    [LogUserActivity(Order = 2)]
+    [TrackNavigation(Order = 3)]
+    [AuthorizeRoles(LoginType.Hub, Order = 4)]
+    public class ContainerController : Controller
+    {
+        private readonly ContainerService _service;
+        public ContainerController()
+        {
+            IContainerRepository repo = new ContainerRepository();
+            _service = new ContainerService(repo);
+        }
+        private void containerDropDowns()
+        {
+            ViewBag.ContainerTypes = Dropdowns.GetContainerTypesDropdown();
+            ViewBag.ContainerSizes = Dropdowns.GetContainerSizesDropdown();
+            ViewBag.Locations = Dropdowns.GetLocationDropdown(true);
+            ViewBag.Ports = Dropdowns.GetPortDropdown("", true);
+            ViewBag.ContainerModels = Dropdowns.GetContainerModelsDropdown(true);
+            ViewBag.StatusDropdown = Dropdowns.GetContainerStatusDropdown();
+        }
+        public ActionResult List()
+        {
+            ContainerFilterPage filter = PageSessionManager.GetFilter<ContainerFilterPage>(PageKeys.Container);
+<<<<<<< .working
+            int ActiveTab = PageSessionManager.GetAttribute<int>(PageKeys.Container, "ActiveTab", 0);
+||||||| .merge-left.r742
+=======
+            filter.ActiveTab = PageSessionManager.GetAttribute<int>(PageKeys.Container, "ActiveTab", 0);
+>>>>>>> .merge-right.r741
+            if (filter.filters == null) filter.filters = new ContainerFilter();
+            if (ActiveTab > 0)
+            {
+                filter.filters.status = ActiveTab;
+            }
+
+            _service.PopulateStatusCounts(filter);
+            SessionManager.ContainerListFilter = filter;
+
+            containerDropDowns();
+            return View(filter);
+        }
+        [HttpPost]
+        public ActionResult List(ContainerFilterPage filter, string action)
+        {
+            if (action == "Reset")
+            {
+                PageSessionManager.SetFilter(PageKeys.Container, new ContainerFilterPage());
+                PageSessionManager.SetAttribute(PageKeys.Container, "ActiveTab", 0);
+                SessionManager.ContainerListFilter = null;
+                return RedirectToAction("List");
+            }
+<<<<<<< .working
+||||||| .merge-left.r742
+            else
+            {
+                if (filter.filters.status != filter.ActiveTab)
+                {
+                    filter.ActiveTab = 0;
+                }
+                SessionManager.ContainerListFilter = filter;
+            }
+            SetFilterSession(filter);
+            PageSessionManager.SetAttribute(PageKeys.Container, "ActiveTab", filter.ActiveTab);
+=======
+            else
+            {
+                filter.ActiveTab = 0;
+            }
+            SetFilterSession(filter);
+            PageSessionManager.SetAttribute(PageKeys.Container, "ActiveTab", filter.ActiveTab);
+>>>>>>> .merge-right.r741
+            _service.PopulateStatusCounts(filter);
+            PageSessionManager.SetFilter(PageKeys.Container, filter);
+            PageSessionManager.SetAttribute(PageKeys.Container, "ActiveTab", ActiveTab);
+            SessionManager.ContainerListFilter = filter;
+            containerDropDowns();
+            return View(filter);
+        }
+        public ActionResult ListStatus(int status)
+        {
+            ContainerFilterPage filter = PageSessionManager.GetFilter<ContainerFilterPage>(PageKeys.Container);
+            if (filter == null) filter = new ContainerFilterPage();
+            if (filter.filters == null) filter.filters = new ContainerFilter();
+            filter.filters.status = status;
+            PageSessionManager.SetFilter(PageKeys.Container, filter);
+            PageSessionManager.SetAttribute(PageKeys.Container, "ActiveTab", status);
+            return RedirectToAction("List");
+        }
+        public ActionResult GetContainerModal(string containerid = "")
+        {
+            ContainerModal model = new ContainerModal();
+            try
+            {
+                ViewBag.ContainerModels = Dropdowns.GetContainerModelsDropdown();
+                ViewBag.Operators = Dropdowns.GetContainerOperatorDropdown();
+                ViewBag.Locations = Dropdowns.GetLocationDropdown();
+                ViewBag.Months = Dropdowns.GetMonthDropdown();
+                ViewBag.Years = Dropdowns.GetYearDropdown();
+
+                if (!string.IsNullOrEmpty(containerid))
+                {
+                    model = _service.GetContainerByID(containerid);
+                }
+            }
+            catch (Exception ex)
+            {
+            }
+            return PartialView("~/Views/Container/_ModalContainer.cshtml", model);
+        }
+        [HttpPost]
+        public ActionResult SaveContainer(ContainerModal model)
+        {
+            _service.SaveContainer(model);
+            return Json(_service.result, JsonRequestBehavior.AllowGet);
+        }
+    }
+}

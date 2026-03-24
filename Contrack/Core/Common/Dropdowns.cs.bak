@@ -1,0 +1,281 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Linq;
+using System.Web.Mvc;
+using System.Web.UI.WebControls;
+
+namespace Contrack
+{
+    public static class Dropdowns
+    {
+        public static List<ListItem> GetCountryDropdown(bool showempty = false)
+        {
+            var result = new List<ListItem>();
+
+            using (SqlDB Db = new SqlDB())
+            {
+                DataTable tbl = Db.GetDataTable($"select * from masters.getcountrylist('{Common.HubID}')");
+
+                result = (from DataRow dr in tbl.Rows
+                          select new ListItem
+                          {
+                              Text = Common.ToString(dr["countryname"]),
+                              Value = Common.Encrypt(Common.ToInt(dr["countryid"]))
+                          }).ToList();
+            }
+
+            if (showempty)
+                result.Insert(0, new ListItem { Text = "-Select-", Value = "" });
+
+            return result;
+        }
+        public static List<ListItem> GetPortDropdown(string countryid = "", bool showempty = false)
+        {
+            List<ListItem> result = new List<ListItem>();
+            using (SqlDB Db = new SqlDB())
+            {
+                DataTable tbl = new DataTable();
+                if (countryid == "")
+                    tbl = Db.GetDataTable("select * from masters.getportlist('" + Common.HubID.ToString() + "')");
+                else
+                    tbl = Db.GetDataTable("select * from masters.getportlist('" + Common.HubID.ToString() + "')");
+                result = (from DataRow dr in tbl.Rows
+                          select new ListItem()
+                          {
+                              Text = Common.ToString(dr["portname"]),
+                              Value = Common.Encrypt(Common.ToInt(dr["portid"]))
+                          }).ToList();
+            }
+            if (showempty)
+                result.Insert(0, new ListItem() { Text = "-Select-", Value = "" });
+            return result;
+        }
+        public static List<ListItem> GetVesselTypeDropdown(bool showempty = true)
+        {
+            var result = new List<ListItem>();
+
+            using (SqlDB Db = new SqlDB())
+            {
+                DataTable tbl = Db.GetDataTable($"select * from masters.getvesseltypelist('{Common.HubID}')");
+
+                result = (from DataRow dr in tbl.Rows
+                          select new ListItem
+                          {
+                              Text = Common.ToString(dr["typename"]),
+                              Value = Common.Encrypt(Common.ToInt(dr["vesseltypeid"]))
+                          }).ToList();
+            }
+
+            if (showempty)
+                result.Insert(0, new ListItem { Text = "-Select-", Value = "" });
+
+            return result;
+        }
+        public static List<ListItem> GetVesselSubTypeDropdown(bool showempty = true)
+        {
+            var result = new List<ListItem>();
+            using (SqlDB Db = new SqlDB())
+            {
+                DataTable tbl = Db.GetDataTable($"select * from masters.getvesselsubtypelist('{Common.HubID}')");
+
+                result = (from DataRow dr in tbl.Rows
+                          select new ListItem
+                          {
+                              Text = Common.ToString(dr["subtypename"]),
+                              Value = Common.Encrypt(Common.ToInt(dr["subtypeid"]))
+                          }).ToList();
+            }
+
+            if (showempty)
+                result.Insert(0, new ListItem { Text = "-Select-", Value = "" });
+
+            return result;
+        }
+        //public static object GetPortSearch_old(string search)
+        //{
+        //    ILocationRepository repo = new LocationRepository();
+        //    var ports = repo.GetGroupedPorts(search);
+
+        //    var grouped = ports.GroupBy(x => new { x.CountryName, x.CountryFlag })
+        //                       .Select(g => new
+        //                       {
+        //                           text = $"{g.Key.CountryFlag}##{g.Key.CountryName}",
+        //                           children = g.Select(p => new
+        //                           {
+        //                               id = p.PortID,
+        //                               text = p.PortName,
+        //                               countryName = p.CountryName,
+        //                               flag = g.Key.CountryFlag,
+        //                               portCode = p.PortCode,
+        //                               portName = p.PortName,
+        //                               countryId = p.CountryID
+        //                           }).ToList()
+        //                       }).ToList();
+        //    return grouped;
+        //}
+        public static object GetPortSearch(string search)
+        {
+            ILocationRepository repo = new LocationRepository();
+            var ports = repo.GetGroupedPorts(search);
+
+            var grouped = ports.GroupBy(x => new { x.CountryID })
+                               .Select(g => new
+                               {
+                                   id = g.Key.CountryID,
+                                   text = $"{g.First().CountryFlag}##{g.First().CountryName}",
+
+                                   children = g.Select(p => new
+                                   {
+                                       id = p.PortID,
+                                       text = p.PortName, 
+                                       portCode = p.PortCode,
+                                       flag = g.First().CountryFlag,
+                                       portName = p.PortName,
+                                       countryName = g.First().CountryName,
+                                       countryId = p.CountryID
+                                   }).ToList()
+                               }).ToList();
+            return grouped;
+        }
+
+
+        public static List<ListItem> EmptyDropdown(bool showselect = false)
+        {
+            List<ListItem> result = new List<ListItem>();
+            if (showselect)
+                result.Insert(0, new ListItem() { Text = "-Select-", Value = "" });
+            return result;
+        }
+        public static List<ListItem> GetUserTypeDropdown()
+        {
+            var result = new List<ListItem>();
+            using (var Db = new SqlDB())
+            {
+                DataTable tbl = Db.GetDataTable("SELECT * FROM masters.usertypes WHERE COALESCE(isdeleted,false)=false;");
+                result = (from DataRow dr in tbl.Rows
+                          select new ListItem()
+                          {
+                              Text = dr["usertype"].ToString(),
+                              Value = Common.Encrypt(Convert.ToInt32(dr["usertypeid"]))
+                          }).ToList();
+            }
+            result.Insert(0, new ListItem() { Text = "-Select-", Value = "" });
+            return result;
+        }
+        public static List<ListItem> GetAgenciesDropdown(bool multiple = true)
+        {
+            List<ListItem> result = new List<ListItem>();
+            using (SqlDB Db = new SqlDB())
+            {
+                DataTable tbl = new DataTable();
+                tbl = Db.GetDataTable("SELECT * FROM  masters.getagencylist('" + Common.HubID + "','" + Common.LoginID + "');");
+                result = (from DataRow dr in tbl.Rows
+                          select new ListItem()
+                          {
+                              Text = Common.ToString(dr["agencyname"]),
+                              Value = Common.Encrypt(Common.ToInt(dr["agencyid"]))
+                          }).ToList();
+            }
+            if (!multiple)
+                result.Insert(0, new ListItem() { Text = "-Select-", Value = "" });
+            return result;
+        }
+        public static List<ListItem> GetRoles()
+        {
+            var result = new List<ListItem>();
+            using (var Db = new SqlDB())
+            {
+                result = (from Roles dr in new Roles().GetRolesList()
+                          select new ListItem()
+                          {
+                              Text = dr.role_name,
+                              Value = Common.Encrypt(dr.role_id)
+                          }).ToList();
+            }
+            result.Insert(0, new ListItem() { Text = "-- Select --", Value = "" });
+            return result;
+        }
+        public static List<ListItem> GetLocationTypeDropdown(bool showempty = true)
+        {
+            List<ListItem> result = new List<ListItem>();
+            try
+            {
+                using (SqlDB Db = new SqlDB(DatabaseCollection.Contrack))
+                {
+                    string query = $"SELECT locationtypeid, locationtypename FROM masters.location_type WHERE hubid = {Common.HubID} AND COALESCE(isdeleted,false)=false ORDER BY locationtypename ASC";
+
+                    DataTable tbl = Db.GetDataTable(query);
+
+                    result = (from DataRow dr in tbl.Rows
+                              select new ListItem()
+                              {
+                                  Text = Common.ToString(dr["locationtypename"]),
+                                  Value = Common.Encrypt(Common.ToInt(dr["locationtypeid"]))
+                              }).ToList();
+                }
+
+                if (showempty)
+                    result.Insert(0, new ListItem() { Text = "-Select-", Value = "" });
+            }
+            catch (Exception ex)
+            {
+            }
+            return result;
+        }
+        public static List<ListItem> GetCurrencyDropdown()
+        {
+            List<ListItem> result = new List<ListItem>();
+            using (SqlDB Db = new SqlDB())
+            {
+                DataTable tbl = Db.GetDataTable("Select * from masters.currency where COALESCE(isdeleted,false)=false;");
+                result = (from DataRow dr in tbl.Rows
+                          select new ListItem()
+                          {
+                              Text = Common.ToString(dr["currencycode"]) + " - " + Common.ToString(dr["currencyname"]),
+                              Value = Common.ToString(dr["currencycode"]).Trim()
+                          }).ToList();
+            }
+            result.Insert(0, new ListItem() { Text = "-Select-", Value = "" });
+            return result;
+        }
+
+        public static List<ListItem> GetContainerTypesDropdown()
+        {
+            List<ListItem> result = new List<ListItem>();
+            using (SqlDB Db = new SqlDB(DatabaseCollection.Contrack))
+            {
+                DataTable tbl = Db.GetDataTable(
+                    "SELECT * FROM masters.container_type_list_simple(" +
+                    "p_hubid := '" + Common.HubID + "'" + ");");
+                result = (from DataRow dr in tbl.Rows
+                          select new ListItem()
+                          {
+                              Text = Common.ToString(dr["typename"]),
+                              Value = Common.Encrypt(Common.ToInt(dr["containertypeid"]))
+                          }).ToList();
+            }
+            result.Insert(0, new ListItem() { Text = "-Select-", Value = "" });
+            return result;
+        }
+
+        public static List<ListItem> GetContainerSizesDropdown()
+        {
+            List<ListItem> result = new List<ListItem>();
+            using (SqlDB Db = new SqlDB(DatabaseCollection.Contrack))
+            {
+                DataTable tbl = Db.GetDataTable(
+                    "SELECT * FROM masters.container_size_list();");
+                result = (from DataRow dr in tbl.Rows
+                          select new ListItem()
+                          {
+                              Text = Common.ToString(dr["sizename"]),
+                              Value = Common.Encrypt(Common.ToInt(dr["sizeid"]))
+                          }).ToList();
+            }
+            result.Insert(0, new ListItem() { Text = "-Select-", Value = "" });
+            return result;
+        }
+
+    }
+}

@@ -1,0 +1,365 @@
+﻿.allocation-section {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+}
+
+    .allocation-section .allocation-cards {
+        width: calc(100% - 432px);
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+    }
+
+        .allocation-section .allocation-cards .allocation-card {
+            border-radius: 8px;
+            border: 1px solid #E5E5E5;
+            background: #FFF;
+            box-shadow: 0 4px 54px 0 rgba(42, 43, 45, 0.08);
+        }
+
+            .allocation-section .allocation-cards .allocation-card .allocation-card-header {
+                display: flex;
+                padding: 24px;
+                gap: 16px;
+            }
+
+                .allocation-section .allocation-cards .allocation-card .allocation-card-header img {
+                    width: 42px;
+                    height: 42px;
+                }
+
+                .allocation-section .allocation-cards .allocation-card .allocation-card-header .port-group {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 8px;
+                }
+
+                    .allocation-section .allocation-cards .allocation-card .allocation-card-header .port-group .port-name {
+                        color: #232323;
+                        font-size: 16px;
+                        font-weight: 700;
+                        line-height: 18px; /* 112.5% */
+                    }
+
+                    .allocation-section .allocation-cards .allocation-card .allocation-card-header .port-group .port-country {
+                        display: flex;
+                        align-items: center;
+                        gap: 8px;
+                    }
+
+                        .allocation-section .allocation-cards .allocation-card .allocation-card-header .port-group .port-country .port-country-name {
+                            color: #959595;
+                            font-size: 14px;
+                            font-weight: 500;
+                            line-height: 14px; /* 100% */
+                        }
+
+                        .allocation-section .allocation-cards .allocation-card .allocation-card-header .port-group .port-country .dot {
+                            width: 6px;
+                            height: 6px;
+                            border-radius: 50%;
+                            background: #959595;
+                        }
+
+                        .allocation-section .allocation-cards .allocation-card .allocation-card-header .port-group .port-country .port-terminal {
+                            color: #959595;
+                            font-size: 14px;
+                            font-weight: 500;
+                            line-height: 14px; /* 100% */
+                        }
+
+    .allocation-section .allocation-summary {
+        width: 416px;
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+        position: relative;
+    }
+
+.allocation-card-body .model-card {
+    display: flex;
+    justify-content: space-between;
+    padding: 15px 24px;
+    position: relative;
+}
+
+    /*    .allocation-card-body .model-card.available {
+        background: #f8fefb;
+    }
+
+    .allocation-card-body .model-card.critical {
+        background: #fef9fa;
+    }*/
+
+    .allocation-card-body .model-card::before {
+        /* background: url(/assets/icons/line2.svg);*/
+        content: '';
+        position: absolute;
+        background: #ececec;
+        left: 24px;
+        right: 24px;
+        height: 1px;
+        background-size: 100%;
+        background-repeat: no-repeat;
+        top: 0;
+    }
+
+    .allocation-card-body .model-card .model-card-info {
+        display: flex;
+        align-items: center;
+        gap: 18px;
+    }
+
+        .allocation-card-body .model-card .model-card-info .model-card-info-detail {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            width: 200px;
+        }
+
+            .allocation-card-body .model-card .model-card-info
+            .model-card-info-detail .model-card-name {
+                color: #7F7C75;
+                font-size: 16px;
+                font-weight: 400;
+                line-height: 12px; /* 85.714% */
+            }
+
+            .allocation-card-body .model-card .model-card-info
+            .model-card-info-detail .model-card-iso {
+                color: #232323;
+                font-size: 16px;
+                font-weight: 500;
+                line-height: 14px; /* 100% */
+            }
+
+        .allocation-card-body .model-card .model-card-info
+        .model-card-info-counts {
+            display: flex;
+            gap: 12px;
+        }
+
+            .allocation-card-body .model-card .model-card-info
+            .model-card-info-counts .count-item {
+                border-radius: 6px;
+                border: 2px solid rgba(10, 167, 130, 0.27);
+                padding: 12px;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                width: 150px;
+            }
+
+                .allocation-card-body .model-card .model-card-info
+                .model-card-info-counts .count-item.available {
+                }
+
+                .allocation-card-body .model-card .model-card-info
+                .model-card-info-counts .count-item.blocked {
+                    border: 2px solid rgba(216, 0, 39, 0.22);
+                }
+
+                .allocation-card-body .model-card .model-card-info
+                .model-card-info-counts .count-item.soon {
+                    border: 2px solid #EEE8D0;
+                }
+
+                .allocation-card-body .model-card .model-card-info
+                .model-card-info-counts .count-item.gray {
+                    border: 2px solid rgb(177 176 176 / 22%);
+                }
+
+                .allocation-card-body .model-card .model-card-info
+                .model-card-info-counts .count-item .count-text {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 8px;
+                }
+
+                .allocation-card-body .model-card .model-card-info
+                .model-card-info-counts .count-item .count-text-label {
+                    color: #959595;
+                    font-size: 12px;
+                    font-style: normal;
+                    font-weight: 600;
+                    line-height: 12px; /* 100% */
+                    text-transform: uppercase;
+                }
+
+                .allocation-card-body .model-card .model-card-info
+                .model-card-info-counts .count-item .count-text-count {
+                    color: #232323;
+                    font-size: 18px;
+                    font-style: normal;
+                    font-weight: 700;
+                    line-height: 18px; /* 100% */
+                }
+
+
+                    .allocation-card-body .model-card .model-card-info
+                    .model-card-info-counts .count-item .count-text-count > span {
+                        color: #959595;
+                        font-size: 16px;
+                        font-weight: 600;
+                    }
+
+    .allocation-card-body .model-card.available .model-card-info .model-card-info-counts .count-item.available {
+        background: #eefdf5;
+    }
+
+        .allocation-card-body .model-card.available .model-card-info
+        .model-card-info-counts .count-item.available .count-text-count {
+            color: #2f7955;
+        }
+
+    .allocation-card-body .model-card .model-card-info
+    .model-card-info-counts .count-item .count-icon {
+        width: 28px;
+        height: 28px;
+    }
+
+        .allocation-card-body .model-card .model-card-info
+        .model-card-info-counts .count-item .count-icon img {
+            width: 100%;
+            height: 100%;
+        }
+
+
+    .allocation-card-body .model-card .model-card-action {
+        display: flex;
+        gap: 12px;
+        align-items: center;
+    }
+
+        .allocation-card-body .model-card .model-card-action input[type='text'] {
+            width: 100px;
+            color: #241D1A;
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+
+.allocation-section .allocation-summary .requirement {
+    border-radius: 8px;
+    /* background: #232323;*/
+    background: linear-gradient(90deg, #232323 0%, #898989 100%);
+    box-shadow: 0 4px 54px 0 rgba(42, 43, 45, 0.08);
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    color: #fff;
+    position: relative;
+    overflow: hidden;
+}
+
+    .allocation-section .allocation-summary .requirement.red {
+        background: linear-gradient(71deg, #571823 33.32%, #D80027 110.88%);
+    }
+
+    .allocation-section .allocation-summary .requirement.green {
+        background: linear-gradient(71deg, #0E5242 33.32%, #0AA782 110.88%);
+    }
+
+    .allocation-section .allocation-summary .requirement .corner-logo {
+        position: absolute;
+        right: -36px;
+        opacity: 0.3;
+    }
+
+    .allocation-section .allocation-summary .requirement .heading {
+        color: rgba(255, 255, 255, 0.53);
+        font-size: 16px;
+        font-style: normal;
+        font-weight: 500;
+        padding-bottom: 20px;
+    }
+
+    .allocation-section .allocation-summary .requirement .container-info {
+        display: flex;
+        gap: 20px;
+    }
+
+        .allocation-section .allocation-summary .requirement .container-info .avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            border: 1px solid rgba(255, 255, 255, 0.27);
+            background: rgba(255, 255, 255, 0.08);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .allocation-section .allocation-summary .requirement .container-info .info-item {
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+        }
+
+            .allocation-section .allocation-summary .requirement .container-info .info-item .type-size {
+                color: #FFF;
+                font-size: 18px;
+                font-weight: 700;
+                line-height: normal; /* 100% */
+                padding-bottom: 5px;
+            }
+
+            .allocation-section .allocation-summary .requirement .container-info .info-item .qty {
+                color: #BEBEBE;
+                font-size: 16px;
+                font-weight: 500;
+                line-height: normal; /* 100% */
+                padding-bottom: 18px;
+            }
+
+            .allocation-section .allocation-summary .requirement .container-info .info-item .progress {
+                background: rgba(255, 255, 255, 0.16);
+                width: 80%;
+                margin-bottom: 12px;
+            }
+
+            .allocation-section .allocation-summary .requirement .container-info .info-item .qty-remain {
+                color: #FFF;
+                font-size: 16px;
+                font-weight: 500;
+                line-height: 16px; /* 100% */
+            }
+
+.allocation-section .allocation-summary .selected-list {
+    display: flex;
+    flex-direction: column;
+    border-radius: 8px;
+    border: 1px solid #E5E5E5;
+    background: #FFF;
+    padding: 24px;
+    flex: 1;
+}
+
+    .allocation-section .allocation-summary .selected-list .header {
+        display: flex;
+        gap: 5px;
+        justify-content: space-between;
+    }
+
+        .allocation-section .allocation-summary .selected-list .header .head-text {
+            color: #656565;
+            font-size: 16px;
+            font-weight: 500;
+            line-height: 16px; /* 100% */
+        }
+
+        .allocation-section .allocation-summary .selected-list .header .head-count {
+            color: #232323;
+            font-size: 14px;
+            font-weight: 600;
+            line-height: 12px; /* 85.714% */
+        }
+
+
+.allocation-section .allocation-summary .actions {
+    position: fixed;
+    bottom: 0;
+    width: 416px;
+    padding: 20px;
+}

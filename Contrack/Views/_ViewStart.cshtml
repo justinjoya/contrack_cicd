@@ -1,0 +1,8 @@
+﻿@{
+    Layout = null;
+}
+<script>
+    var xhttp = new XMLHttpRequest();
+    xhttp.open("GET", "/Account/SetTimeOffSet?UTC=" + new Date().getTimezoneOffset(), true);
+    xhttp.send();
+</script>
